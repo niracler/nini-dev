@@ -1,0 +1,9 @@
+{
+  "repos": [
+    {
+      "name": "example-repo",
+      "url": "https://github.com/your-org/example-repo.git",
+      "path": "repos/example-repo"
+    }
+  ]
+}

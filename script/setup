@@ -1,0 +1,44 @@
+#!/bin/bash
+# Setup script: Clone all sub-repos
+# Usage: ./script/setup
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+REPOS_FILE="$ROOT_DIR/repos.json"
+
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required"
+    echo "macOS: brew install jq"
+    echo "Ubuntu: sudo apt install jq"
+    exit 1
+fi
+
+if [ ! -f "$REPOS_FILE" ]; then
+    echo "Error: repos.json not found"
+    exit 1
+fi
+
+mkdir -p "$ROOT_DIR/repos"
+
+echo "Cloning sub-repos..."
+echo ""
+
+jq -c '.repos[]' "$REPOS_FILE" | while read -r repo; do
+    name=$(echo "$repo" | jq -r '.name')
+    url=$(echo "$repo" | jq -r '.url')
+    path=$(echo "$repo" | jq -r '.path')
+    full_path="$ROOT_DIR/$path"
+
+    if [ -d "$full_path/.git" ]; then
+        echo "✓ $name already exists, skipping"
+    else
+        echo "→ Cloning $name..."
+        git clone "$url" "$full_path"
+        echo "✓ $name cloned"
+    fi
+    echo ""
+done
+
+echo "All repos ready!"

@@ -1,0 +1,14 @@
+# Sub-repos - managed independently
+repos/
+
+# macOS
+.DS_Store
+
+# IDE
+*.swp
+*.swo
+.idea/
+
+# Sensitive files
+.env
+*.local
