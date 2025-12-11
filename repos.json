@@ -19,6 +19,11 @@
       "name": "bokushi",
       "url": "https://github.com/niracler/bokushi.git",
       "path": "repos/bokushi"
+    },
+    {
+      "name": "ai-programming-share",
+      "url": "https://github.com/niracler/ai-programming-share.git",
+      "path": "repos/ai-programming-share"
     }
   ]
 }
