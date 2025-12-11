@@ -1,3 +1,24 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code when working in this workspace.
@@ -11,11 +32,11 @@ This file provides guidance to Claude Code when working in this workspace.
 
 ## 0 · User Context
 
-- You are assisting **[ROLE: e.g., "a backend developer", "a Home Assistant integration developer"]**.
-- User's familiarity level: **[LEVEL: e.g., "experienced", "learning while developing"]**.
+- You are assisting **a hobbyist developer**.
+- User's familiarity level: **learning while developing**.
 - Core objectives:
   - Act as a **strong reasoning and planning coding assistant**, delivering high-quality solutions.
-  - **[If learning]** Briefly explain key concepts and the reasoning behind non-obvious design decisions.
+  - Briefly explain key concepts and the reasoning behind non-obvious design decisions.
   - Keep explanations practical—focus on knowledge useful for the current task.
 
 ---
@@ -24,17 +45,20 @@ This file provides guidance to Claude Code when working in this workspace.
 
 This is a multi-repo workspace containing the following projects:
 
-| Repo | Description |
-|------|-------------|
-| `repos/example-repo` | Example repository |
+| Repo | Tech Stack | Description |
+|------|------------|-------------|
+| `repos/nyaruko-telegram-bot` | TypeScript, Cloudflare Workers, Grammy, Hono, Drizzle, LangChain | Telegram bot |
+| `repos/bokushi` | Astro, Tailwind CSS, Biome, Playwright | Personal blog/website |
+| `repos/netease-cloud-music-dl` | Python 3.9+ | Netease music downloader CLI |
+| `repos/plrom` | Markdown | Personal notes and documentation |
 
 **Important**:
 
-- Each sub-repo has its own `CLAUDE.md` with project-specific guidance. **Read it first** when working in a sub-repo.
-- Each sub-repo has its own `venv` virtual environment. Activate it before running commands:
+- Each sub-repo may have its own `CLAUDE.md` with project-specific guidance. **Read it first** when working in a sub-repo.
+- For Python projects, activate venv before running commands:
 
   ```bash
-  cd repos/{repo-name}
+  cd repos/netease-cloud-music-dl
   source venv/bin/activate
   ```
 
@@ -129,36 +153,20 @@ When user says "implement", "execute", "start coding", "proceed with the plan":
 
 | Context | Language |
 |---------|----------|
-| Explanations, discussions, analysis | **[YOUR_LANGUAGE: e.g., English, 简体中文]** |
+| Explanations, discussions, analysis | **中文** |
 | Code, comments, identifiers, commit messages | **English** |
-| Markdown body text | [YOUR_LANGUAGE] |
+| Markdown body text | 中文 |
 | Markdown code blocks | English |
 
 ### 5.2 Coding Standards
 
-- Follow [PROJECT_STYLE_GUIDE: e.g., PEP 8, Google Style Guide]
-- Project-specific conventions:
-  - [ADD YOUR CONVENTIONS HERE]
+- TypeScript projects: ESLint + TypeScript strict mode
+- Astro projects: Biome for formatting and linting
+- Python projects: PEP 8
 
 ### 5.3 Development Commands
 
-**Note**: Run all commands in the corresponding repo's venv environment.
-
-```bash
-# Enter repo and activate venv
-cd repos/{repo-name}
-source venv/bin/activate
-
-# Format and lint
-[YOUR_FORMAT_COMMAND]
-[YOUR_LINT_COMMAND]
-
-# Type check
-[YOUR_TYPE_CHECK_COMMAND]
-
-# Test
-[YOUR_TEST_COMMAND]
-```
+**请参考各仓库下的 `CLAUDE.md` 获取具体命令。**
 
 ---
 
@@ -199,6 +207,10 @@ Require confirmation:
 
 ## 8 · Git & Command Line
 
+**使用 `git-workflow` skill 进行 Git 操作**：提交、PR、Release 都应遵循该 skill 的规范。
+
+- Commit 格式: `type(scope): summary` (feat, fix, refactor, docs, test, chore)
+- 分支命名: `feature/xxx`, `fix/xxx`, `docs/xxx` 等
 - Destructive operations (`rm -rf`, `git reset --hard`, `git push --force`) must explain risks
 - Don't proactively suggest history-rewriting commands unless user explicitly requests
 - Prefer `gh` CLI for GitHub interactions
@@ -207,4 +219,4 @@ Require confirmation:
 
 ## 9 · Resources
 
-- [ADD YOUR PROJECT RESOURCES HERE]
+**请参考各仓库下的 `CLAUDE.md` 获取项目相关资源。**
