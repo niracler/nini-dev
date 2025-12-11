@@ -1,9 +1,24 @@
 {
   "repos": [
     {
-      "name": "example-repo",
-      "url": "https://github.com/your-org/example-repo.git",
-      "path": "repos/example-repo"
+      "name": "nyaruko-telegram-bot",
+      "url": "https://github.com/niracler/nyaruko-telegram-bot.git",
+      "path": "repos/nyaruko-telegram-bot"
+    },
+    {
+      "name": "plrom",
+      "url": "https://github.com/niracler/plrom.git",
+      "path": "repos/plrom"
+    },
+    {
+      "name": "netease-cloud-music-dl",
+      "url": "https://github.com/niracler/netease-cloud-music-dl.git",
+      "path": "repos/netease-cloud-music-dl"
+    },
+    {
+      "name": "bokushi",
+      "url": "https://github.com/niracler/bokushi.git",
+      "path": "repos/bokushi"
     }
   ]
 }
