@@ -12,3 +12,4 @@ repos/
 # Sensitive files
 .env
 *.local
+.playwright-mcp
