@@ -37,12 +37,49 @@
 
 ## Phase 4: Part 2.3 - Agent Era (~5 slides)
 
-- [ ] 4.1 Slide: Agent vs Traditional LLM + ReAct loop
-- [ ] 4.2 Slide: Cursor / Claude Code comparison + Vibe Coding
-- [ ] 4.3 Slide: MCP architecture (Mermaid diagram)
-- [ ] 4.4 Slide: Subagent & Skill (合并)
-- [ ] 4.5 Slide: Context Engineering (重点)
-- [ ] 4.6 Sync: Update `docs/02-3-Agent时代.md`
+- [x] 4.1 Slide: Agent vs Traditional LLM + ReAct loop
+- [x] 4.2 Slide: Cursor / Claude Code comparison (Vibe Coding 移至 Part 5)
+- [x] 4.3 Slide: MCP architecture (Mermaid diagram)
+- [x] 4.4 Slide: Subagent & Skill (合并)
+- [x] 4.5 Slide: Context Engineering (重点)
+- [x] 4.6 Sync: Update `docs/02-3-Agent时代.md` (术语已统一)
+
+## Phase 4.5: Context Engineering Deep Dive & Part 2 Roadmap (NEW)
+
+> **核心目标**：让听众真正理解 "为什么 Context Engineering 是现代 AI 编程的核心技能"，而不只是知道有这个概念。
+
+### 4.5.1 Context Engineering 重整（2 页，高信噪比）
+
+**核心叙事线**：
+1. **比喻切入**：AI = 只能来一天的行业顾问（对你公司一无所知）
+2. **问题定义**：你需要在有限时间内给 TA 提供恰到好处的信息
+3. **策略框架**：四大策略解决这个问题
+4. **现实约束**：Context Rot — 信息太多反而出问题
+
+**Slide 21 设计**：
+- [ ] 4.5.1.1 **开场比喻**：行业顾问 vs Context Window 类比
+  - 顾问只能待一天 → Context Window 有限容量
+  - 不知道公司情况 → 每次对话都是无状态的
+  - 你的任务：在有限时间内给 TA 最相关的资料
+- [ ] 4.5.1.2 **四大策略**（解决方案）
+  - Write: 给顾问一个可以做笔记的本子（持久化）
+  - Select: 只拿最相关的文档给 TA 看（检索）
+  - Compress: 把 100 页报告压缩成 3 页摘要（压缩）
+  - Isolate: 让 TA 带助手分头调研（子任务隔离）
+- [ ] 4.5.1.3 **Context Rot 警告**（现实约束）
+  - "不是给的资料越多越好，给错了反而害 TA"
+  - Anthropic: "大多数 Agent 失败是 Context 失败"
+
+**Slide 22 保留**（已验证效果好）：
+- [ ] 4.5.1.4 保留现有动态可视化，微调风格统一
+
+### 4.5.2 Part 2 知识路线图（1 页 Mermaid mindmap）
+
+- [ ] 4.5.2.1 实现 mindmap（结构见 `docs/02-4-概念总结.md`）
+- [ ] 4.5.2.2 Playwright 截图验证布局
+- [ ] 4.5.2.3 插入 Part 2 结尾作为总结过渡
+
+---
 
 ## Phase 5: Part 3 - My Pitfall Stories (~5-7 slides)
 
@@ -111,7 +148,8 @@
 | 1: Part 1 | ✅ Done | 4 | 标题、为什么、路线图、声明、术语同步完成 |
 | 2: Part 2.1 | ✅ Done | 5 | GPT-3、核心概念、Token体感、Copilot、工作方式 |
 | 3: Part 2.2 | ✅ Done | 6 | ChatGPT/RLHF、幻觉、GPT-4、Function Call、RAG、推理模型、术语同步完成 |
-| 4: Part 2.3 | Pending | ~5 | Agent、ReAct、工具对比、MCP、Subagent/Skill、Context Engineering |
+| 4: Part 2.3 | ✅ Done | 6 | Agent、工具对比、MCP、Subagent/Skill、Context Engineering (×2)、Vibe Coding 移至 Part 5 |
+| **4.5: CE & Roadmap** | **NEW** | **+1** | Context Engineering 重整 + Part 2 知识路线图 |
 | 5: Part 3 | Pending | ~5 | |
 | 6: Part 4 | Pending | ~8 | |
 | 7: Part 5 | Pending | ~8 | |
@@ -119,4 +157,4 @@
 | 9: Links | Pending | - | |
 | 10: Polish | Pending | - | |
 
-**Estimated Total Slides**: ~50
+**Estimated Total Slides**: ~51
