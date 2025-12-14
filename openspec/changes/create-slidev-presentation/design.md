@@ -1,297 +1,245 @@
 # Design: Slidev Presentation Architecture
 
-## Context
+## 项目背景
 
-将 3000+ 行的 AI 编程分享文稿转换为 ~50 页的 Slidev PPT，同时保持文稿版（VitePress）同步更新。这是一个迭代式项目，每页 PPT 都需要用户精修确认。
+将 AI 编程分享文稿（VitePress）转换为 ~38 页 Slidev PPT，逐页精修确认。
 
-## Goals
+**目标听众**：对 AI 了解甚少的物联网工程师
 
-- 创建专业、视觉清晰的演示 PPT
-- 保持文稿版与 PPT 版内容同步
-- 统一所有专业术语和命名
-- 确保所有引用链接有效且准确
-
-## Non-Goals
-
-- 不改变原有内容的核心观点
-- 不增加新的技术主题
-- 不创建独立仓库（在同一仓库内）
-
-## Decisions
-
-### 1. 项目结构
+**项目结构**：
 
 ```text
 repos/ai-programming-share/
-├── docs/                    # VitePress 文稿版（保留）
+├── docs/                    # VitePress 文稿版（原稿）
 │   ├── 01-开场.md
 │   ├── 02-1-早期发展.md
-│   └── ...
-├── slides.md                # Slidev 主文件
-├── components/              # 自定义 Vue 组件（如需要）
-├── public/                  # 截图、图片资源
-│   └── images/
-├── package.json             # 更新，添加 Slidev 依赖
-└── slidev.config.ts         # Slidev 配置
+│   ├── 02-2-多模态与工具.md
+│   ├── ...
+│   └── 05-附录.md
+├── slides.md                # Slidev PPT（输出）
+├── public/images/           # 截图、图片资源
+└── package.json             # Slidev 依赖
 ```
 
-### 2. Slidev 技术选型
+---
 
-**基础配置：**
+## 每页 PPT 的精修流程
 
-- **Theme**: `@slidev/theme-seriph` (专业简约风格)
-- **代码高亮**: Shiki (已支持)
-- **图表**: Mermaid (内置支持)
-- **数学公式**: 如需要可启用 KaTeX
+> ⚠️ **核心约束：单页单步** — 每次 apply 只处理**一个步骤**，完成后等待用户确认才能继续。
+>
+> 🚫 **硬约束：纯文字页 = 回炉重造** — 每页必须有至少一个**有信息量的视觉元素**（截图、图表、代码块、数据可视化等）。仅有样式装饰（颜色卡片、边框、背景色）的文字页仍然算「纯文字」。
 
-**样式约定：**
-
-```css
-:root {
-  --accent: #FB8F68;           /* 重点色 */
-  --accent-light: rgba(251, 143, 104, 0.15);  /* 背景色 */
-}
-.accent { color: var(--accent); }
-.accent-bg { background-color: var(--accent-light); }
-```
-
-**技术经验：**
-
-| 问题 | 解决方案 |
-|------|----------|
-| Mermaid timeline 容易越界 | 改用 `grid` 布局 + 卡片 |
-| Vue 组件加载不稳定 | 放弃组件，直接用内联 HTML + Tailwind 类 |
-| 重点色需要复用 | 在 `<style>` 中定义 CSS 变量 `--accent` |
-| 字体大小不一致 | 建立视觉层次：标题 ≥36pt → 正文 ≥24pt |
-| Mermaid 图太小 | 根据布局调整 scale：单列 0.7-0.8，two-cols 0.5-0.6 |
-
-### 3. 术语统一表
-
-| 中文术语 | 英文 | 统一写法 | 备注 |
-|---------|------|---------|------|
-| 大语言模型 | Large Language Model | LLM | 首次出现时写全称 |
-| 词元/令牌 | Token | Token | 统一用 Token |
-| 上下文窗口 | Context Window | Context Window | |
-| 幻觉 | Hallucination | 幻觉 | |
-| 人类反馈强化学习 | RLHF | RLHF | 首次出现时写全称 |
-| 多模态 | Multimodal | 多模态 | |
-| 函数调用 | Function Call | Function Call | |
-| 检索增强生成 | RAG | RAG | 首次出现时写全称 |
-| 思维链 | Chain of Thought | CoT | |
-| 推理模型 | Reasoning Model | 推理模型 | |
-| 智能体/代理 | Agent | Agent | 统一用 Agent |
-| 子智能体 | Subagent | Subagent | |
-| 模型上下文协议 | Model Context Protocol | MCP | |
-| 技能 | Skill | Skill | |
-
-### 4. 设计原则
-
-#### 目标听众：对 AI 了解甚少的物联网工程师
-
-这意味着：
-
-- 避免假设听众已有 AI 背景知识
-- 用物联网/嵌入式领域的类比解释 AI 概念
-- 首次出现的术语必须简明解释
-
-**核心理念（参考 Nancy Duarte, Garr Reynolds, MIT CommLab）：**
-
-- **Nancy Duarte**: 幻灯片是 "glance media"，一眼能懂
-- **Garr Reynolds**: YOU are the content, slides are your Table of Contents
-- **核心**: 每页一个核心观点，大量留白
-
-**信噪比原则：**
-
-- **所有页面的信噪比都要尽可能高** — 每个元素都必须有存在的理由
-- 删除装饰性内容，保留有意义的信息
-- 如果一个元素不能帮助理解，就删掉它
-
-**视觉优先原则：**
-
-- **尽可能多用图，少用纯文字** — 纯文字太素，难以吸引注意力
-- 需要截图/素材时，AI 会主动告知用户去准备
-- 复杂图形可以先用 ASCII 画草稿，用户确认后再用专业工具绘制
-- Mermaid 支持多种图类型（flowchart, sequence, timeline, mindmap 等），可用 context7 MCP 查找用法
-
-**内容原则：**
-
-- **内容量要充足**：空白太多说明内容不够，应增加有意义的内容而非装饰
-- **左右分栏要平衡**：两边内容量应大致相当，避免一边空一边满
-- **参考外部最佳实践**：遇到布局问题时，查看 [Slidev Showcases](https://sli.dev/resources/showcases) 寻找灵感
-
-**迭代原则：**
-
-- 前面的页面效果可能不够理想，后续可能回来修改
-- 不盲目参考已完成的页面，每页独立追求最佳效果
-
-### 5. 每页 PPT 的精修流程
-
-> ⚠️ **核心约束：逐页确认** — 每完成一页 slide 必须暂停，等待用户确认后才能继续下一页。
-
-**流程：**
+**流程（每步独立 apply）：**
 
 ```text
-1. 根据该页内容类型，搜索相关最佳实践
-   ↓
-2. 参考 Slidev Showcases 和 antfu/talks 寻找类似布局
-   ↓
-3. 生成该页草稿（Slidev 格式）
-   ↓
-4. 使用 Playwright MCP 截图验证布局效果
-   ↓
-5. 用户审核反馈（内容、布局、术语、视觉效果）
-   ↓
-6. 迭代修改 → Playwright 截图验证 → 直到满意
-   ↓
-7. 同步更新对应的 VitePress 文稿
-   ↓
-8. 进入下一页
+┌─────────────────────────────────────────────────────────┐
+│  每个步骤 = 一次 apply，完成后暂停等待用户确认           │
+└─────────────────────────────────────────────────────────┘
+
+Step A: 研究准备（WebSearch 必做）
+        → 输出：搜索结果摘要、关键资料链接
+        → 用户确认后进入 Step B
+        ↓
+Step B: 构思叙事（Duarte + Winston + Karpathy 视角）
+        → 输出：核心想法、记忆点、视觉锚点方案
+        → 用户确认后进入 Step C
+        ↓
+Step C: 设计初稿 + 自审
+        → 输出：完整 slide 代码 + Tufte/antfu 自审结果
+        → 用户确认后进入 Step D
+        ↓
+Step D: Playwright 截图验证
+        → 输出：截图 + 布局问题修复（如有）
+        → 用户确认后进入 Step E
+        ↓
+Step E: 用户最终确认 + 同步文稿
+        → 输出：VitePress 文稿同步更新
+        → 完成，进入下一页的 Step A
 ```
 
-#### Step 1: 搜索最佳实践（强制）
+**关键原则**：
 
-> ⚠️ **强制要求**：每一页 slide 开始前，**必须**使用 WebSearch 搜索相关资料。这是 Context Engineering 页面成功的关键经验。
+- 🚫 **禁止跨步骤**：一次 apply 只做一个 Step，不要「顺便」做下一步
+- 🚫 **禁止跨页面**：完成 Step E 后必须等待用户指示才能开始下一页
+- ✅ **每步有明确输出**：用户可以在任何步骤提出修改意见
+
+### Step 1: 研究准备（WebSearch 必做）
 
 每页开始前，根据内容类型搜索相关资料：
 
-| 内容类型 | 搜索关键词示例 |
-|---------|---------------|
-| 时间线/演进 | `timeline slide design best practice` |
-| 概念对比 | `comparison slide layout` |
-| 流程图 | `process flow presentation design` |
-| 数据/统计 | `data visualization slide` |
-| 引言/金句 | `quote slide design` |
-| 列表/要点 | `bullet points slide alternatives` |
-| **技术概念** | `[概念名] best practices 2025` |
-| **工具对比** | `[工具名] how it works architecture` |
+| 内容类型 | 搜索示例 |
+|---------|---------|
+| 技术概念 | `[概念名] best practices 2025` |
+| 工具对比 | `[工具名] how it works architecture` |
+| 布局参考 | `timeline/comparison/process slide design` |
 
-**搜索策略**：
+**搜索策略**：概念深挖 → 多源交叉验证 → WebFetch 获取完整内容 → 整合提炼
 
-1. **概念深挖**：搜索官方文档、权威博客、最新研究
-2. **多源交叉**：至少 2-3 个不同来源验证信息
-3. **WebFetch 深挖**：不只看搜索摘要，获取完整文章内容提取关键信息
-4. **信息整合**：从多个来源提炼统一的框架和数据
-5. **引用标注**：在 slide 脚注中标明来源
+### Step 2: 构思叙事（Duarte + Winston 视角）
 
-**搜索带来的价值**：
+> Nancy Duarte：幻灯片是 "glance media"，叙事要有「现状 vs 更好未来」的张力
+> Patrick Winston：开场抓人、一个核心想法、故事包装
 
-| 收获类型 | 说明 |
-|---------|------|
-| 权威框架 | 发现业界公认的分类方法、策略模型 |
-| 具体数据 | 获取可引用的统计数字、研究结论 |
-| 实现细节 | 了解产品/工具的具体工作方式 |
-| 可视化灵感 | 从优秀案例中提炼展示方式 |
+**问自己：**
 
-#### Step 4: Playwright MCP 验证
+1. **这页在讲什么转变？** 从「现状」到「更好的未来」的张力是什么？
+2. **一个核心想法是什么？** 不是两个，不是三个，就一个
+3. **开场 10 秒能抓住注意力吗？** 标题够有吸引力吗？
+4. **「啊哈」时刻在哪？** 听众看完应该有什么顿悟？
+
+### Step 3: 设计初稿（Karpathy 视角）
+
+> Andrej Karpathy：深入浅出、类比驱动、关键洞察
+
+**问自己：**
+
+1. **用什么类比让外行秒懂？** 目标听众是物联网工程师，有嵌入式/硬件领域的类比吗？
+2. **有具体例子吗？** 能不能再具体一点？抽象定义是大忌
+3. **代码/伪代码能展示吗？** 技术概念用代码比纯文字更直观
+4. **图文比例如何？** 纯文字太多会让听众走神
+
+### Step 4: 记忆点检查（硬约束 — Gate）
+
+> 🚫 **纯文字页 = 回炉重造**。每页必须有至少一个「视觉锚点」，否则回到 Step 1 重新构思。
+>
+> ⚠️ **注意**：仅有样式装饰（颜色卡片、边框、背景色、emoji）的文字页**仍然算纯文字**，不符合要求。
+
+**✅ 合格的视觉锚点**（有信息量，至少选一个）：
+
+| 类型 | 适用场景 | 获取方式 | 示例 |
+|------|---------|---------|------|
+| **外部截图** | 研究数据、工具界面、权威来源 | Playwright 截图外部网站 | METR 研究图表 |
+| **Mermaid 图** | 架构、流程、时间线、对比 | 内联代码 | Agent ReAct 循环 |
+| **代码块** | 技术概念、API 示例 | Shiki 高亮 | Function Call JSON |
+| **数据可视化** | 震撼性数字、反直觉结论 | 大字 + 颜色对比 | 「预期 +24% vs 实际 -19%」 |
+| **对比表格** | 多维度对比（有真实数据） | grid 布局 | 工具能力矩阵 |
+
+**❌ 不合格的「伪视觉」**（只是装饰）：
+
+| 类型 | 为什么不算 |
+|------|-----------|
+| 彩色卡片 + 纯文字 | 删掉颜色后信息量不变 |
+| emoji 列表 | emoji 是装饰，不是信息 |
+| 带边框的文字块 | 边框不传递信息 |
+| 背景渐变 + 文字 | 背景是装饰 |
+
+**检查清单：**
+
+- [ ] 这页的「记忆点」是什么？能用一句话说清吗？
+- [ ] 如果把文字全删掉，光看图/截图/代码，听众能 get 到 50% 以上信息吗？
+- [ ] 这个记忆点在其他页面出现过吗？（避免重复）
+
+### Step 5: Playwright MCP 验证
 
 使用 Playwright MCP 工具自动截图验证布局：
 
-1. 确保 Slidev dev server 运行中 (`pnpm slidev`)
+1. 确认 Slidev dev server 已运行
 2. 调用 Playwright 截图指定页面
 3. 检查：文字是否溢出、间距是否合理、Mermaid 图是否正常渲染
 
 > 不要凭感觉设计布局，要有据可查。
 
-**外部参考资源：**
+### Step 6: 自审（Tufte + antfu 视角，用户 review 前必做）
 
-- [Slidev Showcases](https://sli.dev/resources/showcases) — 寻找类似布局的灵感
-- [antfu/talks](https://github.com/antfu/talks) — 高质量开源演示的源码
-- [Presentation Zen](https://www.presentationzen.com/) — Garr Reynolds 的设计理念
-- [Duarte Blog](https://www.duarte.com/resources/) — Nancy Duarte 的演示技巧
+#### Tufte 视角：信噪比审查
 
-### 6. 布局规范
+> Edward Tufte：最大化「数据墨水比」，每个像素都要传递信息
 
-**推荐布局模式：**
+**逐一检查每个视觉元素，问：**
 
-| 布局 | 用途 | 说明 |
-|------|------|------|
-| 默认布局 | 大多数页面 | 标题左上角，内容自上而下 |
-| `layout: center` | 封面等特殊页面 | 居中强调 |
-| `layout: two-cols` + `::right::` | 概念+示例 | 左右对比 |
-| `grid grid-cols-3 gap-4` | 多项并列 | 卡片网格 + 圆角背景色 |
-| 单列居中 | 图表为主 | 让 Mermaid 图成为焦点 |
+1. **如果删掉这个元素，会损失什么信息？** 如果答案是「没有」，删掉
+2. **这个装饰有必要吗？** 边框、阴影、背景色是否真的帮助理解？
+3. **文字能再精简吗？** 能用 5 个字说清的，不要用 10 个字
 
-**可视化技巧**：
+#### antfu 视角：Slidev 最佳实践
 
-- 用「矩形容器」展示容量/范围的填充过程
-- 用「进度条」直观展示数值变化
-- 用 `v-click` 分步展示，配合演讲节奏
-- 左右对比（前/后、旧/新）强化理解
+> antfu 是 Slidev 作者，风格简洁、优雅、技术感强
 
-**演讲节奏标记：**
+**问自己：**
 
-非核心内容可在右上角添加标记，帮助演讲时把握节奏：
+1. **代码优先**：技术概念能不能用代码/伪代码展示？
+2. **动画节制**：`v-click` 用得太多了吗？动画服务于理解，不是炫技
+3. **留白呼吸**：页面是否太挤？适度留白让重点突出
+4. **Slidev 原生能力**：用到了布局系统、Monaco editor、Shiki magic move 吗？还是在硬写 HTML？
+5. **一致性**：和前后页的视觉风格一致吗？
 
-```html
-<div class="abs-tr m-6 px-2 py-1 text-xs bg-gray-500/10 rounded opacity-60">
-⏩ 快速带过
-</div>
-```
+**参考源码**：[antfu/talks](https://github.com/antfu/talks)
 
-### 7. 脚注与引用规范
+### Step 7: 用户审核
 
-**正文标记：**
+用户反馈 → 迭代修改 → Playwright 截图验证 → 直到满意
 
-```html
-<sup class="opacity-60">1</sup>
-```
+### Step 8: 同步 VitePress 文稿
 
-**页面底部脚注：**
+同步更新对应的 VitePress 文稿，然后进入下一页。
 
-```html
-<div class="abs-bl m-6 text-xs opacity-50">
-<sup>1</sup> 🔬 L1 | 来源 "标题" — 简要说明
-</div>
-```
+---
 
-格式：`信源等级 | 来源 "标题" — 说明`
+## 参考手册（按需查阅）
 
-**优化原则：**
+> 以下内容不需要每次都读，遇到具体问题时查阅。
 
-- **数量**：每页 2-3 个为宜，过多会分散注意力
-- **内容**：用中文详细描述，包含"为什么重要"
-- **精简**：相关引用可合并为一个脚注
+### 术语统一表
 
-### 8. 展示策略
-
-**链接 vs 截图：**
-
-- 展示产品整体效果 → 直接给官方链接（如 Claude Code、Cursor、Copilot 官网）
-- 强调特定功能/界面 → 截图（精确控制展示内容）
-- 代码示例 → 代码块或截图
-- 实时演示 → 现场操作 + 备用录屏
-
-### 9. ASCII 图转换策略
-
-| 图表类型 | 转换方案 | 示例 |
+| 中文术语 | 统一写法 | 备注 |
 |---------|---------|------|
-| 流程图 | Mermaid flowchart | ReAct 循环、RLHF 流程 |
-| 架构图 | Mermaid flowchart/C4 | MCP 架构、Agent 组件 |
-| 时间线 | Mermaid timeline | AI 编程演进 |
-| 对比表格 | Slidev 表格 | 模型价格对比 |
-| 概念地图 | 需要手绘/专业工具 | Part 2 概念全景图 |
+| 大语言模型 | LLM | 首次出现时写全称 |
+| 词元/令牌 | Token | |
+| 上下文窗口 | Context Window | |
+| 幻觉 | 幻觉 | |
+| 人类反馈强化学习 | RLHF | 首次出现时写全称 |
+| 函数调用 | Function Call | |
+| 检索增强生成 | RAG | 首次出现时写全称 |
+| 智能体/代理 | Agent | |
+| 子智能体 | Subagent | |
+| 模型上下文协议 | MCP | |
 
-### 9. 链接校验方案
+### 布局速查
 
-1. **可访问性检查**: 使用脚本批量检测 HTTP 状态
-2. **内容核实**: 人工抽查关键引用
-3. **处理失效链接**:
-   - 优先找替代来源
-   - 标注为 Archive.org 链接
-   - 实在找不到则标注「来源已失效」
-
-## Trade-offs
-
-| Decision | Pros | Cons |
-|----------|------|------|
-| 在同一仓库 | 便于同步维护 | package.json 会更复杂 |
-| 逐页迭代 | 质量可控 | 耗时较长 |
-| Mermaid 替代 ASCII | 可维护、美观 | 部分复杂图可能需要简化 |
-
-## Resolved Decisions
-
-| 问题 | 决策 |
+| 布局 | 用途 |
 |------|------|
-| PPT 语言 | 纯中文 |
-| PDF 导出 | 需要（配置 `slidev export`） |
-| 演讲者备注 | 需要（使用 Slidev presenter notes 功能） |
+| 默认布局 | 大多数页面 |
+| `layout: center` | 封面、强调页 |
+| `layout: two-cols` + `::right::` | 左右对比 |
+| `grid grid-cols-3 gap-4` | 卡片网格 |
+
+### 脚注格式
+
+```html
+<!-- 正文标记 -->
+<sup class="opacity-60">1</sup>
+
+<!-- 页面底部 -->
+<div class="abs-bl m-6 text-xs opacity-50 leading-relaxed">
+<sup>1</sup> 🔬 L1 | <a href="URL">来源标题</a> — 详细说明，让读者不用点进去就能理解核心信息
+</div>
+```
+
+**脚注描述原则**：
+
+- ❌ 太短：`METR Study (2025) — 开发者使用 AI 反而慢了 19%`
+- ✅ 详细：`METR Study (2025) — RCT 随机对照实验，16 位开发者平均 5 年项目经验，任务平均耗时 2 小时，使用 Cursor + Claude 3.5/3.7 Sonnet`
+
+**目标**：读者看完脚注就能判断是否值得深入阅读原文
+
+### 样式变量
+
+```css
+:root {
+  --accent: #FB8F68;
+  --accent-light: rgba(251, 143, 104, 0.15);
+}
+```
+
+### 踩坑经验
+
+| 问题 | 解决方案 |
+|------|----------|
+| Mermaid timeline 越界 | 改用 grid 布局 + 卡片 |
+| Vue 组件不稳定 | 用内联 HTML + Tailwind |
+| Mermaid 图太小 | 单列 scale 0.7-0.8，two-cols 0.5-0.6 |
+
+### 外部资源
+
+- [antfu/talks](https://github.com/antfu/talks) — Slidev 作者的演示源码
+- [Slidev Showcases](https://sli.dev/resources/showcases) — 布局灵感
