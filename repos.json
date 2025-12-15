@@ -24,6 +24,11 @@
       "name": "ai-programming-share",
       "url": "https://github.com/niracler/ai-programming-share.git",
       "path": "repos/ai-programming-share"
+    },
+    {
+      "name": "skill",
+      "url": "https://github.com/niracler/skill.git",
+      "path": "repos/skill"
     }
   ]
 }

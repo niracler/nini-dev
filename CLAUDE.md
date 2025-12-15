@@ -51,6 +51,7 @@ This is a multi-repo workspace containing the following projects:
 | `repos/bokushi` | Astro, Tailwind CSS, Biome, Playwright | Personal blog/website |
 | `repos/netease-cloud-music-dl` | Python 3.9+ | Netease music downloader CLI |
 | `repos/plrom` | Markdown | Personal notes and documentation |
+| `repos/skill` | Python, Shell | Claude Code skills collection |
 
 **Important**:
 
