@@ -103,8 +103,8 @@
 
 ### 6.3 同步与验证
 
-- [ ] 6.3.1 Sync: 术语检查 `docs/04-1-实操指南.md`
-- [ ] 6.3.2 Sync: 术语检查 `docs/04-2-边界与采用.md`
+- [x] 6.3.1 Sync: 术语检查 `docs/04-1-实操指南.md`
+- [x] 6.3.2 Sync: 术语检查 `docs/04-2-边界与采用.md`
 
 ## Phase 7: Link Validation
 
@@ -230,7 +230,7 @@
 | 4: Part 2.3 | ✅ Done | 6/6 | Agent、工具对比、MCP、Subagent/Skill、Context Engineering |
 | 4.5: CE & Roadmap | ✅ Done | 2/2 | Context Engineering 重整 + Part 2 知识路线图 |
 | 5: Part 3 | ✅ Done | 4/4 | Home Assistant 三阶段、PR 重构、教训总结 |
-| 6: Part 4 | 🚧 In Progress | 20/22 | 6.1 ✅, 6.2.1-6.2.4 ✅, 剩余 6.3 术语检查 |
+| 6: Part 4 | ✅ Done | 22/22 | 6.1 ✅, 6.2 ✅, 6.3 术语检查 ✅ |
 | 7: Links | Pending | 0/13 | 链接提取、检查、验证、修复 |
 | 8: Expert Review | Pending | 0/22 | Duarte/Tufte/Karpathy/Winston 四视角审查 |
 | 9: Polish | Pending | 0/16 | 流程、术语、技术验证、备注、导出 |
@@ -239,4 +239,4 @@
 
 **Target**: 38 页上限
 **Current**: 37 页 (Part 1-4 全部完成 + End 页)
-**Remaining**: Phase 6.3 术语检查 → Phase 7-9
+**Remaining**: Phase 7-9 (链接验证、专家审查、最终润色)
