@@ -52,113 +52,92 @@
 
 > ✅ 已合并：36 → 35 页
 
-## 10. Token 的体感
+## 7. Token 与 Context Window（合并原 10-11 页：Token 体感 + 模型价格 + Context 概念）
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（Jay Alammar 可视化、Context Window 概念）
+- [x] Step B: 构思叙事（Token + Context 两个核心概念并列）
+- [x] Step C: 设计初稿（Token 刻度尺 + GPT-3 文本补全可视化）
+- [x] Step D: 展示优化（Prompt→Completion 配色、增加留白）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 🔴 重点
 
-## 11. 2025 年模型价格
+> ✅ 页面重构：Token + 价格 + Context Window 三合一，为后续 Context 生命周期做铺垫
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+## 12+13. 2021.6: GitHub Copilot（合并原 12-13 页）
 
-## 12. 2021.6: GitHub Copilot
+- [x] Step A: 研究准备（GitHub Copilot 发布历史、Codex、HumanEval）
+- [x] Step B: 构思叙事（微调 = 对焦，0% → 28.8%）
+- [x] Step C: 设计初稿（two-cols 布局，左代码右卡片）
+- [x] Step D: 展示优化（添加 HumanEval 数据、缩小右侧文字）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 ✅ 完成
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+> ✅ 已合并：35 → 34 页（GitHub Copilot + 注释驱动补全 合为一页）
 
-## 13. Copilot 工作方式：注释驱动补全
+## 14+15. ChatGPT + 幻觉（合并）
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（RLHF 与幻觉的因果关系）
+- [x] Step B: 构思叙事（RLHF before/after + 幻觉不可避免）
+- [x] Step C: 设计初稿（two-cols 布局，6 个 v-click）
+- [x] Step D: 展示优化（详细脚注、重点调整）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 ⏩ 快速带过
 
-## 14. 2022.11: ChatGPT
-
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
-
-## 15. 幻觉
-
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+> ✅ 已合并：34 → 33 页（ChatGPT + 幻觉 合为一页）
 
 ## 16. 2023.3: GPT-4
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（Technical Report、幻觉 ↓40%、Context 8K→32K）
+- [x] Step B: 构思叙事（质变而非渐进）
+- [x] Step C: 设计初稿（two-cols 布局，7 个 v-click）
+- [x] Step D: 展示优化（增加 Technical Report 注释、右侧表格延迟展示）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 ⏩ 快速带过
 
 ## 17. Function Call
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（布局参考、antfu talks）
+- [x] Step B: 构思叙事（从「回答」到「执行」）
+- [x] Step C: 设计初稿（2:3 布局，左步骤+JSON，右 Mermaid）
+- [x] Step D: 展示优化（v-click ≤2，Mermaid 位置调整）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 🔴 重点
 
 ## 18. RAG
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（baoyu.io RAG 架构图参考）
+- [x] Step B: 构思叙事（索引阶段 vs 查询阶段）
+- [x] Step C: 设计初稿（subgraph 流程图，双阶段布局）
+- [x] Step D: 展示优化（参考 Naive RAG 经典图重构）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 ⏩ 快速带过
 
-## 19. 推理模型
+## 19. 思维链（原推理模型）
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（Google CoT 论文、涌现能力、System 1/2 类比）
+- [x] Step B: 构思叙事（为什么 CoT 有效：注意力聚焦、工作记忆、可纠错）
+- [x] Step C: 设计初稿（two-cols 布局，左 CoT+为什么有效，右 AIME+DeepSeek）
+- [x] Step D: 展示优化（v-click 顺序：先左后右、先上后下）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注（无标注）
 
 ## 20. Agent：从「回答」到「执行」
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备
+- [x] Step B: 构思叙事
+- [x] Step C: 设计初稿
+- [x] Step D: 展示优化
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 ✅ 保持现状
 
-## 21. AI 编程工具：从补全到自主
+## 21. AI 编程工具：三代范式
 
-- [ ] Step A: 研究准备
-- [ ] Step B: 构思叙事
-- [ ] Step C: 设计初稿
-- [ ] Step D: 展示优化
-- [ ] Step E: Playwright 截图 + 用户 Review
-- [ ] Step F: 同步文稿 + 标注
+- [x] Step A: 研究准备（AI 编程工具对比、三代范式演进）
+- [x] Step B: 构思叙事（补全 → 对话 → 自主 范式转变）
+- [x] Step C: 设计初稿（三卡片 + 对比表格 + 范式总结）
+- [x] Step D: 展示优化（卡片压缩、表格无表头、脚注详细化）
+- [x] Step E: Playwright 截图 + 用户 Review ✅
+- [x] Step F: 同步文稿 + 标注 💻 演示
 
 ## 22. MCP（融入 MCP 工具安利）
 
