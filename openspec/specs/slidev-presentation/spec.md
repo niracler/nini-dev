@@ -3,9 +3,7 @@
 ## Purpose
 
 Defines requirements for creating and maintaining a Slidev-based presentation for the AI programming share project, ensuring high visual quality through enforced constraints on visual anchors, detailed footnotes, and a rigorous single-slide review workflow.
-
 ## Requirements
-
 ### Requirement: Slidev Presentation Structure
 
 The AI programming share project SHALL provide a Slidev-based presentation alongside the existing VitePress documentation.
@@ -47,6 +45,11 @@ Every slide SHALL contain at least one informative visual element. Pure text sli
 
 - **WHEN** a slide only contains colored cards, emoji lists, borders, or background gradients with text
 - **THEN** the slide is considered "pure text" and MUST be redesigned with an informative visual anchor
+
+#### Scenario: External image replacement
+
+- **WHEN** an external image contains dense text that is hard to read during presentation
+- **THEN** the core information SHALL be extracted and presented using native Slidev elements (Mermaid diagrams, structured layouts, code blocks) instead of the image
 
 ### Requirement: Visual Diagram Support
 
@@ -168,3 +171,38 @@ The presentation SHALL contain no more than 50 slides. This is a hard limit requ
 
 - **WHEN** content exceeds slide allocation for a section
 - **THEN** non-essential content is removed from PPT (retained only in VitePress manuscript version)
+
+### Requirement: Codex vs Claude 对比页面
+
+演示文稿 SHALL 包含一个基于社区调研和基准测试数据对比 Codex CLI 和 Claude Code 的页面。
+
+#### Scenario: 显示性能指标
+
+- **WHEN** 用户查看 Codex vs Claude 页面
+- **THEN** 对比表显示：代码质量（SWE-bench）、上下文窗口、执行速度、交互风格
+
+#### Scenario: 包含社区情绪数据
+
+- **WHEN** 用户查看 Codex vs Claude 页面
+- **THEN** 显示社区偏好数据（Reddit 500+ 评论分析），含百分比分布
+
+#### Scenario: 对比行为特征
+
+- **WHEN** 用户查看 Codex vs Claude 页面
+- **THEN** 表格对比指令遵循风格、执行反馈行为、典型问题
+
+#### Scenario: 提供场景适配建议
+
+- **WHEN** 用户查看 Codex vs Claude 页面
+- **THEN** 指导说明哪种工具适合哪类任务（如：需求明确 → Codex，快速迭代 → Claude）
+
+#### Scenario: 包含记忆点引用
+
+- **WHEN** 用户查看 Codex vs Claude 页面
+- **THEN** 显示 HN「精灵」引用，说明 Codex 字面化指令遵循的行为特点
+
+#### Scenario: 提供详细脚注
+
+- **WHEN** 用户查看 Codex vs Claude 页面
+- **THEN** 至少 6 个脚注引用来源，包括：SWE-bench、Reddit 情绪分析、HN 讨论、官方文档
+
