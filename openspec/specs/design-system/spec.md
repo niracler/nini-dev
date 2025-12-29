@@ -369,3 +369,62 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 
 ---
 
+### Requirement: Apple HIG Alignment
+
+设计系统 **MUST** 以 Apple Human Interface Guidelines 作为核心参考框架，遵循 Clarity、Consistency、Deference 三大原则。
+
+#### Scenario: Clarity 原则体现
+
+- **GIVEN** 任意 UI 元素
+- **WHEN** 评估其设计
+- **THEN** 元素用途应一目了然
+- **AND** 不存在不必要的装饰性复杂度
+
+#### Scenario: Consistency 原则体现
+
+- **GIVEN** 相同类型的 UI 元素（如卡片、按钮）
+- **WHEN** 在不同页面出现
+- **THEN** 应使用相同的 token 和样式
+- **AND** 用户能够形成一致的交互预期
+
+#### Scenario: Deference 原则体现
+
+- **GIVEN** 内容与 UI 元素
+- **WHEN** 同时显示
+- **THEN** UI 元素不应干扰内容阅读
+- **AND** 动效和装饰应保持克制
+
+---
+
+### Requirement: Design Documentation Structure
+
+设计文档 **MUST** 按 Apple HIG 分类方式组织，便于查阅和维护。
+
+#### Scenario: Foundations 章节完整
+
+- **GIVEN** 设计文档
+- **WHEN** 查阅 Foundations 部分
+- **THEN** **MUST** 包含 Color、Typography、Spacing & Layout、Dark Mode
+- **AND** 每个子章节标注对应的 HIG 原则
+
+#### Scenario: Patterns 章节完整
+
+- **GIVEN** 设计文档
+- **WHEN** 查阅 Patterns 部分
+- **THEN** **MUST** 包含 Navigation、Content Architecture、Modals & Overlays
+- **AND** 说明博客特有的交互模式
+
+#### Scenario: Components 章节完整
+
+- **GIVEN** 设计文档
+- **WHEN** 查阅 Components 部分
+- **THEN** **MUST** 包含 Cards、Pills、Code Blocks、Images
+- **AND** 说明每个组件的变体和用法
+
+#### Scenario: 博客变体标注
+
+- **GIVEN** 设计文档中偏离 HIG 标准的设计决策
+- **WHEN** 记录该决策
+- **THEN** **MUST** 使用"博客变体"标注
+- **AND** 说明偏离的理由
+
