@@ -1,0 +1,152 @@
+# subscription-guide Specification
+
+## Purpose
+TBD - created by archiving change create-subscription-guide. Update Purpose after archive.
+## Requirements
+### Requirement: 分层文档结构
+
+订阅指南 SHALL 采用分层结构，同时满足快速上手和深入了解的需求。
+
+#### Scenario: 快速指引入口
+
+- **WHEN** 用户访问订阅指南
+- **THEN** 首先看到快速指引页，包含决策树和套餐一览
+
+#### Scenario: 详细教程链接
+
+- **WHEN** 用户需要具体服务的订阅教程
+- **THEN** 可从快速指引跳转到对应的详细教程页面
+
+#### Scenario: 教程结构统一
+
+- **WHEN** 编写各服务订阅教程
+- **THEN** 每篇包含：快速步骤（3分钟）+ 详细教程 + 常见问题
+
+---
+
+### Requirement: 信息时效标注
+
+所有价格和流程信息 SHALL 标注查证日期，确保读者了解信息时效性。
+
+#### Scenario: 价格信息标注
+
+- **WHEN** 文档包含服务定价
+- **THEN** 必须标注「最后更新：YYYY-MM-DD」
+
+#### Scenario: 流程信息标注
+
+- **WHEN** 文档描述具体操作流程
+- **THEN** 在关键步骤处标注信息来源和查证日期
+
+#### Scenario: 过期信息提醒
+
+- **WHEN** 信息查证日期超过 3 个月
+- **THEN** 应添加提醒标注，建议用户自行验证
+
+---
+
+### Requirement: 风险等级标注
+
+所有订阅方式 SHALL 标注风险等级，帮助用户做出知情选择。
+
+#### Scenario: 低风险方式
+
+- **WHEN** 订阅方式是官方渠道、正规支付
+- **THEN** 标注为 🟢 低风险
+- **AND** 示例：海外银行卡直接订阅
+
+#### Scenario: 中风险方式
+
+- **WHEN** 订阅方式是第三方但合规的渠道
+- **THEN** 标注为 🟡 中风险
+- **AND** 示例：Apple 礼品卡、虚拟信用卡
+
+#### Scenario: 高风险方式
+
+- **WHEN** 订阅方式可能违反服务条款或不稳定
+- **THEN** 标注为 🔴 高风险
+- **AND** 必须包含明确的风险警告
+- **AND** 示例：淘宝代充、共享账号
+
+---
+
+### Requirement: 信息来源标注
+
+关键信息 SHALL 标注来源，确保可追溯和验证。
+
+#### Scenario: 来源标注格式
+
+- **WHEN** 引用官方定价或流程信息
+- **THEN** 使用格式 `> 📍 信息来源：[来源名称](链接) | 查证日期：YYYY-MM-DD`
+
+#### Scenario: 多源验证
+
+- **WHEN** 信息来自非官方渠道
+- **THEN** 应尽可能提供多个来源交叉验证
+
+---
+
+### Requirement: 套餐选择指南
+
+文档 SHALL 提供套餐选择指南，帮助用户根据需求选择合适的组合。
+
+#### Scenario: $20 套餐多选
+
+- **WHEN** 用户选择 $20 基础套餐
+- **THEN** 可多选 Claude/Codex/Gemini/Cursor
+- **AND** 可额外选择 0-2 个国内模型
+
+#### Scenario: $100 套餐说明
+
+- **WHEN** 用户考虑 $100 进阶套餐
+- **THEN** 文档说明适用场景
+- **AND** 包含「不推荐新手直接选择」的提醒
+
+#### Scenario: 组合示例
+
+- **WHEN** 用户不确定如何选择
+- **THEN** 提供具体的组合示例（入门型/标准型/全面型等）
+
+---
+
+### Requirement: 订阅规则说明
+
+文档 SHALL 说明公司订阅规则和分享机制。
+
+#### Scenario: 每月分享要求
+
+- **WHEN** 用户报销订阅费用
+- **THEN** 文档说明每月需分享一次 LLM 增效总结
+
+#### Scenario: 国外模型优先
+
+- **WHEN** 用户考虑订阅国内模型
+- **THEN** 文档建议先充分尝试国外模型
+
+#### Scenario: 分享内容建议
+
+- **WHEN** 用户需要完成每月分享
+- **THEN** 文档提供分享内容模板和建议
+- **AND** 说明可以使用 LLM 辅助总结
+
+---
+
+### Requirement: 前置准备教程
+
+文档 SHALL 提供前置准备教程，面向零基础用户。
+
+#### Scenario: Google 账号注册
+
+- **WHEN** 用户没有 Google 账号
+- **THEN** 提供详细的注册教程（图文）
+
+#### Scenario: 代理配置
+
+- **WHEN** 用户需要配置代理
+- **THEN** 提供公司节点的使用说明
+
+#### Scenario: 常见问题覆盖
+
+- **WHEN** 用户遇到注册问题
+- **THEN** 文档覆盖常见问题（手机号验证、地区选择等）
+
