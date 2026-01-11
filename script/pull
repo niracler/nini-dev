@@ -1,0 +1,55 @@
+#!/bin/bash
+# Pull script: Update all sub-repos
+# Usage: ./script/pull
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+REPOS_FILE="$ROOT_DIR/repos.json"
+
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required"
+    echo "macOS: brew install jq"
+    echo "Ubuntu: sudo apt install jq"
+    exit 1
+fi
+
+if [ ! -f "$REPOS_FILE" ]; then
+    echo "Error: repos.json not found"
+    exit 1
+fi
+
+echo "Updating sub-repos..."
+echo ""
+
+failed=()
+
+jq -c '.repos[]' "$REPOS_FILE" | while read -r repo; do
+    name=$(echo "$repo" | jq -r '.name')
+    path=$(echo "$repo" | jq -r '.path')
+    full_path="$ROOT_DIR/$path"
+
+    if [ ! -d "$full_path/.git" ]; then
+        echo "✗ $name not found, run ./script/setup first"
+        echo "$name" >> /tmp/pull_failed_$$
+    else
+        echo "→ Pulling $name..."
+        if git -C "$full_path" pull --ff-only 2>&1; then
+            echo "✓ $name updated"
+        else
+            echo "✗ $name failed (may have local changes)"
+            echo "$name" >> /tmp/pull_failed_$$
+        fi
+    fi
+    echo ""
+done
+
+if [ -f /tmp/pull_failed_$$ ]; then
+    echo "Some repos failed to update:"
+    cat /tmp/pull_failed_$$
+    rm /tmp/pull_failed_$$
+    exit 1
+else
+    echo "All repos updated!"
+fi
