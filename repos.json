@@ -11,9 +11,9 @@
       "path": "repos/plrom"
     },
     {
-      "name": "netease-cloud-music-dl",
-      "url": "https://github.com/niracler/netease-cloud-music-dl.git",
-      "path": "repos/netease-cloud-music-dl"
+      "name": "random",
+      "url": "https://github.com/niracler/random.git",
+      "path": "repos/random"
     },
     {
       "name": "bokushi",

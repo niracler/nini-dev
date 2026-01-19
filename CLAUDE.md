@@ -49,7 +49,7 @@ This is a multi-repo workspace containing the following projects:
 |------|------------|-------------|
 | `repos/nyaruko-telegram-bot` | TypeScript, Cloudflare Workers, Grammy, Hono, Drizzle, LangChain | Telegram bot |
 | `repos/bokushi` | Astro, Tailwind CSS, Biome, Playwright | Personal blog/website |
-| `repos/netease-cloud-music-dl` | Python 3.9+ | Netease music downloader CLI |
+| `repos/random` | Python, GitHub Actions | Personal monthly challenge system |
 | `repos/plrom` | Markdown | Personal notes and documentation |
 | `repos/skill` | Python, Shell | Claude Code skills collection |
 
@@ -59,7 +59,7 @@ This is a multi-repo workspace containing the following projects:
 - For Python projects, activate venv before running commands:
 
   ```bash
-  cd repos/netease-cloud-music-dl
+  cd repos/random
   source venv/bin/activate
   ```
 

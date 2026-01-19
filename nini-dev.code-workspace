@@ -3,7 +3,7 @@
     { "path": ".", "name": "Config" },
     { "path": "repos/nyaruko-telegram-bot", "name": "Nyaruko Telegram Bot" },
     { "path": "repos/plrom", "name": "Plrom" },
-    { "path": "repos/netease-cloud-music-dl", "name": "Netease Cloud Music DL" },
+    { "path": "repos/random", "name": "Random Challenge" },
     { "path": "repos/bokushi", "name": "Bokushi" },
     { "path": "repos/Note", "name": "Obsidian Note" },
     { "path": "repos/ai-programming-share", "name": "AI Programming Share" },
