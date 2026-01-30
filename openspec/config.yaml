@@ -1,0 +1,71 @@
+# OpenSpec OPSX 配置
+
+schema: spec-driven
+
+context: |
+  ## 项目：nini-dev
+
+  多仓库个人工作区，包含以下项目：
+
+  | 仓库 | 技术栈 | 描述 |
+  |------|--------|------|
+  | `repos/bokushi` | Astro, Tailwind CSS, Biome, Playwright | 个人博客 |
+  | `repos/nyaruko-telegram-bot` | TypeScript, Cloudflare Workers, Grammy, Hono | Telegram 机器人 |
+  | `repos/random` | Python, GitHub Actions | 月度挑战系统 |
+  | `repos/plrom` | Markdown, Shell | 个人笔记与清单 |
+  | `repos/skill` | Python, Shell | Claude Code 技能集 |
+
+  ## 开发流程
+
+  各仓库独立开发，参考各自 `CLAUDE.md` 获取项目级指导。
+  复杂变更使用 OpenSpec OPSX 流程管理。
+
+rules:
+  proposal:
+    - 参考 `openspec/changes/archive/` 下最近 2-3 个相似类型的 change
+    - 明确标注变更涉及的仓库
+    - 包含 rollback plan（如适用）
+
+  design:
+    - 参考 `openspec/changes/archive/` 下最近 2-3 个 change 的 design.md 结构
+    - 必须包含 Context、Goals/Non-Goals、Decisions、Risks
+    - 简单任务（单文件改动、无设计决策）可跳过 design
+
+  tasks:
+    - 参考 `openspec/changes/archive/` 下最近 2-3 个 change 的 tasks.md Phase 结构
+    - 分支策略：小变更单 PR 交付；大变更每 Phase 独立 PR
+    - 每个 Phase 有明确的 Gate（PR Review 或本地验证）
+
+  verification:
+    # 自动检查项 - 必须通过才能 archive
+    automated:
+      - command: pnpm astro check
+        description: TypeScript 类型检查
+        level: CRITICAL
+        condition: 当变更涉及 repos/bokushi 时
+        working_dir: repos/bokushi
+
+      - command: pnpm lint
+        description: Biome 代码质量检查
+        level: CRITICAL
+        condition: 当变更涉及 repos/bokushi 时
+        working_dir: repos/bokushi
+
+      - command: pnpm build
+        description: Astro 生产构建
+        level: CRITICAL
+        condition: 当变更涉及 repos/bokushi 时
+        working_dir: repos/bokushi
+
+    # 人工审查项 - 提醒检查
+    manual:
+      - description: 确认 UI 变更在桌面端和移动端表现一致
+        level: WARNING
+        condition: 当变更涉及 repos/bokushi 的样式或布局时
+
+      - description: 确认无障碍性（键盘导航、焦点可见性、aria 标签）
+        level: WARNING
+        condition: 当变更涉及 repos/bokushi 的交互组件时
+
+      - description: 确认 delta specs 与实现一致
+        level: WARNING
