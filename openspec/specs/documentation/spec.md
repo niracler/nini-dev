@@ -1,8 +1,11 @@
 # documentation Specification
 
 ## Purpose
+
 TBD - created by archiving change add-fact-opinion-annotation. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: 观点标注规范
 
 文档中的主观观点内容 SHALL 使用 GitHub-flavored Alerts 进行标注，区分事实与观点。
@@ -30,8 +33,6 @@ TBD - created by archiving change add-fact-opinion-annotation. Update Purpose af
 - **THEN** 不添加观点标注
 - **AND** 确保有脚注引用信源
 
----
-
 ### Requirement: 信源等级体系
 
 所有引用信源 SHALL 在脚注中标注等级，帮助读者评估可信度。
@@ -56,8 +57,6 @@ TBD - created by archiving change add-fact-opinion-annotation. Update Purpose af
 - **WHEN** 信源是一般博客或社交媒体（个人推文、Medium）
 - **THEN** 标记为 `💬 L4`
 
----
-
 ### Requirement: 阅读指南
 
 文档 SHALL 提供阅读指南，说明标注规则和信源等级体系。
@@ -74,4 +73,3 @@ TBD - created by archiving change add-fact-opinion-annotation. Update Purpose af
 
 - **WHEN** 读者访问文档站点
 - **THEN** sidebar 中显示阅读指南入口
-

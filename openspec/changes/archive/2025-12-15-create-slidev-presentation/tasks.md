@@ -49,8 +49,6 @@
 - [x] 4.5.1 Context Engineering 重整（比喻 + 四大策略 + Context Rot）
 - [x] 4.5.2 Part 2 知识路线图（Mermaid mindmap）
 
----
-
 ## Phase 5: Part 3 - My Pitfall Stories (~3 slides)
 
 - [x] 5.1 Slide: Home Assistant project 3 phases（三阶段卡片 + 85% 法则引用）
@@ -105,8 +103,6 @@
 
 - [x] 6.3.1 Sync: 术语检查 `docs/04-1-实操指南.md`
 - [x] 6.3.2 Sync: 术语检查 `docs/04-2-边界与采用.md`
-
----
 
 ## Progress Tracking
 

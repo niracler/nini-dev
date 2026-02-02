@@ -1,8 +1,11 @@
 # blog-search Specification
 
 ## Purpose
+
 TBD - created by archiving change enhance-blog-features. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Full-Text Search
 
 The blog SHALL provide full-text search functionality using Pagefind.
@@ -48,4 +51,3 @@ The search modal SHALL support keyboard navigation.
 
 - **WHEN** user presses Escape while search modal is open
 - **THEN** the search modal closes
-

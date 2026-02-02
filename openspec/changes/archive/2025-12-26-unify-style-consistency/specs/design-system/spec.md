@@ -25,8 +25,6 @@
 - **THEN** 使用 `var(--shadow-button-hover)` 或纯颜色变化
 - **AND** 不使用硬编码 rgba 阴影值
 
----
-
 ### Requirement: Scroll Lock Utility
 
 系统 **MUST** 提供统一的滚动锁定工具，所有需要锁定滚动的场景都应使用此工具。
@@ -46,8 +44,6 @@
 - **THEN** 调用 `unlockScroll()` 函数
 - **AND** body 元素移除 `scroll-locked` 类
 
----
-
 ### Requirement: Unified Drawer Component
 
 系统 **MUST** 提供统一的抽屉组件，所有侧边滑入的面板都应使用此组件。
@@ -66,8 +62,6 @@
 - **WHEN** 点击目录按钮
 - **THEN** 使用 `<Drawer>` 组件显示目录内容
 - **AND** 使用与导航抽屉相同的动画效果
-
----
 
 ### Requirement: Unified Lightbox Component
 
@@ -94,8 +88,6 @@
 - **THEN** 使用 `<Lightbox variant="manga">` 显示大图
 - **AND** 支持加载状态指示
 
----
-
 ### Requirement: No Important Override
 
 组件样式 **MUST NOT** 使用 `!important` 覆盖其他样式，应通过合理的选择器设计避免冲突。
@@ -113,8 +105,6 @@
 - **WHEN** 发现非第三方库的 `!important`
 - **THEN** 应分析冲突原因并重构
 - **AND** 仅在覆盖第三方库样式时允许使用 `!important`
-
----
 
 ## MODIFIED Requirements
 
@@ -152,8 +142,6 @@
 - **THEN** 过渡效果仅涉及 `color`、`background-color`、`border-color`、`opacity`
 - **AND** 不使用 `transform` 属性
 
----
-
 ### Requirement: Border Radius Standardization
 
 所有组件的圆角值 **MUST** 使用标准 token（`--radius-sm`、`--radius-md`、`--radius-lg`），**MUST NOT** 使用硬编码值。
@@ -186,8 +174,6 @@
 - **WHEN** 审查圆角值
 - **THEN** 圆形按钮使用 `border-radius: 50%`（允许）
 - **AND** 非圆形按钮使用 `var(--radius-*)` token
-
----
 
 ### Requirement: Shadow Token Usage
 

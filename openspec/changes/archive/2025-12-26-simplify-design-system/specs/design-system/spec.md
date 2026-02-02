@@ -6,8 +6,6 @@
 
 **Migration**: 无需迁移，保持现有独立实现。
 
----
-
 ## MODIFIED Requirements
 
 ### Requirement: Design Token Completeness
@@ -34,8 +32,6 @@
 - **WHEN** 评估是否需要 token 化
 - **THEN** 可选择保持硬编码
 - **AND** 无需强制创建新 token
-
----
 
 ## ADDED Requirements
 

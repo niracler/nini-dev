@@ -3,7 +3,9 @@
 ## Purpose
 
 Defines requirements for creating and maintaining a Slidev-based presentation for the AI programming share project, ensuring high visual quality through enforced constraints on visual anchors, detailed footnotes, and a rigorous single-slide review workflow.
+
 ## Requirements
+
 ### Requirement: Slidev Presentation Structure
 
 The AI programming share project SHALL provide a Slidev-based presentation alongside the existing VitePress documentation.
@@ -215,4 +217,3 @@ The presentation SHALL contain no more than 50 slides. This is a hard limit requ
 
 - **WHEN** 用户查看 Codex vs Claude 页面
 - **THEN** 至少 6 个脚注引用来源，包括：SWE-bench、Reddit 情绪分析、HN 讨论、官方文档
-

@@ -11,8 +11,6 @@ Step C: 验证测试 — 触发词识别、完整流程测试
 Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 ```
 
----
-
 ## Phase 1: diary-assistant（优先）
 
 ### 1.1 研究准备 (Step A)
@@ -25,6 +23,7 @@ Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 ### 1.2 创建 skill (Step B)
 
 - [x] **B1**: 创建 `src/diary-assistant/` 目录结构
+
   ```
   diary-assistant/
   ├── SKILL.md
@@ -80,8 +79,6 @@ Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 - [ ] **C5**: 测试任务捕获解析（「下周」「周五」等日期）
 - [ ] **C6**: 测试完整流程时间（目标 ≤45min）
 
----
-
 ## Phase 2: writing-inspiration
 
 ### 2.1 研究准备 (Step A)
@@ -92,6 +89,7 @@ Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 ### 2.2 创建 skill (Step B)
 
 - [x] **B1**: 创建 `src/writing-inspiration/` 目录结构
+
   ```
   writing-inspiration/
   ├── SKILL.md
@@ -118,8 +116,6 @@ Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 - [ ] **C2**: 测试文章类型识别
 - [ ] **C3**: 测试启发提问流程
 
----
-
 ## Phase 3: writing-proofreading
 
 ### 3.1 研究准备 (Step A)
@@ -130,6 +126,7 @@ Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 ### 3.2 创建 skill (Step B)
 
 - [x] **B1**: 创建 `src/writing-proofreading/` 目录结构
+
   ```
   writing-proofreading/
   ├── SKILL.md
@@ -160,16 +157,12 @@ Step D: 清理收尾 — 删除旧 skill、确认无引用问题
 - [ ] **C2**: 测试 6 步审校流程
 - [ ] **C3**: 测试分段审校节奏
 
----
-
 ## Phase 4: 清理收尾 (Step D)
 
 - [x] **D1**: 确认三个新 skill 都已创建并可用
 - [x] **D2**: 确认无其他 skill 引用 `writing-assistant`
 - [x] **D3**: 删除 `src/writing-assistant/` 目录
 - [x] **D4**: 提交所有更改 — commit `0ddfda3`
-
----
 
 ## 依赖关系
 

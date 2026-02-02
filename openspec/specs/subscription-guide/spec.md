@@ -1,8 +1,11 @@
 # subscription-guide Specification
 
 ## Purpose
+
 TBD - created by archiving change create-subscription-guide. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: 分层文档结构
 
 订阅指南 SHALL 采用分层结构，同时满足快速上手和深入了解的需求。
@@ -22,8 +25,6 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 - **WHEN** 编写各服务订阅教程
 - **THEN** 每篇包含：快速步骤（3分钟）+ 详细教程 + 常见问题
 
----
-
 ### Requirement: 信息时效标注
 
 所有价格和流程信息 SHALL 标注查证日期，确保读者了解信息时效性。
@@ -42,8 +43,6 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 
 - **WHEN** 信息查证日期超过 3 个月
 - **THEN** 应添加提醒标注，建议用户自行验证
-
----
 
 ### Requirement: 风险等级标注
 
@@ -68,8 +67,6 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 - **AND** 必须包含明确的风险警告
 - **AND** 示例：淘宝代充、共享账号
 
----
-
 ### Requirement: 信息来源标注
 
 关键信息 SHALL 标注来源，确保可追溯和验证。
@@ -83,8 +80,6 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 
 - **WHEN** 信息来自非官方渠道
 - **THEN** 应尽可能提供多个来源交叉验证
-
----
 
 ### Requirement: 套餐选择指南
 
@@ -107,8 +102,6 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 - **WHEN** 用户不确定如何选择
 - **THEN** 提供具体的组合示例（入门型/标准型/全面型等）
 
----
-
 ### Requirement: 订阅规则说明
 
 文档 SHALL 说明公司订阅规则和分享机制。
@@ -129,8 +122,6 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 - **THEN** 文档提供分享内容模板和建议
 - **AND** 说明可以使用 LLM 辅助总结
 
----
-
 ### Requirement: 前置准备教程
 
 文档 SHALL 提供前置准备教程，面向零基础用户。
@@ -149,4 +140,3 @@ TBD - created by archiving change create-subscription-guide. Update Purpose afte
 
 - **WHEN** 用户遇到注册问题
 - **THEN** 文档覆盖常见问题（手机号验证、地区选择等）
-

@@ -1,8 +1,11 @@
 # design-system Specification
 
 ## Purpose
+
 TBD - created by archiving change unify-card-styles. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Surface Card Variants
 
 系统 **MUST** 提供标准化的卡片变体类，支持不同的视觉层级和尺寸。
@@ -25,8 +28,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - When 添加 `.surface-card--compact` 修饰类
 - Then 元素使用 10px 圆角、更小的内边距
 
----
-
 ### Requirement: Hover Effect Simplification
 
 所有卡片的 hover 效果 **MUST** 简化，不使用 translateY 上浮动画。
@@ -44,8 +45,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - When 鼠标悬停
 - Then 边框颜色变为强调色
 - And 不发生位移或缩放
-
----
 
 ### Requirement: Border Radius Standardization
 
@@ -79,8 +78,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **WHEN** 审查圆角值
 - **THEN** 圆形按钮使用 `border-radius: 50%`（允许）
 - **AND** 非圆形按钮使用 `var(--radius-*)` token
-
----
 
 ### Requirement: Shadow Token Usage
 
@@ -148,8 +145,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **THEN** 过渡效果仅涉及 `color`、`background-color`、`border-color`、`opacity`
 - **AND** 不使用 `transform` 属性
 
----
-
 ### Requirement: Design Token Completeness
 
 设计系统 **MUST** 为高频 UI 场景（灯箱、卡片、按钮）提供语义化 token。低频场景（仅 1-2 处使用）**SHALL** 允许使用硬编码值。**MUST** 包含符合 Apple HIG 的排版和对比度 token。
@@ -207,8 +202,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **THEN** 调用 `unlockScroll()` 函数
 - **AND** body 元素移除 `scroll-locked` 类
 
----
-
 ### Requirement: Unified Lightbox Component
 
 系统 **MUST** 提供统一的灯箱组件，所有图片预览功能都应使用此组件。
@@ -234,8 +227,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **THEN** 使用 `<Lightbox variant="manga">` 显示大图
 - **AND** 支持加载状态指示
 
----
-
 ### Requirement: No Important Override
 
 组件样式 **MUST NOT** 使用 `!important` 覆盖其他样式，应通过合理的选择器设计避免冲突。
@@ -253,8 +244,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **WHEN** 发现非第三方库的 `!important`
 - **THEN** 应分析冲突原因并重构
 - **AND** 仅在覆盖第三方库样式时允许使用 `!important`
-
----
 
 ### Requirement: Token Usage Consistency
 
@@ -288,8 +277,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **THEN** 可使用 bracket notation 或内联 style
 - **AND** 应评估是否值得新增专用 token
 
----
-
 ### Requirement: Apple HIG Typography Compliance
 
 设计系统 **MUST** 遵循 Apple Human Interface Guidelines 的排版原则，确保良好的可读性和清晰的层级。
@@ -309,8 +296,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **AND** h1 至少为 2rem (32px+)
 - **AND** 标题从 h1 到 h4 呈现明确的视觉权重递减
 
----
-
 ### Requirement: WCAG AA Color Contrast
 
 设计系统 **MUST** 确保所有文字与背景的对比度符合 WCAG AA 标准。
@@ -327,8 +312,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **GIVEN** 使用 `--color-text-secondary` 的文本
 - **WHEN** 显示在主要背景上
 - **THEN** 对比度 **MUST** 达到 4.5:1 以上
-
----
 
 ### Requirement: Content Breathing Space
 
@@ -348,8 +331,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **THEN** padding 应适当减少但不低于 1rem
 - **AND** 保持内容可读性
 
----
-
 ### Requirement: Subtle Animation
 
 设计系统 **MUST** 使用微妙、不干扰的动画效果。
@@ -366,8 +347,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **GIVEN** 用户系统设置 `prefers-reduced-motion: reduce`
 - **WHEN** 渲染任何动画
 - **THEN** **MUST** 禁用或大幅简化动画效果
-
----
 
 ### Requirement: Apple HIG Alignment
 
@@ -393,8 +372,6 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **WHEN** 同时显示
 - **THEN** UI 元素不应干扰内容阅读
 - **AND** 动效和装饰应保持克制
-
----
 
 ### Requirement: Design Documentation Structure
 
@@ -427,4 +404,3 @@ TBD - created by archiving change unify-card-styles. Update Purpose after archiv
 - **WHEN** 记录该决策
 - **THEN** **MUST** 使用"博客变体"标注
 - **AND** 说明偏离的理由
-

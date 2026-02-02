@@ -24,6 +24,7 @@
 > 目标：针对 RED phase 发现的问题，写最小化的 skill
 
 - [x] **2.1** 创建 skill 目录结构
+
   ```
   repos/skill/src/yunxiao-cli/
   ├── SKILL.md

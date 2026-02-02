@@ -11,6 +11,7 @@ The AI programming share presentation SHALL be organized into the following part
 5. Part 5: 附录
 
 Part 4 SHALL contain the following sections:
+
 - 4.1 心智模型
 - 4.2 Context Engineering 实操
 - 4.3 CLAUDE.md 与工具链

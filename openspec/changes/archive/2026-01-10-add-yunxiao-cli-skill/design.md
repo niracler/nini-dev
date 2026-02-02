@@ -65,10 +65,10 @@ description: >
 
 | 内容 | 来源 |
 |------|------|
-| git-repo 安装 | https://git-repo.info/zh_cn/ |
-| git-repo 命令 | https://help.aliyun.com/zh/yunxiao/user-guide/installation-and-configuration |
-| Push Review Mode | https://help.aliyun.com/zh/yunxiao/user-guide/push-review-mode |
-| OpenAPI | https://help.aliyun.com/zh/yunxiao/developer-reference/codeup-openapi-collection/ |
+| git-repo 安装 | <https://git-repo.info/zh_cn/> |
+| git-repo 命令 | <https://help.aliyun.com/zh/yunxiao/user-guide/installation-and-configuration> |
+| Push Review Mode | <https://help.aliyun.com/zh/yunxiao/user-guide/push-review-mode> |
+| OpenAPI | <https://help.aliyun.com/zh/yunxiao/developer-reference/codeup-openapi-collection/> |
 
 ## Risks / Trade-offs
 

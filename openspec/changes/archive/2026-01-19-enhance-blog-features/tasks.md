@@ -26,8 +26,6 @@ Step G: PR 提交 — 创建 PR，等待 Review
 
 每个 Phase 完成 UI 后运行 `/rams` 审查组件代码。
 
----
-
 ## Phase 1: 全文搜索 (Pagefind) ✅
 
 **状态**: 已完成，直接合并到 main
@@ -79,8 +77,6 @@ Step G: PR 提交 — 创建 PR，等待 Review
 
 - [x] G1: 提交 commit `feat(search): add Pagefind search`
 - [x] G2: 直接推送到 main 分支
-
----
 
 ## Phase 2: 文章分享按钮 ✅
 
@@ -135,8 +131,6 @@ Step G: PR 提交 — 创建 PR，等待 Review
 - [x] G2: 修复图标 bundle 问题 `perf(icons): only bundle used icons`
 - [x] G3: 部署成功
 
----
-
 ## Phase 3: IndieWeb / Webmentions
 
 **分支**: `feature/indieweb`
@@ -190,8 +184,6 @@ Step G: PR 提交 — 创建 PR，等待 Review
 
 - [ ] G1: 提交 commit，创建 PR
 - [ ] G2: 用户 Review ← **等待确认**
-
----
 
 ## Phase 4: AI 相关文章推荐
 
@@ -257,8 +249,6 @@ Step G: PR 提交 — 创建 PR，等待 Review
 
 - [ ] G1: 提交 commit，创建 PR
 - [ ] G2: 用户 Review ← **等待确认**
-
----
 
 ## 收尾
 

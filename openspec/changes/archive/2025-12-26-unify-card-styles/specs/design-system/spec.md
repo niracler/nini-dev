@@ -24,8 +24,6 @@
 - When 添加 `.surface-card--compact` 修饰类
 - Then 元素使用 10px 圆角、更小的内边距
 
----
-
 ### Requirement: Hover Effect Simplification
 
 所有卡片的 hover 效果 **MUST** 简化，不使用 translateY 上浮动画。
@@ -43,8 +41,6 @@
 - When 鼠标悬停
 - Then 边框颜色变为强调色
 - And 不发生位移或缩放
-
----
 
 ### Requirement: Border Radius Standardization
 
@@ -72,8 +68,6 @@
 - Then 使用 `var(--radius-md)` (10px)
 - And 不使用硬编码的 8px
 
----
-
 ### Requirement: Shadow Token Usage
 
 所有卡片阴影 **MUST** 使用设计令牌（`--shadow-soft`、`--shadow-strong`），**MUST NOT** 使用内联 rgba 定义。
@@ -91,8 +85,6 @@
 - When 审查阴影值
 - Then 使用简化的单层阴影令牌
 - And 不使用多层自定义 rgba 阴影
-
----
 
 ### Requirement: Hover Effect Constraints
 

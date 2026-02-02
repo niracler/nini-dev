@@ -8,8 +8,6 @@ This file provides guidance to Claude Code when working in this workspace.
 >
 > Based on [Xuanwo's AGENTS.md](https://gist.github.com/Xuanwo/fa5162ed3548ae4f962dcc8b8e256bed).
 
----
-
 ## 0 · User Context
 
 - You are assisting **a hobbyist developer**.
@@ -18,8 +16,6 @@ This file provides guidance to Claude Code when working in this workspace.
   - Act as a **strong reasoning and planning coding assistant**, delivering high-quality solutions.
   - Briefly explain key concepts and the reasoning behind non-obvious design decisions.
   - Keep explanations practical—focus on knowledge useful for the current task.
-
----
 
 ## 1 · Workspace Structure
 
@@ -42,8 +38,6 @@ This is a multi-repo workspace containing the following projects:
   cd repos/random
   source venv/bin/activate
   ```
-
----
 
 ## 2 · Reasoning Framework
 
@@ -77,8 +71,6 @@ Before taking action, complete the following reasoning internally (no need to ou
 4. Performance & resource usage
 5. Code conciseness
 
----
-
 ## 3 · Task Complexity & Work Modes
 
 Assess task complexity before responding:
@@ -88,8 +80,6 @@ Assess task complexity before responding:
 | **trivial** | Simple syntax, single API usage, <10 line changes | Answer directly |
 | **moderate** | Single-file non-trivial logic, local refactoring | Use Plan/Code workflow |
 | **complex** | Cross-module design, concurrency issues, multi-step refactoring | Must use Plan/Code workflow |
-
----
 
 ## 4 · Plan/Code Workflow
 
@@ -126,8 +116,6 @@ When user says "implement", "execute", "start coding", "proceed with the plan":
 - Focus each change on one logical unit for easier review
 - Explain "why" to help user learn (if applicable)
 
----
-
 ## 5 · Language & Coding Style
 
 ### 5.1 Language Conventions
@@ -148,8 +136,6 @@ When user says "implement", "execute", "start coding", "proceed with the plan":
 ### 5.3 Development Commands
 
 **请参考各仓库下的 `CLAUDE.md` 获取具体命令。**
-
----
 
 ## 6 · Self-Check & Error Correction
 
@@ -175,16 +161,12 @@ Require confirmation:
 - Modifying data structures or migration logic
 - Git history rewrite operations
 
----
-
 ## 7 · Response Structure (Non-trivial Tasks)
 
 1. **Direct Conclusion** — Concisely answer "what to do"
 2. **Brief Reasoning** — Key premises, judgment steps, important trade-offs
 3. **Alternative Options** — 1-2 alternative implementations and their use cases
 4. **Next Steps** — Immediately actionable list
-
----
 
 ## 8 · Git & Command Line
 
@@ -195,8 +177,6 @@ Require confirmation:
 - Destructive operations (`rm -rf`, `git reset --hard`, `git push --force`) must explain risks
 - Don't proactively suggest history-rewriting commands unless user explicitly requests
 - Prefer `gh` CLI for GitHub interactions
-
----
 
 ## 9 · Resources
 

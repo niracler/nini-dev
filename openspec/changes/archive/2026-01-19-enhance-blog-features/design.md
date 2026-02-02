@@ -44,8 +44,6 @@
 | 非色彩信息 | 1.4.1 | 状态不仅靠颜色区分，需有图标/文字 |
 | 触控目标 | 2.5.5 | 可点击元素不小于 44x44px |
 
----
-
 ## Context
 
 Bokushi 是基于 Astro 构建的个人博客，部署在 Cloudflare Pages。当前技术栈：
@@ -57,8 +55,6 @@ Bokushi 是基于 Astro 构建的个人博客，部署在 Cloudflare Pages。当
 - **动态页**: Telegram Channel 集成 (SSR)
 
 **目标读者**: 技术博客读者，关注 ACG、编程、生活
-
----
 
 ## Goals / Non-Goals
 
@@ -74,8 +70,6 @@ Bokushi 是基于 Astro 构建的个人博客，部署在 Cloudflare Pages。当
 - 不引入复杂后端服务（优先 build-time 方案）
 - 不改变现有页面结构
 - 不增加运行时依赖（除非必要）
-
----
 
 ## Phase 1: 全文搜索 (Pagefind)
 
@@ -108,8 +102,6 @@ Runtime:
 - **触发方式**: 导航栏搜索图标 + 快捷键 `Cmd/Ctrl + K`
 - **展示方式**: 模态框 (Modal) 覆盖
 - **搜索结果**: 标题 + 摘要高亮 + 分类标签
-
----
 
 ## Phase 2: 文章分享按钮
 
@@ -148,8 +140,6 @@ Runtime:
 - 移动端：收起为悬浮按钮或底部工具栏
 - 复制成功后显示 Toast 提示
 
----
-
 ## Phase 3: IndieWeb / Webmentions
 
 ### 技术选型
@@ -183,8 +173,6 @@ Runtime:
 - **Likes**: 头像列表
 - **Reposts**: 头像 + 来源链接
 - **Mentions**: 类似评论展示
-
----
 
 ## Phase 4: AI 相关文章推荐
 
@@ -247,8 +235,6 @@ Runtime:
 │  └─────────┘  └─────────┘  └─────────┘         │
 └─────────────────────────────────────────────────┘
 ```
-
----
 
 ## Risks / Trade-offs
 

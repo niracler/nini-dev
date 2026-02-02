@@ -1,8 +1,11 @@
 # blog-indieweb Specification
 
 ## Purpose
+
 TBD - created by archiving change enhance-blog-features. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Webmention Endpoint
 
 The blog SHALL advertise a Webmention endpoint for receiving mentions.
@@ -44,4 +47,3 @@ The about page SHALL include an h-card microformat for author identity.
 
 - **WHEN** a Webmention consumer parses the about page
 - **THEN** they can extract author name, photo, and website URL from h-card
-

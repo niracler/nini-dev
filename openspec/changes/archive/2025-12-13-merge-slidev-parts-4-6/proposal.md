@@ -10,6 +10,7 @@
 - Part 3 已经讲了 Vibe Coding 踩坑，Part 5 再展开风险有些累赘
 
 合并后可以：
+
 1. 减少重复，让演讲更紧凑
 2. 突出重点（Context Engineering、OCaml 案例、现场演示）
 3. 时间从 ~55min 压缩到 ~35-40min

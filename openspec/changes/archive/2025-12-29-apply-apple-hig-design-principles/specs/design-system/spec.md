@@ -19,8 +19,6 @@
 - **AND** h1 至少为 2rem (32px+)
 - **AND** 标题从 h1 到 h4 呈现明确的视觉权重递减
 
----
-
 ### Requirement: WCAG AA Color Contrast
 
 设计系统 **MUST** 确保所有文字与背景的对比度符合 WCAG AA 标准。
@@ -37,8 +35,6 @@
 - **GIVEN** 使用 `--color-text-secondary` 的文本
 - **WHEN** 显示在主要背景上
 - **THEN** 对比度 **MUST** 达到 4.5:1 以上
-
----
 
 ### Requirement: Content Breathing Space
 
@@ -58,8 +54,6 @@
 - **THEN** padding 应适当减少但不低于 1rem
 - **AND** 保持内容可读性
 
----
-
 ### Requirement: Subtle Animation
 
 设计系统 **MUST** 使用微妙、不干扰的动画效果。
@@ -76,8 +70,6 @@
 - **GIVEN** 用户系统设置 `prefers-reduced-motion: reduce`
 - **WHEN** 渲染任何动画
 - **THEN** **MUST** 禁用或大幅简化动画效果
-
----
 
 ## MODIFIED Requirements
 

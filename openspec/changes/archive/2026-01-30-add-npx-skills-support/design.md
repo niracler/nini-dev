@@ -7,11 +7,13 @@
 ## Goals / Non-Goals
 
 **Goals:**
+
 - `npx skills add niracler/skill` 能通过标准路径发现所有 skills
 - `claude plugin marketplace add` 继续正常工作
 - 开发工具（validate.sh、init_skill.py）继续正常工作
 
 **Non-Goals:**
+
 - 不迁移 SKILL.md 内容格式（已兼容）
 - 不移除 `.claude-plugin/marketplace.json`（保持共存）
 - 不添加 `package.json` 或其他 npm 生态文件
@@ -22,6 +24,7 @@
 
 **选择**：直接重命名为 `skills/`
 **替代方案**：
+
 - 保留 `src/` 依赖递归回退搜索 → 不够规范，首次搜索会 miss
 - 创建 symlink `skills -> src` → 增加复杂性，git 处理 symlink 不稳定
 
@@ -30,6 +33,7 @@
 ### D2: 路径引用统一更新
 
 所有引用 `src/` 的文件同步更新为 `skills/`：
+
 - `.claude-plugin/marketplace.json`（4 个 plugin 的 skills 数组）
 - `scripts/validate.sh`（glob 模式）
 - `README.md`（安装说明、结构图、开发命令）

@@ -21,8 +21,6 @@ repos/ai-programming-share/
 └── package.json             # Slidev 依赖
 ```
 
----
-
 ## 每页 PPT 的精修流程
 
 > ⚠️ **核心约束：单页单任务** — 每次 apply 只处理**一页 PPT**，完成后等待用户确认才能继续下一页。
@@ -177,8 +175,6 @@ Step F: 同步文稿
 ### Step 8: 同步 VitePress 文稿
 
 同步更新对应的 VitePress 文稿，然后进入下一页。
-
----
 
 ## 参考手册（按需查阅）
 

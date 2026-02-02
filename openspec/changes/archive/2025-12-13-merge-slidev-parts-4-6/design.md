@@ -13,12 +13,14 @@ AI 编程分享演讲稿（Slidev）当前有 6 个 Part，其中 Part 4-6 存�
 ## Goals / Non-Goals
 
 **Goals:**
+
 - 将 Part 4-6 合并为单一 Part 4（~35-40min）
 - 去除重复内容（Oxide 原则、模拟器心智等）
 - 删除不合适的比喻（葵花宝典）
 - 降级不熟悉的案例（Lovable）
 
 **Non-Goals:**
+
 - 不改动 Part 1-3 的内容
 - 不添加新的主题或案例
 

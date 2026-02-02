@@ -13,20 +13,24 @@ Bokushi 博客当前设计系统已较为完善，但与 Apple Human Interface G
 ## What Changes
 
 ### Typography Improvements
+
 - **MODIFIED** `--font-size-base` 从 1rem (16px) 提升到 1.0625rem (17px)
 - **MODIFIED** 标题字号系统，增加层级差异
 - **ADDED** 更明确的标题间距规范
 
 ### Color Contrast Fixes
+
 - **MODIFIED** `--color-text-muted` 提高对比度至 4.5:1 以上
 - **MODIFIED** Dark mode muted text 同步调整
 
 ### Spacing Enhancements
+
 - **MODIFIED** 文章内容区 padding 增加
 - **MODIFIED** 段落间距微调
 - **ADDED** 内容呼吸感相关 token
 
 ### Animation Simplification
+
 - **MODIFIED** 首页动画效果，更微妙不干扰
 
 ## Impact

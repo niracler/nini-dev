@@ -1,8 +1,11 @@
 # blog-interactions Specification
 
 ## Purpose
+
 TBD - created by archiving change add-like-button. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: 文章点赞
 
 用户 SHALL 能够对博客文章进行点赞，表达对内容的喜爱。
@@ -56,4 +59,3 @@ TBD - created by archiving change add-like-button. Update Purpose after archive.
 - **WHEN** 用户点赞文章 A 后访问文章 B
 - **THEN** 文章 B 显示为未点赞状态
 - **AND** 用户可以独立点赞文章 B
-

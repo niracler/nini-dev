@@ -40,13 +40,12 @@
 | 触控目标 | 2.5.5 | 按钮尺寸 ≥ 44×44px |
 | 动画安全 | 2.3.3 | 点赞动画遵循 `prefers-reduced-motion` |
 
----
-
 ## Context
 
 bokushi 博客需要一个轻量级的用户互动功能。当前已有 ShareSidebar 组件用于社交分享，但这些按钮容易被广告拦截器屏蔽。点赞功能作为补充，可以不受拦截器影响地运行。
 
 **约束条件：**
+
 - 博客是静态站点，部署在 Cloudflare Pages
 - 已有 Astro hybrid 模式配置，支持 SSR API 端点
 - 无用户登录系统，需要匿名点赞
@@ -54,12 +53,14 @@ bokushi 博客需要一个轻量级的用户互动功能。当前已有 ShareSid
 ## Goals / Non-Goals
 
 **Goals:**
+
 - 提供简单的点赞/取消点赞功能
 - 显示文章的总点赞数
 - 防止单用户恶意刷赞
 - 与现有 ShareSidebar 风格统一
 
 **Non-Goals:**
+
 - 不实现用户账号系统
 - 不实现评论功能（已有 Remark42）
 - 不追踪用户行为数据
@@ -71,11 +72,13 @@ bokushi 博客需要一个轻量级的用户互动功能。当前已有 ShareSid
 **决定：** 使用 Cloudflare KV 存储点赞数据
 
 **原因：**
+
 - 博客已部署在 Cloudflare Pages，KV 是原生集成
 - 读多写少的场景非常适合 KV
 - 成本低，免费额度足够个人博客使用
 
 **数据结构：**
+
 ```
 Key: like:{slug}
 Value: { "count": 42, "ips": ["hash1", "hash2", ...] }
@@ -89,6 +92,7 @@ Value: { "count": 42, "ips": ["hash1", "hash2", ...] }
 - 客户端：localStorage 记录已点赞的文章 slug，提供即时 UI 反馈
 
 **原因：**
+
 - IP 限制可防止恶意刷赞
 - 哈希存储保护用户隐私
 - localStorage 提供离线状态恢复，减少 API 请求
@@ -96,6 +100,7 @@ Value: { "count": 42, "ips": ["hash1", "hash2", ...] }
 ### 3. UI 设计：爱心图标 + 数字
 
 **决定：**
+
 - 图标：`ri:heart-line`（未赞）→ `ri:heart-fill`（已赞，红色）
 - 显示：图标 + 数字（如 ♥ 42）
 - 位置：ShareSidebar 复制链接按钮下方
@@ -116,6 +121,7 @@ Value: { "count": 42, "ips": ["hash1", "hash2", ...] }
 **请求：** `?slug=article-slug`
 
 **响应：**
+
 ```json
 {
   "count": 42,
@@ -126,6 +132,7 @@ Value: { "count": 42, "ips": ["hash1", "hash2", ...] }
 ### POST /api/like
 
 **请求：**
+
 ```json
 {
   "slug": "article-slug",
@@ -134,6 +141,7 @@ Value: { "count": 42, "ips": ["hash1", "hash2", ...] }
 ```
 
 **响应：**
+
 ```json
 {
   "count": 43,

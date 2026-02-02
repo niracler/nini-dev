@@ -1,6 +1,9 @@
 # Sub-repos - managed independently
 repos/
 
+# Node.js
+node_modules/
+
 # macOS
 .DS_Store
 

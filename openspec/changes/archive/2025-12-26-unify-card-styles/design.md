@@ -5,16 +5,16 @@
 ### 为什么用 CSS 类而非 Astro 组件？
 
 **选项 A：创建 `<Surface>` Astro 组件**
+
 - 优点：类型安全、props 约束、IDE 提示
 - 缺点：需要重构所有使用卡片样式的地方、增加组件层级、对简单样式来说过度设计
 
 **选项 B：扩展 `.surface-card` CSS 类系统（选定）**
+
 - 优点：渐进式迁移、无需改变 HTML 结构、与 Tailwind 协作良好
 - 缺点：无编译时类型检查
 
 **决策理由**：博客是静态站点，样式一致性比运行时类型安全更重要。CSS 类方案可以逐步迁移，风险更低。
-
----
 
 ## Surface 变体系统
 
@@ -71,11 +71,10 @@
 ```
 
 **不再使用的效果**：
+
 - ~~`translateY(-2px)`~~ 上浮
 - ~~`scale(1.02)`~~ 放大
 - ~~多层阴影增强~~
-
----
 
 ## 圆角规范
 
@@ -86,8 +85,6 @@
 | `--radius-lg` | 16px | 主要卡片、图片、对话框 |
 
 **废弃的值**：8px、12px、14px、20px 全部归并到最近的标准值。
-
----
 
 ## 迁移映射
 
@@ -100,8 +97,6 @@
 | `.manga-shot-item` (12px 20px, translateY 12px) | 自定义（保留不对称圆角） | 移除上浮，简化阴影 |
 | `.post-link` (rounded-md) | `.surface-card--flat.surface-card--compact` | 使用语义类 |
 | `.pagination-link` (8px, translateY) | `.surface-card--compact.surface-card--hover-border` | 圆角 → 10px，移除上浮 |
-
----
 
 ## design-primitives.md 简化
 

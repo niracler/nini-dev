@@ -7,6 +7,7 @@
 ## Motivation
 
 云效提供多种 CLI 工具（git-repo、Push Review Mode、阿里云 CLI + OpenAPI），但：
+
 - 文档分散在不同页面
 - 工具之间的选择不明确
 - Claude 目前不了解这些工具的存在和用法
@@ -14,12 +15,14 @@
 ## Scope
 
 **包含：**
+
 - git-repo 安装与核心命令（`git pr`, `git download`, `git peer-review`）
 - Push Review Mode（零安装方案）
 - 阿里云 CLI 调用云效 OpenAPI（Tag、Projex 任务）
 - 面向场景的工作流指南
 
 **不包含：**
+
 - Flow-CLI 流水线自定义步骤
 - 制品库、效能度量等其他云效功能
 - 完整的 OpenAPI 参考（链接到官方文档）

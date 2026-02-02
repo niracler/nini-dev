@@ -17,8 +17,6 @@
 - Affected specs: design-system (create)
 - Affected code: `src/styles/global.css`, `src/pages/channel/`, `src/pages/mangashots/`, `src/components/PostList.astro`
 
----
-
 ## 范围
 
 ### 包含

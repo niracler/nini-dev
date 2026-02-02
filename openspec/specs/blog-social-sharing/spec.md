@@ -1,8 +1,11 @@
 # blog-social-sharing Specification
 
 ## Purpose
+
 TBD - created by archiving change enhance-blog-features. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Share Sidebar
 
 Article pages SHALL display a share sidebar on the left side of the content.
@@ -47,4 +50,3 @@ Users SHALL be able to copy the article URL to clipboard.
 - **WHEN** user clicks the copy link button
 - **THEN** the article URL is copied to clipboard
 - **AND** a success toast notification is displayed
-

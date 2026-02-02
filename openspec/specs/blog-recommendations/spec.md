@@ -1,8 +1,11 @@
 # blog-recommendations Specification
 
 ## Purpose
+
 TBD - created by archiving change enhance-blog-features. Update Purpose after archive.
+
 ## Requirements
+
 ### Requirement: Related Posts Section
 
 Article pages SHALL display related posts based on semantic similarity.
@@ -52,4 +55,3 @@ Recommendations SHALL be based on content semantics, not just tags or categories
 - **WHEN** two articles discuss similar topics with different keywords
 - **THEN** they are still recommended as related
 - **AND** similarity is higher than keyword-based matching would produce
-
