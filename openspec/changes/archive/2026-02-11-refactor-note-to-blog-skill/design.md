@@ -308,6 +308,36 @@ Scripts  ──▶  SKILL.md  ──▶  References  ──▶  Skill Review ─
 
 调用 `skill-reviewer` → 逐项与用户协商 → 最终验证
 
+### D11: Level 系统——评估深度选择
+
+**选择**: collect 完成后展示数据规模，用户选 Level 1-3 控制评估深度
+
+| Level | 名称 | 评估方式 | 后续流程 |
+|:---:|:---|:---|:---|
+| 1 | 浏览 | 无 LLM，候选列表按字数降序展示 | 用户直选 → 全部 fast track |
+| 2 | 推荐 | LLM 评估摘要 + 主题簇 → 5-8 推荐 | fast/deep track 分配（原流程） |
+| 3 | 深探 | Level 2 + 读取 hub 笔记全文附加到 prompt | fast/deep track，cluster 推荐更准确 |
+
+推荐逻辑：candidates ≤ 10 → 推荐 Level 1；candidates > 10 → 推荐 Level 2。用户明确要求"发现主题"时推荐 Level 3。
+
+**替代方案**:
+
+- 无 Level（旧方案） → 每次都走 LLM 评估，候选少时浪费 token
+- 自适应分叉（不让用户选） → 用户失去控制感
+- 5 级 Level（如 cli-weekly-report） → note-to-blog 的变量维度少于周报，3 级足够
+
+**理由**: 参考 cli-weekly-report 的 Level 系统。让用户根据数据规模选择投入程度。Level 1 省 token，Level 3 给深度主题探索提供更准确的 hub 内容分析
+
+### D12: `<skill-dir>` 路径规范
+
+**选择**: SKILL.md 中引用自身 scripts/ 时，统一使用 `<skill-dir>/scripts/...` 占位符，不使用裸相对路径 `scripts/...`
+
+**替代方案**:
+
+- 裸相对路径 `scripts/note-to-blog.py`（旧方案） → npx skills 安装后 CWD 不在 skill 目录，执行失败
+
+**理由**: npx skills 安装后 skill 以 symlink 形式存在于 `~/.claude/skills/` 或 `~/.agents/skills/`，CWD 是用户工作目录。`<skill-dir>` 明确提醒 Agent 先解析 skill 安装路径
+
 ## Risks / Trade-offs
 
 | Risk | Mitigation |

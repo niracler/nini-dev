@@ -71,6 +71,18 @@
 
 **Gate**: 所有 Critical/High 已解决，Medium/Low 用户选择跳过
 
+## Phase 5b: Level 系统 + 路径规范
+
+> 基于 skill-review 后的设计迭代（D11、D12），修改 SKILL.md 和 references。
+
+- [x] 5b.1 重构 SKILL.md 流程：collect 后插入 Level 选择步骤，展示数据规模 + Level 1-3 菜单 + 推荐逻辑
+- [x] 5b.2 实现 Level 1 浏览分支：跳过 LLM 评估，候选列表按字数降序展示，用户直选 → fast track
+- [x] 5b.3 实现 Level 3 深探分支：在 Level 2 基础上，增加读取 hub 笔记全文附加到 LLM prompt 的指令
+- [x] 5b.4 统一路径引用：SKILL.md 和 agent-instructions.md 中所有 `scripts/` 引用改为 `<skill-dir>/scripts/...`
+- [x] 5b.5 更新 scoring-criteria.md：Level 3 的 prompt 模板增加 hub 全文输入格式说明
+
+**Gate**: Level 1/2/3 流程在 SKILL.md 中清晰分叉，所有脚本路径使用 `<skill-dir>` 前缀
+
 ## Phase 6: Final Verification
 
 - [x] 6.1 重跑 `repos/skill/scripts/validate.sh` 确认修复后 skill 格式仍然合规

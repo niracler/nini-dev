@@ -94,6 +94,62 @@ For each candidate file, `collect` SHALL extract the title (from frontmatter `ti
 - **WHEN** `collect` finishes scanning 988 files with 35 marked entries
 - **THEN** stdout SHALL contain valid JSON with `stats.total_scanned: 988`, `stats.filtered_out: 35`, `stats.candidates_count: 953`
 
+### Requirement: Level selection after collect
+
+After `collect` completes, the skill SHALL display data volume (candidates count, clusters count) and offer Level 1-3 selection. The skill SHALL recommend a Level based on candidate count.
+
+#### Scenario: Level selection display
+
+- **WHEN** `collect` outputs 45 candidates and 3 clusters
+- **THEN** the skill SHALL display candidate count, cluster count, and a Level 1-3 menu with recommended Level highlighted
+
+#### Scenario: Auto-recommend Level 1
+
+- **WHEN** `collect` outputs ≤ 10 candidates
+- **THEN** the skill SHALL recommend Level 1 (浏览)
+
+#### Scenario: Auto-recommend Level 2
+
+- **WHEN** `collect` outputs > 10 candidates
+- **THEN** the skill SHALL recommend Level 2 (推荐)
+
+### Requirement: Level 1 browsing mode
+
+At Level 1, the skill SHALL skip LLM evaluation entirely and display candidates sorted by character count descending. The user selects items directly, and all selections go to fast track.
+
+#### Scenario: Level 1 display and selection
+
+- **WHEN** the user selects Level 1 with 8 candidates
+- **THEN** the skill SHALL display a numbered list with title and char_count, and the user picks items for fast track processing
+
+#### Scenario: Level 1 does not offer deep track
+
+- **WHEN** the user is in Level 1
+- **THEN** the skill SHALL NOT offer deep track or cluster analysis
+
+### Requirement: Level 3 deep exploration
+
+At Level 3, the skill SHALL perform Level 2 evaluation AND additionally read hub note full text for each cluster, appending the content to the LLM evaluation prompt for more accurate cluster analysis.
+
+#### Scenario: Level 3 hub content reading
+
+- **WHEN** the user selects Level 3 and there are 3 clusters with hub notes
+- **THEN** the skill SHALL Read the full text of each hub note and include it in the LLM evaluation prompt alongside the collect JSON data
+
+#### Scenario: Level 3 without clusters
+
+- **WHEN** the user selects Level 3 but `collect` found 0 clusters
+- **THEN** the behavior SHALL be identical to Level 2 (no hub notes to read)
+
+### Requirement: `<skill-dir>` path convention
+
+All script invocations in SKILL.md SHALL use `<skill-dir>/scripts/...` placeholder instead of bare relative paths. The Agent SHALL resolve `<skill-dir>` to the actual skill installation directory before execution.
+
+#### Scenario: Script invocation format
+
+- **WHEN** SKILL.md instructs the Agent to run the collect script
+- **THEN** the command SHALL use `python3 <skill-dir>/scripts/note-to-blog.py collect ...` format
+
 ### Requirement: LLM evaluation with mixed recommendations
 
 The SKILL.md SHALL instruct the LLM to evaluate both individual candidates and topic clusters from the `collect` JSON output. The LLM SHALL return a JSON array of 5~8 recommendations, each typed as either `single` (individual note) or `cluster` (topic group).
