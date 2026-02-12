@@ -50,7 +50,7 @@
 
 ```sql
 CREATE TABLE comments (
-  id         TEXT PRIMARY KEY,      -- nanoid 或 uuid
+  id         TEXT PRIMARY KEY,      -- crypto.randomUUID()
   slug       TEXT NOT NULL,         -- 文章标识（对应 Astro content slug）
   parent_id  TEXT,                  -- 嵌套回复（NULL = 顶层评论）
   author     TEXT NOT NULL,         -- 昵称
@@ -164,7 +164,116 @@ CREATE INDEX idx_comments_parent ON comments(parent_id);
 }
 ```
 
-### 7. 前端架构：原生 JS 组件
+### 7. API 文件路由
+
+**决定：** RESTful 路由，按 Astro 文件路由拆分为三个文件
+
+**原因：**
+
+- Astro 文件路由中，`comments.ts` 只能响应 `/api/comments`，无法捕获 `/api/comments/[id]`
+- DELETE/PATCH 需要路径参数 `[id]`，必须用动态路由文件
+
+**文件映射：**
+
+| 文件 | 路由 | 方法 |
+|------|------|------|
+| `src/pages/api/comments.ts` | `/api/comments` | GET（列表）、POST（发表） |
+| `src/pages/api/comments/[id].ts` | `/api/comments/:id` | DELETE（删除）、PATCH（隐藏/显示） |
+| `src/pages/api/comments/count.ts` | `/api/comments/count` | GET（计数） |
+
+### 8. ID 生成：crypto.randomUUID()
+
+**决定：** 使用 `crypto.randomUUID()` 生成评论 ID
+
+**原因：**
+
+- Cloudflare Workers 运行时原生支持，零依赖
+- UUID v4 的碰撞概率对个人博客而言可忽略
+- 无需引入 nanoid 等额外包
+
+### 9. 输入长度限制
+
+**决定：** API 层校验所有用户输入的长度
+
+| 字段 | 最大长度 | 说明 |
+|------|----------|------|
+| `author` | 50 字符 | 昵称 |
+| `content` | 5000 字符 | Markdown 原文 |
+| `website` | 200 字符 | URL |
+| `email` | 200 字符 | 邮箱地址 |
+
+**原因：** 系统边界输入校验，防止恶意超长内容。前端同步做长度限制提示，后端为最终防线。
+
+### 10. Markdown 渲染范围
+
+**决定：** 不允许标题（h1-h6），允许内联格式和块级元素子集
+
+**允许的语法：** 粗体、斜体、行内代码、代码块、链接、列表（有序/无序）、引用、分割线、图片（仅链接，不支持上传）
+
+**禁止的语法：** 标题（h1-h6）、HTML 标签
+
+**原因：** 评论区不应出现大标题，避免视觉干扰和页面结构混乱。通过 `markdown-it` 的 `disable` 选项禁用 heading 规则，`sanitize-html` 的 allowedTags 中排除 h1-h6。
+
+### 11. 删除评论的展示策略
+
+**决定：** 已删除的父评论显示占位符，子评论照常展示
+
+**展示规则：**
+
+```
+评论 A [已删除]          ← 显示"该评论已删除"占位文本
+├── 回复 A-1             ← 正常展示
+└── 回复 A-2             ← 正常展示
+```
+
+**API 行为：**
+
+- GET 查询时，status 为 `deleted` 的评论仍然返回，但 `content`、`author`、`email`、`website` 字段置空
+- 前端根据 status 渲染占位符
+- 如果一条已删除的评论没有子评论，则不返回（无需占位）
+
+**原因：** 保留有价值的讨论线程，不因删除一条父评论而连带消灭子评论。
+
+### 12. 本地开发策略
+
+**决定：** D1 不可用时返回 mock 数据（同 `like.ts` 模式），Turnstile 使用测试 key
+
+**D1 Mock：**
+
+- 检测 `locals.runtime?.env?.COMMENTS_DB` 是否存在
+- 不存在时 GET 返回空评论列表，POST 返回模拟的新评论对象
+- 与 `like.ts` 处理 KV 不可用的模式一致
+
+**Turnstile 测试：**
+
+- 本地开发使用 Cloudflare 官方测试 key（always pass）
+- Site key: `1x00000000000000000000AA`，Secret key: `1x0000000000000000000000000000000AA`
+- 通过环境变量区分，无需代码分支
+
+### 13. 作者信息展示
+
+**决定：** 昵称为可点击链接（如有 website），显示 Gravatar 头像（如有 email）
+
+**展示规则：**
+
+- 有 website：昵称渲染为 `<a href="website" target="_blank" rel="nofollow noopener">昵称</a>`
+- 无 website：昵称渲染为纯文本
+- 有 email：通过 email 的 MD5 哈希获取 Gravatar 头像 `https://www.gravatar.com/avatar/{md5}?d=mp&s=48`
+- 无 email：显示默认占位头像（Gravatar 的 `mp` mystery-person 默认头像）
+
+### 14. 提交成功后的 UX
+
+**决定：** 清空表单 + 新评论即时插入列表
+
+**流程：**
+
+1. 用户点击提交 → 按钮显示 loading 状态（禁用重复提交）
+2. API 返回成功 → 清空表单所有字段
+3. 新评论直接插入到评论列表对应位置（无需刷新页面）
+4. Turnstile widget 重置，准备下次提交
+5. API 返回错误 → 表单内容保留，显示错误提示
+
+### 15. 前端架构：原生 JS 组件
 
 **决定：** 用原生 JavaScript（TypeScript）编写前端，不引入框架
 
@@ -180,13 +289,20 @@ CREATE INDEX idx_comments_parent ON comments(parent_id);
 ```
 src/
 ├── components/
-│   └── CommentSection.astro      -- 替换 Remark42Comments.astro
+│   └── CommentSection.astro        -- 替换 Remark42Comments.astro
+├── pages/api/
+│   ├── comments.ts                 -- GET（列表）+ POST（发表）
+│   └── comments/
+│       ├── [id].ts                 -- DELETE（删除）+ PATCH（隐藏/显示）
+│       └── count.ts                -- GET（评论计数）
+├── lib/
+│   └── utils.ts                    -- hashIP、getClientIP（与 like.ts 共享）
 └── scripts/
-    └── comments.ts               -- 替换 remark42.ts
-        ├── renderComments()       -- 渲染评论列表（树形）
-        ├── renderForm()           -- 渲染评论表单
-        ├── submitComment()        -- 提交评论（含 Turnstile）
-        └── initCommentSection()   -- 初始化 + view transition 处理
+    └── comments.ts                 -- 替换 remark42.ts
+        ├── renderComments()        -- 渲染评论列表（树形）
+        ├── renderForm()            -- 渲染评论表单
+        ├── submitComment()         -- 提交评论（含 Turnstile）
+        └── initCommentSection()    -- 初始化 + view transition 处理
 ```
 
 ## Risks / Trade-offs

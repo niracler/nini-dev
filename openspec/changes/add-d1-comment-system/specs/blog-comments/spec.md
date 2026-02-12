@@ -10,6 +10,8 @@
 - **THEN** 评论出现在文章评论列表中
 - **AND** 评论内容以 Markdown 渲染显示
 - **AND** 显示作者昵称和发表时间
+- **AND** 表单清空，Turnstile widget 重置
+- **AND** 新评论即时插入列表对应位置（无需刷新页面）
 
 #### Scenario: 必填字段缺失
 
@@ -17,11 +19,24 @@
 - **THEN** 表单显示验证错误提示
 - **AND** 评论不会被提交
 
+#### Scenario: 输入超出长度限制
+
+- **WHEN** 用户提交的昵称超过 50 字符、评论内容超过 5000 字符、网站超过 200 字符或邮箱超过 200 字符
+- **THEN** API 返回 400 错误并提示具体哪个字段超限
+- **AND** 前端保留已填写内容，显示错误提示
+
 #### Scenario: Turnstile 验证失败
 
 - **WHEN** 用户提交评论但 Turnstile 验证不通过
 - **THEN** API 返回 403 错误
 - **AND** 前端提示用户重试
+
+#### Scenario: 提交中的 loading 状态
+
+- **WHEN** 用户点击提交按钮
+- **THEN** 按钮显示 loading 状态并禁用
+- **AND** 防止重复提交
+- **AND** API 返回错误时表单内容保留，按钮恢复可用
 
 ### Requirement: 嵌套回复
 
@@ -65,8 +80,46 @@
 #### Scenario: Markdown 渲染
 
 - **WHEN** 评论内容包含 Markdown 语法
-- **THEN** 渲染为对应的 HTML（标题、粗体、斜体、代码块、链接、列表等）
+- **THEN** 渲染为对应的 HTML（粗体、斜体、行内代码、代码块、链接、列表、引用、分割线）
+- **AND** 不渲染标题语法（h1-h6），保留为原文
 - **AND** HTML 经过 sanitize 处理，防止 XSS 攻击
+
+#### Scenario: 已删除评论的展示
+
+- **WHEN** 一条有回复的评论被管理员删除
+- **THEN** 该评论位置显示"该评论已删除"占位文本
+- **AND** 其下方的回复照常展示
+
+#### Scenario: 无回复的已删除评论
+
+- **WHEN** 一条没有回复的评论被管理员删除
+- **THEN** 该评论不在列表中展示
+
+### Requirement: 作者信息展示
+
+系统 SHALL 根据用户提供的可选信息（网站、邮箱）丰富评论的作者展示。
+
+#### Scenario: 作者有网站
+
+- **WHEN** 评论作者填写了网站 URL
+- **THEN** 昵称渲染为指向该网站的可点击链接
+- **AND** 链接在新标签页打开，带有 `rel="nofollow noopener"` 属性
+
+#### Scenario: 作者无网站
+
+- **WHEN** 评论作者未填写网站
+- **THEN** 昵称显示为纯文本
+
+#### Scenario: 作者有邮箱（Gravatar 头像）
+
+- **WHEN** 评论作者填写了邮箱
+- **THEN** 通过邮箱的 MD5 哈希从 Gravatar 获取头像显示
+- **AND** 邮箱地址不在前端暴露（仅用于头像获取）
+
+#### Scenario: 作者无邮箱
+
+- **WHEN** 评论作者未填写邮箱
+- **THEN** 显示 Gravatar 默认占位头像（mystery-person）
 
 ### Requirement: 暗色模式
 
@@ -117,9 +170,15 @@
 
 管理员 SHALL 能够删除或隐藏不当评论。
 
-#### Scenario: 删除评论
+#### Scenario: 删除评论（有回复）
 
-- **WHEN** 管理员发送带有 admin token 的 DELETE 请求
+- **WHEN** 管理员发送带有 admin token 的 DELETE 请求，且该评论有回复
+- **THEN** 评论状态变为 deleted
+- **AND** 前端显示"该评论已删除"占位符，回复照常展示
+
+#### Scenario: 删除评论（无回复）
+
+- **WHEN** 管理员发送带有 admin token 的 DELETE 请求，且该评论无回复
 - **THEN** 评论状态变为 deleted
 - **AND** 该评论不再在前端显示
 
@@ -127,7 +186,7 @@
 
 - **WHEN** 管理员发送带有 admin token 的 PATCH 请求将状态设为 hidden
 - **THEN** 评论状态变为 hidden
-- **AND** 该评论不再在前端显示
+- **AND** 该评论不再在前端显示（与 deleted 行为一致）
 
 #### Scenario: 未授权操作
 
