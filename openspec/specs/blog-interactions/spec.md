@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change add-like-button. Update Purpose after archive.
+博客文章交互功能，包括点赞和评论数显示，让读者能够与内容互动。
 
 ## Requirements
 
@@ -59,3 +59,18 @@ TBD - created by archiving change add-like-button. Update Purpose after archive.
 - **WHEN** 用户点赞文章 A 后访问文章 B
 - **THEN** 文章 B 显示为未点赞状态
 - **AND** 用户可以独立点赞文章 B
+
+### Requirement: 评论数显示
+
+系统 SHALL 在文章列表或文章页面展示评论数，与现有点赞数并列。
+
+#### Scenario: 文章页面显示评论数
+
+- **WHEN** 用户访问一篇有评论的文章
+- **THEN** 在交互区域显示评论数（如 💬 5）
+- **AND** 与点赞数（♥ 42）并列展示
+
+#### Scenario: 无评论时不显示数字
+
+- **WHEN** 用户访问一篇没有评论的文章
+- **THEN** 评论数显示为 0 或不显示数字
