@@ -17,3 +17,6 @@ node_modules/
 *.local
 .vscode
 .playwright-mcp
+
+# OMC session state
+.omc/
