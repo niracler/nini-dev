@@ -1,4 +1,4 @@
-## ADDED Requirements
+## MODIFIED Requirements
 
 ### Requirement: Automatic taste profile generation
 
@@ -19,20 +19,6 @@ The system SHALL analyze Pinboard bookmark history to extract interest patterns 
 - **WHEN** the majority of Pinboard bookmarks have English titles, tags, or descriptions
 - **THEN** the generated taste profile MUST still be entirely in Chinese; English terms MAY appear only as proper nouns (e.g., "Home Assistant", "Claude Code")
 
-### Requirement: Event-driven profile update
-
-The system SHALL update the taste profile when sufficient new Pinboard activity is detected, rather than on a fixed schedule.
-
-#### Scenario: Threshold reached
-
-- **WHEN** the Pinboard monitoring detects N new bookmarks since the last profile update (N configurable, default: 10)
-- **THEN** the system triggers the profile update workflow
-
-#### Scenario: Below threshold
-
-- **WHEN** fewer than N new bookmarks exist since the last update
-- **THEN** the system does not trigger a profile update
-
 ### Requirement: Taste profile content structure
 
 The taste profile document SHALL include structured sections in Chinese that can be consumed as a system prompt by the daily scoring workflow.
@@ -46,31 +32,3 @@ The taste profile document SHALL include structured sections in Chinese that can
 
 - **WHEN** the profile is generated or updated
 - **THEN** the output MUST NOT contain full English paragraphs or sentences (isolated English proper nouns within Chinese text are acceptable)
-
-### Requirement: Pinboard behavior signals
-
-The system SHALL interpret different Pinboard behaviors as distinct taste signals.
-
-#### Scenario: Public bookmark (shared=yes, toread=no)
-
-- **WHEN** a bookmark is shared and not marked toread
-- **THEN** the system treats it as a strong positive signal (user actively curated and published)
-
-#### Scenario: Toread-to-read transition
-
-- **WHEN** a bookmark transitions from toread=yes to toread=no
-- **THEN** the system treats it as a moderate positive signal (user completed reading)
-
-#### Scenario: Bookmark tags
-
-- **WHEN** a bookmark has tags
-- **THEN** the system uses tags as high-confidence topic indicators for the taste profile
-
-### Requirement: Profile versioning
-
-The system SHALL preserve profile update history through GitHub commits.
-
-#### Scenario: Profile updated
-
-- **WHEN** the taste profile is regenerated
-- **THEN** the system commits the updated `profile/taste.md` with a descriptive commit message including the trigger reason and number of new bookmarks analyzed
