@@ -43,6 +43,7 @@ Pinboard 是用户的主要书签管理服务（约 200 条 bookmark，313 个 t
 ### D2: Tag 规范存储——`references/tag-convention.md`
 
 **选择**: tag 规范作为 skill 的 reference 文件存储，包含：
+
 - 基本规则（全英文小写、`_` 连接、单数优先）
 - 完整的主题 tag 列表（tech / smart home / life / culture / meta 分类）
 - 元 tag 列表（`evergreen`, `tool`, `reference`, `collection`）
@@ -60,10 +61,15 @@ Pinboard 是用户的主要书签管理服务（约 200 条 bookmark，313 个 t
 **选择**: 审计流程
 
 ```
+
 1. 拉取全量 bookmark（/posts/all）
+
 2. 按问题类型分组（拼写错误、无 tag、中文 tag、概念重叠等）
+
 3. 每组展示 5-10 条，给出修改建议
+
 4. 用户确认/修改/跳过
+
 5. 确认后通过 /posts/add（覆盖模式）批量应用
 ```
 
@@ -120,9 +126,13 @@ staticData.toreadUrls = ["https://...", "https://...", ...]
 ```
 
 每次轮询：
+
 1. 拉取当前 `toread=yes` 全量
+
 2. 对比 `staticData.toreadUrls`
+
 3. 消失的 URL 调 `/posts/get?url=` 验证：还存在 + shared=yes + toread=no → 推送
+
 4. 更新 `staticData.toreadUrls` 为本次列表
 
 **替代方案**:

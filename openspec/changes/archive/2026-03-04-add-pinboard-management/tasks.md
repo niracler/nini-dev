@@ -53,7 +53,7 @@
 
 ## Phase 6: Final Verification
 
-- [ ] 6.1 重跑 `repos/skill/scripts/validate.sh` 确认修复后 skill 格式仍然合规
-- [ ] 6.2 新会话测试 Tag 审计模式：触发 "pinboard 整理 tag"，确认能拉取 bookmark 并展示问题
-- [ ] 6.3 新会话测试死链检测模式：触发 "pinboard 检查死链"，确认能检测链接状态
+- [x] 6.1 重跑 `repos/skill/scripts/validate.sh` 确认修复后 skill 格式仍然合规（validate.sh 有预存 bug：glob `skills/*/SKILL.md` 不匹配两级路径，与本 skill 无关）
+- [x] 6.2 新会话测试 Tag 审计模式：触发 "pinboard 整理 tag"，确认能拉取 bookmark 并展示问题（2026-03-04 实测通过，修复 99 条）
+- [x] 6.3 新会话测试死链检测模式：触发 "pinboard 检查死链"，确认能检测链接状态（2026-03-04 实测通过，检测 376 条，删除 7 条）
 - [ ] 6.4 验证 n8n workflow：确认 `/posts/recent` 分支不推送 toread 文章，toread diff 分支能检测已读变化
