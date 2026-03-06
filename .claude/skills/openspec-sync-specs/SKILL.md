@@ -6,7 +6,7 @@ compatibility: Requires openspec CLI.
 metadata:
   author: openspec
   version: "1.0"
-  generatedBy: "1.0.2"
+  generatedBy: "1.2.0"
 ---
 
 Sync delta specs from a change to main specs.
@@ -108,7 +108,6 @@ The system SHALL do something new.
 **Key Principle: Intelligent Merging**
 
 Unlike programmatic merging, you can apply **partial updates**:
-
 - To add a scenario, just include that scenario under MODIFIED - don't copy existing scenarios
 - The delta represents *intent*, not a wholesale replacement
 - Use your judgment to merge changes sensibly
@@ -132,7 +131,6 @@ Main specs are now updated. The change remains active - archive when implementat
 ```
 
 **Guardrails**
-
 - Read both delta and main specs before making changes
 - Preserve existing content not mentioned in delta
 - If something is unclear, ask for clarification

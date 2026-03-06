@@ -3,6 +3,7 @@ repos:
     rev: v0.20.0
     hooks:
       - id: markdownlint-cli2
+        exclude: ^\.claude/
   - repo: local
     hooks:
       - id: no-horizontal-rules
@@ -10,3 +11,4 @@ repos:
         entry: scripts/check-horizontal-rules.sh
         language: script
         types: [markdown]
+        exclude: ^\.claude/
