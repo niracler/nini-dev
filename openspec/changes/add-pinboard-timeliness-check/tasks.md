@@ -15,7 +15,7 @@
 - [x] 2.1 新增 `## Timeliness Check Mode` section，包含 Overview 说明（两阶段：启发式预筛 + AI 分析）
 - [x] 2.2 实现 Step 1: Fetch all bookmarks（复用已有的 `/posts/all` 缓存到 `/tmp/pinboard_all.json`）
 - [x] 2.3 实现 Step 2: Heuristic pre-filtering，包含三层过滤管道：
-  - Tag 过滤：只保留技术类 tag（`llm`, `claude`, `programming`, `python`, `javascript`, `typescript`, `web`, `devops`, `cloudflare`, `shell`, `github`, `database`, `security`, `home_assistant`, `iot`, `zigbee`），排除 `evergreen`/`reference`/`collection`
+  - Tag 过滤：只保留技术类 tag（`llm`, `programming`, `python`, `javascript`, `typescript`, `web`, `devops`, `cloudflare`, `shell`, `github`, `database`, `security`, `home_assistant`, `iot`, `zigbee`），排除 `evergreen`/`reference`/`collection`
   - 年龄过滤：保存时间超过 2 年（基于 Pinboard `time` 字段）
   - 版本号检测：标题或 URL 含版本号模式（如 `React 16`, `v2.x`, `Python 3.8`, `ES6`），无论年龄
   - 候选条件：Tag 过滤 AND (年龄过滤 OR 版本号检测)

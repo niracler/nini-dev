@@ -6,7 +6,7 @@ The skill SHALL pre-filter bookmarks using heuristic rules to identify candidate
 
 The heuristic pipeline SHALL apply three filters in order:
 
-1. **Tag filter**: Include only bookmarks with tech-related tags (`llm`, `claude`, `programming`, `python`, `javascript`, `typescript`, `web`, `devops`, `cloudflare`, `shell`, `github`, `database`, `security`, `home_assistant`, `iot`, `zigbee`). Exclude bookmarks tagged with `evergreen`, `reference`, or `collection`.
+1. **Tag filter**: Include only bookmarks with tech-related tags (`llm`, `programming`, `python`, `javascript`, `typescript`, `web`, `devops`, `cloudflare`, `shell`, `github`, `database`, `security`, `home_assistant`, `iot`, `zigbee`). Exclude bookmarks tagged with `evergreen`, `reference`, or `collection`.
 2. **Age filter**: Include bookmarks saved more than 2 years ago (based on Pinboard `time` field).
 3. **Version detection**: Include bookmarks whose title or URL contains version number patterns (e.g., `React 16`, `v2.x`, `Python 3.8`, `ES6`), regardless of age.
 

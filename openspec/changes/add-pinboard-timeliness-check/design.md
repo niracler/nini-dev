@@ -37,7 +37,7 @@
 
 **选择**: 三层过滤管道
 
-1. **Tag 过滤**: 只保留技术类 tag（`llm`, `claude`, `programming`, `python`, `javascript`, `typescript`, `web`, `devops`, `cloudflare`, `shell`, `github`, `database`, `security`, `home_assistant`, `iot`, `zigbee`）。排除 `evergreen`/`reference`/`collection` meta tag。
+1. **Tag 过滤**: 只保留技术类 tag（`llm`, `programming`, `python`, `javascript`, `typescript`, `web`, `devops`, `cloudflare`, `shell`, `github`, `database`, `security`, `home_assistant`, `iot`, `zigbee`）。排除 `evergreen`/`reference`/`collection` meta tag。
 2. **年龄过滤**: 保存时间超过 2 年的（使用 Pinboard 的 `time` 字段）。
 3. **版本号检测**: 标题或 URL 中包含版本号模式的（如 `React 16`, `v2.x`, `Python 3.8`, `ES6`），无论年龄都标记为可疑。
 
