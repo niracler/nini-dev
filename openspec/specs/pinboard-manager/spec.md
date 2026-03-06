@@ -31,6 +31,11 @@ Tag issues SHALL be categorized as:
 - **WHEN** user says "skip" or "跳过" for a suggestion
 - **THEN** skill moves to the next item without making changes
 
+#### Scenario: User triggers timeliness check from mode selection
+
+- **WHEN** user says "pinboard 检查时效" or "pinboard timeliness check" or "pinboard 过时检测"
+- **THEN** skill enters timeliness check mode as defined in `pinboard-timeliness` spec
+
 ### Requirement: Dead link detection mode
 
 The skill SHALL provide a dead link detection mode that checks all bookmarks for broken URLs using HTTP HEAD requests.
