@@ -1,0 +1,87 @@
+project: nini-dev-2026-03
+title: nini-dev 3 月排期
+
+timeline:
+  start: 2026-03-01
+  end: 2026-03-31
+
+milestones:
+  - id: mid-month
+    title: 中期检查
+    date: 2026-03-15
+    type: demo
+    deliverable: "pinboard timeliness 完成验证，ai-share 博客发布"
+  - id: end-of-month
+    title: 月末收尾
+    date: 2026-03-31
+    type: release
+    deliverable: "plrom v2026.03 发布，所有一次性任务归档"
+
+phases:
+  - id: march
+    title: 3 月
+    start: 2026-03-01
+    end: 2026-03-31
+    weeks: [W1, W2, W3, W4]
+
+modules:
+  # --- 持续性任务 ---
+  - id: bokushi-blog
+    title: 博客周更
+    type: infrastructure
+    phase: march
+    weeks: [W1, W2, W3, W4]
+    status: in_progress
+    description: "每周至少 1 篇博客，含 2 篇周记 + ai-share 介绍文"
+
+  - id: bokushi-health
+    title: Health 每日更新
+    type: infrastructure
+    phase: march
+    weeks: [W1, W2, W3, W4]
+    status: in_progress
+    description: "每日更新 health 数据到 bokushi"
+
+  # --- 一次性任务 ---
+  - id: skill-pinboard-timeliness
+    title: Pinboard 时效性检测
+    type: infrastructure
+    phase: march
+    weeks: [W1, W2]
+    status: in_progress
+    description: "完成 add-pinboard-timeliness-check 的 Phase 4 验证并归档"
+    changes:
+      - add-pinboard-timeliness-check
+
+  - id: ai-share-archive
+    title: AI 分享归档
+    type: infrastructure
+    phase: march
+    weeks: [W1, W2]
+    status: planned
+    description: "写一篇博客介绍 ai-programming-share PPT 链接，然后 archive 仓库"
+
+  - id: plrom-release
+    title: plrom v2026.03 发布
+    type: infrastructure
+    phase: march
+    weeks: [W3, W4]
+    status: planned
+    description: "plrom 月度更新与发布"
+
+  - id: nyaruko-archive
+    title: nyaruko-telegram-bot 归档
+    type: infrastructure
+    phase: march
+    weeks: [W1, W2]
+    status: planned
+    description: "Archive nyaruko-telegram-bot 仓库，不再维护"
+
+  # --- 新功能 ---
+  - id: dev-journal-skill
+    title: 开发日记自动记录
+    type: feature
+    phase: march
+    weeks: [W2, W3]
+    status: planned
+    description: "增强 diary-assistant skill，会话结束前主动生成 Work Log 追加到日记（方案 A）"
