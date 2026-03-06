@@ -48,7 +48,7 @@ modules:
     type: infrastructure
     phase: march
     weeks: [W1, W2]
-    status: in_progress
+    status: done
     description: "完成 add-pinboard-timeliness-check 的 Phase 4 验证并归档"
     changes:
       - add-pinboard-timeliness-check
