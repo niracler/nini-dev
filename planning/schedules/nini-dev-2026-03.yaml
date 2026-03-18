@@ -10,7 +10,7 @@ milestones:
     title: 中期检查
     date: 2026-03-15
     type: demo
-    deliverable: "pinboard timeliness 完成验证，ai-share 博客发布"
+    deliverable: "pinboard timeliness 完成验证，dev-journal-skill 启动"
   - id: end-of-month
     title: 月末收尾
     date: 2026-03-31
@@ -57,7 +57,7 @@ modules:
     title: AI 分享归档
     type: infrastructure
     phase: march
-    weeks: [W1, W2]
+    weeks: [W3, W4]
     status: planned
     description: "写一篇博客介绍 ai-programming-share PPT 链接，然后 archive 仓库"
 

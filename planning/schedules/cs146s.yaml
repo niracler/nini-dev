@@ -1,0 +1,156 @@
+project: cs146s
+title: CS146S - The Modern Software Developer
+
+timeline:
+  start: 2026-03-09
+  end: 2026-05-17
+
+capacity:
+  study:
+    days_per_week: 2
+    notes: "周二/周四 20:00-22:00，每次 2h（阅读+作业）"
+
+milestones:
+  - id: part-1-done
+    title: Agent 基础完成
+    date: 2026-04-03
+    type: checkpoint
+    deliverable: "W1-W4 学习完成，LLM/Agent/IDE/协作模式掌握"
+
+  - id: part-2-done
+    title: 工具与安全完成
+    date: 2026-05-01
+    type: checkpoint
+    deliverable: "W5-W8 学习完成，Terminal/Security/CodeReview/UI 掌握"
+
+  - id: complete
+    title: 课程完成
+    date: 2026-05-17
+    type: release
+    deliverable: "全部 10 周内容与作业完成"
+
+phases:
+  - id: part-1
+    title: Agent 基础
+    start: 2026-03-09
+    end: 2026-04-03
+    weeks: [W1, W2, W3, W4]
+
+  - id: part-2
+    title: 工具与安全
+    start: 2026-04-06
+    end: 2026-05-01
+    weeks: [W5, W6, W7, W8]
+
+  - id: part-3
+    title: 部署与未来
+    start: 2026-05-04
+    end: 2026-05-17
+    weeks: [W9, W10]
+
+modules:
+  - id: w1-llm-intro
+    title: "W1 - LLM 基础与有效提示"
+    type: infrastructure
+    phase: part-1
+    weeks: [W1]
+    status: planned
+    description: >-
+      LLM 原理、提示工程技巧。
+      作业: LLM Prompting Playground
+      https://github.com/mihail911/modern-software-dev-assignments/tree/master/week1
+
+  - id: w2-coding-agents
+    title: "W2 - Coding Agent 解剖"
+    type: infrastructure
+    phase: part-1
+    weeks: [W2]
+    status: planned
+    description: >-
+      Agent 架构与组件、工具调用与函数调用、MCP 协议。
+      作业: First Steps in the AI IDE
+      https://github.com/mihail911/modern-software-dev-assignments/tree/master/week2
+
+  - id: w3-ai-ide
+    title: "W3 - AI IDE"
+    type: infrastructure
+    phase: part-1
+    weeks: [W3]
+    status: planned
+    description: >-
+      上下文管理与代码理解、PRD for agents、IDE 集成与扩展。
+      作业: Build a Custom MCP Server
+      https://github.com/mihail911/modern-software-dev-assignments/blob/master/week3/assignment.md
+
+  - id: w4-agent-patterns
+    title: "W4 - Coding Agent 协作模式"
+    type: infrastructure
+    phase: part-1
+    weeks: [W4]
+    status: planned
+    description: >-
+      Agent 自主度控制、人机协作模式。嘉宾: Boris Cherney (Claude Code 创建者)。
+      作业: Coding with Claude Code
+      https://github.com/mihail911/modern-software-dev-assignments/blob/master/week4/assignment.md
+
+  - id: w5-terminal
+    title: "W5 - 现代终端"
+    type: infrastructure
+    phase: part-2
+    weeks: [W5]
+    status: planned
+    description: >-
+      AI 增强 CLI 界面、终端自动化与脚本。嘉宾: Zach Lloyd (Warp CEO)。
+      作业: Agentic Development with Warp
+      https://github.com/mihail911/modern-software-dev-assignments/tree/master/week5
+
+  - id: w6-testing-security
+    title: "W6 - AI 测试与安全"
+    type: infrastructure
+    phase: part-2
+    weeks: [W6]
+    status: planned
+    description: >-
+      安全 vibe coding、漏洞检测历史、AI 生成测试套件。嘉宾: Isaac Evans (Semgrep CEO)。
+      作业: Writing Secure AI Code
+      https://github.com/mihail911/modern-software-dev-assignments/blob/master/week6/assignment.md
+
+  - id: w7-code-review
+    title: "W7 - 现代代码审查与文档"
+    type: infrastructure
+    phase: part-2
+    weeks: [W7]
+    status: planned
+    description: >-
+      AI code review、调试与诊断、智能文档生成。嘉宾: Tomas Reimers (Graphite CPO)。
+      作业: Code Review Reps
+      https://github.com/mihail911/modern-software-dev-assignments/tree/master/week7
+
+  - id: w8-ui-app
+    title: "W8 - 自动化 UI 与 App 构建"
+    type: infrastructure
+    phase: part-2
+    weeks: [W8]
+    status: planned
+    description: >-
+      设计与前端普及化、快速 UI/UX 原型与迭代。嘉宾: Gaspar Garcia (Vercel AI Research)。
+      作业: Multi-stack Web App Builds
+      https://github.com/mihail911/modern-software-dev-assignments/tree/master/week8
+
+  - id: w9-post-deployment
+    title: "W9 - 上线后的 Agent"
+    type: infrastructure
+    phase: part-3
+    weeks: [W9]
+    status: planned
+    description: >-
+      监控与可观测性、自动化事故响应、triaging 与调试。嘉宾: Resolve.ai 团队。
+
+  - id: w10-future
+    title: "W10 - AI 软件工程的未来"
+    type: infrastructure
+    phase: part-3
+    weeks: [W10]
+    status: planned
+    description: >-
+      软件工程角色的未来、新兴 AI 编程范式、行业趋势预测。嘉宾: Martin Casado (a16z)。
