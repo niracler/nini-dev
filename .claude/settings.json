@@ -1,7 +1,5 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(bash:*)"
-    ]
+  "enabledPlugins": {
+    "telegram@claude-plugins-official": true
   }
 }
