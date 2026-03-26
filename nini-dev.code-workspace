@@ -5,7 +5,6 @@
     { "path": "repos/plrom", "name": "Plrom" },
     { "path": "repos/random", "name": "Random Challenge" },
     { "path": "repos/bokushi", "name": "Bokushi" },
-    { "path": "repos/Note", "name": "Obsidian Note" },
     { "path": "repos/ai-programming-share", "name": "AI Programming Share" },
     { "path": "repos/skill", "name": "Skill" }
   ],
