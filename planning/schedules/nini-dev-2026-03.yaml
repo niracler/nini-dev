@@ -58,7 +58,7 @@ modules:
     type: infrastructure
     phase: march
     weeks: [W3, W4]
-    status: planned
+    status: in_progress
     description: "写一篇博客介绍 ai-programming-share PPT 链接，然后 archive 仓库"
 
   - id: plrom-release
@@ -66,7 +66,7 @@ modules:
     type: infrastructure
     phase: march
     weeks: [W3, W4]
-    status: planned
+    status: in_progress
     description: "plrom 月度更新与发布"
 
   - id: nyaruko-archive
@@ -83,5 +83,5 @@ modules:
     type: feature
     phase: march
     weeks: [W2, W3]
-    status: planned
-    description: "增强 diary-assistant skill，会话结束前主动生成 Work Log 追加到日记（方案 A）"
+    status: done
+    description: "已被 weekly-report skill + diary-assistant 定位调整覆盖，不再单独推进"

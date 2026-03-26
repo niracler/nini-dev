@@ -2,50 +2,50 @@ project: cs146s
 title: CS146S - The Modern Software Developer
 
 timeline:
-  start: 2026-03-09
-  end: 2026-05-17
+  start: 2026-03-30
+  end: 2026-06-04
 
 capacity:
   study:
     days_per_week: 2
-    notes: "周二/周四 20:00-22:00，每次 2h（阅读+作业）"
+    notes: "周二讲课 + 周四作业，20:00-22:00，每次 2h"
 
 milestones:
   - id: part-1-done
     title: Agent 基础完成
-    date: 2026-04-03
+    date: 2026-04-23
     type: checkpoint
     deliverable: "W1-W4 学习完成，LLM/Agent/IDE/协作模式掌握"
 
   - id: part-2-done
     title: 工具与安全完成
-    date: 2026-05-01
+    date: 2026-05-21
     type: checkpoint
     deliverable: "W5-W8 学习完成，Terminal/Security/CodeReview/UI 掌握"
 
   - id: complete
     title: 课程完成
-    date: 2026-05-17
+    date: 2026-06-04
     type: release
     deliverable: "全部 10 周内容与作业完成"
 
 phases:
   - id: part-1
     title: Agent 基础
-    start: 2026-03-09
-    end: 2026-04-03
+    start: 2026-03-30
+    end: 2026-04-23
     weeks: [W1, W2, W3, W4]
 
   - id: part-2
     title: 工具与安全
-    start: 2026-04-06
-    end: 2026-05-01
+    start: 2026-04-27
+    end: 2026-05-21
     weeks: [W5, W6, W7, W8]
 
   - id: part-3
     title: 部署与未来
-    start: 2026-05-04
-    end: 2026-05-17
+    start: 2026-05-25
+    end: 2026-06-04
     weeks: [W9, W10]
 
 modules:
