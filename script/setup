@@ -41,4 +41,32 @@ jq -c '.repos[]' "$REPOS_FILE" | while read -r repo; do
     echo ""
 done
 
+# Install pre-commit hooks for repos that have config
+if command -v pre-commit &> /dev/null; then
+    echo "Installing pre-commit hooks..."
+    echo ""
+
+    # Workspace root
+    if [ -f "$ROOT_DIR/.pre-commit-config.yaml" ]; then
+        echo "→ Installing hooks for workspace root..."
+        (cd "$ROOT_DIR" && pre-commit install)
+        echo "✓ Workspace root hooks installed"
+        echo ""
+    fi
+
+    # Sub-repos
+    for config in "$ROOT_DIR"/repos/*/.pre-commit-config.yaml; do
+        [ -f "$config" ] || continue
+        repo_dir=$(dirname "$config")
+        repo_name=$(basename "$repo_dir")
+        echo "→ Installing hooks for $repo_name..."
+        (cd "$repo_dir" && pre-commit install)
+        echo "✓ $repo_name hooks installed"
+        echo ""
+    done
+else
+    echo "⚠ pre-commit not found, skipping hook installation"
+    echo "  Install: brew install pre-commit (or pip install pre-commit)"
+fi
+
 echo "All repos ready!"
