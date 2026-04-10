@@ -21,3 +21,9 @@ node_modules/
 
 # OMC session state
 .omc/
+
+# Claude Code worktrees
+.claude/worktrees/
+
+# pnpm store
+.pnpm-store/
