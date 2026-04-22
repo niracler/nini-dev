@@ -1,0 +1,54 @@
+project: nini-dev-2026-04
+title: nini-dev 4 月排期
+
+timeline:
+  start: 2026-04-01
+  end: 2026-04-30
+
+# 承接 nini-dev-2026-03 未完成的 3 条 in_progress module（见 inventory-2026-04 B3 决策）。
+
+milestones:
+  - id: mid-month
+    title: 中期检查
+    date: 2026-04-15
+    type: checkpoint
+    deliverable: "ai-share-archive 完成，bokushi 周更持续"
+  - id: end-of-month
+    title: 月末收尾
+    date: 2026-04-30
+    type: release
+    deliverable: "所有一次性任务归档，5 月排期启动 (Random 恢复)"
+
+phases:
+  - id: april
+    title: 4 月
+    start: 2026-04-01
+    end: 2026-04-30
+    weeks: [W1, W2, W3, W4]
+
+modules:
+  # --- 持续性任务（从 2026-03 承接）---
+  - id: bokushi-blog
+    title: 博客周更
+    type: infrastructure
+    phase: april
+    weeks: [W1, W2, W3, W4]
+    status: in_progress
+    description: "每周至少 1 篇博客，含 2 篇双周记。删 Apple Reminder 后信内驱力执行（见 inventory-2026-04 D 决策）。"
+
+  - id: bokushi-health
+    title: Health 每日更新
+    type: infrastructure
+    phase: april
+    weeks: [W1, W2, W3, W4]
+    status: in_progress
+    description: "每日更新 health 数据到 bokushi"
+
+  # --- 一次性任务 ---
+  - id: ai-share-archive
+    title: AI 分享归档
+    type: infrastructure
+    phase: april
+    weeks: [W4]
+    status: in_progress
+    description: "从 nini-dev-2026-03 承接。写一篇博客介绍 ai-programming-share PPT 链接，然后 archive 仓库。"

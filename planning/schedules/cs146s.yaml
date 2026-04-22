@@ -54,7 +54,7 @@ modules:
     type: infrastructure
     phase: part-1
     weeks: [W1]
-    status: planned
+    status: deferred
     description: >-
       LLM 原理、提示工程技巧。
       作业: LLM Prompting Playground
@@ -65,7 +65,7 @@ modules:
     type: infrastructure
     phase: part-1
     weeks: [W2]
-    status: planned
+    status: deferred
     description: >-
       Agent 架构与组件、工具调用与函数调用、MCP 协议。
       作业: First Steps in the AI IDE
@@ -76,7 +76,7 @@ modules:
     type: infrastructure
     phase: part-1
     weeks: [W3]
-    status: planned
+    status: deferred
     description: >-
       上下文管理与代码理解、PRD for agents、IDE 集成与扩展。
       作业: Build a Custom MCP Server
@@ -87,7 +87,7 @@ modules:
     type: infrastructure
     phase: part-1
     weeks: [W4]
-    status: planned
+    status: deferred
     description: >-
       Agent 自主度控制、人机协作模式。嘉宾: Boris Cherney (Claude Code 创建者)。
       作业: Coding with Claude Code
@@ -98,7 +98,7 @@ modules:
     type: infrastructure
     phase: part-2
     weeks: [W5]
-    status: planned
+    status: deferred
     description: >-
       AI 增强 CLI 界面、终端自动化与脚本。嘉宾: Zach Lloyd (Warp CEO)。
       作业: Agentic Development with Warp
@@ -109,7 +109,7 @@ modules:
     type: infrastructure
     phase: part-2
     weeks: [W6]
-    status: planned
+    status: deferred
     description: >-
       安全 vibe coding、漏洞检测历史、AI 生成测试套件。嘉宾: Isaac Evans (Semgrep CEO)。
       作业: Writing Secure AI Code
@@ -120,7 +120,7 @@ modules:
     type: infrastructure
     phase: part-2
     weeks: [W7]
-    status: planned
+    status: deferred
     description: >-
       AI code review、调试与诊断、智能文档生成。嘉宾: Tomas Reimers (Graphite CPO)。
       作业: Code Review Reps
@@ -131,7 +131,7 @@ modules:
     type: infrastructure
     phase: part-2
     weeks: [W8]
-    status: planned
+    status: deferred
     description: >-
       设计与前端普及化、快速 UI/UX 原型与迭代。嘉宾: Gaspar Garcia (Vercel AI Research)。
       作业: Multi-stack Web App Builds
@@ -142,7 +142,7 @@ modules:
     type: infrastructure
     phase: part-3
     weeks: [W9]
-    status: planned
+    status: deferred
     description: >-
       监控与可观测性、自动化事故响应、triaging 与调试。嘉宾: Resolve.ai 团队。
 
@@ -151,6 +151,6 @@ modules:
     type: infrastructure
     phase: part-3
     weeks: [W10]
-    status: planned
+    status: deferred
     description: >-
       软件工程角色的未来、新兴 AI 编程范式、行业趋势预测。嘉宾: Martin Casado (a16z)。
