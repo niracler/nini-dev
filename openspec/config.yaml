@@ -3,22 +3,9 @@
 schema: spec-driven
 
 context: |
-  ## 项目：nini-dev
-
-  多仓库个人工作区，包含以下项目：
-
-  | 仓库 | 技术栈 | 描述 |
-  |------|--------|------|
-  | `repos/bokushi` | Astro, Tailwind CSS, Biome, Playwright | 个人博客 |
-  | `repos/nyaruko-telegram-bot` | TypeScript, Cloudflare Workers, Grammy, Hono | Telegram 机器人 |
-  | `repos/random` | Python, GitHub Actions | 月度挑战系统 |
-  | `repos/plrom` | Markdown, Shell | 个人笔记与清单 |
-  | `repos/skill` | Python, Shell | Claude Code 技能集 |
-
-  ## 开发流程
-
-  各仓库独立开发，参考各自 `CLAUDE.md` 获取项目级指导。
-  复杂变更使用 OpenSpec OPSX 流程管理。
+  本文件仅包含 openspec artifact 创建时需要的补充上下文。
+  工作区结构（仓库列表、技术栈）见 CLAUDE.md（已在 prompt 中）。
+  通用 design 结构（Context/Goals/Decisions/Risks）见 openspec 内置 schema。
 
 rules:
   proposal:
@@ -28,8 +15,6 @@ rules:
 
   design:
     - 参考 `openspec/changes/archive/` 下最近 2-3 个 change 的 design.md 结构
-    - 必须包含 Context、Goals/Non-Goals、Decisions、Risks
-    - 简单任务（单文件改动、无设计决策）可跳过 design
 
   tasks:
     - 参考 `openspec/changes/archive/` 下最近 2-3 个 change 的 tasks.md Phase 结构
