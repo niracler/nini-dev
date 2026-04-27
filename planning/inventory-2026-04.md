@@ -239,7 +239,7 @@
 
 - [ ] 系统已中断 — Random History 停在 2025-03，一年多未补 · (README.md L20-34)
 - [ ] prompt.md Node.js/TypeScript 复习计划 9 条 step 全未勾选 · (2024 年遗留模板)
-- [ ] random-manage skill PLAN.md 里 11 个 Task / 40+ step，skill 搭建未完成
+- [x] random-manage skill 搭建完成（commit `a94ffca`，mutation 集成测试 deferred 到首次实用时）
 
 ### C2. bokushi 草稿
 
