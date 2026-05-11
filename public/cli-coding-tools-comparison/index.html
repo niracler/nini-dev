@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>终端 AI 编程工具对比 — DeepSeek TUI · Codex CLI · Claude Code CLI</title>
+<style>
+:root {
+  --font-base: 1.0625rem;
+  --space-4: 1rem; --space-6: 1.5rem; --space-8: 2rem; --space-12: 3rem;
+  --radius-md: 10px; --radius-lg: 16px; --radius-full: 9999px;
+  --transition-base: 0.2s ease; --transition-slow: 0.3s ease;
+  --mw: 52rem;
+  --bg: #fffaf4; --surface: #ffffff; --muted-bg: #f8efe4;
+  --text: #2a1c17; --text2: #46342a; --text3: #5f4d42;
+  --accent: #fb8f68; --accent-d: #d67046; --accent-soft: #ffe7dc;
+  --green: #4f8b63; --yellow: #d8871d; --red: #c84c3a; --purple: #8d7bd6;
+  --border: rgba(42,28,23,0.1);
+  --shadow: 0 6px 18px rgba(47,37,25,0.08);
+}
+[data-theme="dark"] {
+  --bg: #140e0b; --surface: #1b140f; --muted-bg: #241914;
+  --text: #f8ede1; --text2: #d7c6b8; --text3: #b8a090;
+  --accent-soft: rgba(251,143,104,0.16);
+  --green: #8bcaa0; --yellow: #f3b05b; --red: #f18879; --purple: #a79fe6;
+  --border: rgba(248,237,225,0.12);
+  --shadow: 0 10px 28px rgba(0,0,0,0.32);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:"jf-openhuninn-2.0",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;
+  font-size:var(--font-base);line-height:1.75;letter-spacing:0.01em;
+  transition:background var(--transition-slow),color var(--transition-slow);
+}
+.page{max-width:var(--mw);margin:0 auto;padding:var(--space-8) var(--space-4)}
+@media(min-width:640px){.page{padding-inline:var(--space-6)}}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:var(--space-2) var(--space-4)}
+.nav-inner{max-width:var(--mw);margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-inner a{font-size:.9375rem;font-weight:600;color:var(--text3);text-decoration:none;border-radius:var(--radius-full);padding:.25rem .75rem;transition:color var(--transition-base)}
+.nav-inner a:hover{color:var(--accent)}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-full);padding:.5rem .75rem;color:var(--text2);cursor:pointer;font-size:.8125rem;transition:all var(--transition-base)}
+.theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Hero */
+.hero{margin-top:var(--space-8);margin-bottom:var(--space-12)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:var(--radius-full);font-size:.8125rem;font-weight:600;background:var(--accent-soft);color:var(--accent-d);margin-bottom:var(--space-4)}
+h1{font-size:2.25rem;font-weight:800;letter-spacing:-0.02em;line-height:1.22;margin-bottom:var(--space-4)}
+h1 em{font-style:normal;color:var(--accent-d)}
+.meta{font-size:.9375rem;color:var(--text3);margin-bottom:0}
+
+/* Section */
+.section{margin-bottom:var(--space-12)}
+.section-label{font-size:.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:var(--space-4)}
+hr.divider{border:none;border-top:1px solid var(--border);margin:var(--space-12) 0}
+
+/* Answer Box */
+.answer{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-8);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.answer::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--accent)}
+.answer h2{font-size:1.25rem;font-weight:700;display:flex;align-items:center;gap:.5rem;margin-bottom:var(--space-4)}
+.answer p,.answer li{font-size:.9375rem;line-height:1.7;color:var(--text2)}
+.answer li{margin-bottom:.25rem}
+
+/* Key Numbers Grid */
+.numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--space-4)}
+.num-card{padding:var(--space-5);border-radius:var(--radius-md);background:var(--muted-bg);border:1px solid var(--border);text-align:center}
+.num-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:.25rem}
+.num-value{font-size:1.5rem;font-weight:800;line-height:1.2}
+.num-value small{font-size:.8125rem;font-weight:400;color:var(--text3)}
+
+/* Simple Table */
+.tbl{width:100%;border-collapse:collapse;font-size:.9375rem;margin-bottom:var(--space-6)}
+.tbl thead th{text-align:left;padding:.75rem 1rem;font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);border-bottom:2px solid var(--accent-d);background:var(--muted-bg)}
+.tbl tbody td{padding:.75rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody td:first-child{font-weight:600}
+.tbl .hi{font-weight:800}
+.tbl .win{color:var(--green);font-weight:700}
+.tbl .lose{color:var(--red)}
+
+/* Callout */
+.note{margin:var(--space-6) 0;padding:1rem 1.25rem;border-radius:var(--radius-md);font-size:.9375rem;line-height:1.7;background:var(--muted-bg);border-left:4px solid var(--accent)}
+.note strong{color:var(--accent-d)}
+
+/* Insight Grid */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--space-4)}
+
+/* Scenario Cards */
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--space-4)}
+.sc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:var(--space-6);box-shadow:var(--shadow);transition:border-color var(--transition-base)}
+.sc-card:hover{border-color:var(--accent-d)}
+.sc-icon{font-size:1.5rem;margin-bottom:.5rem;display:block}
+.sc-title{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.sc-pick{display:inline-block;padding:2px 10px;border-radius:var(--radius-full);font-size:.75rem;font-weight:600;margin-bottom:.5rem}
+.pk-best{background:rgba(79,139,99,0.1);color:var(--green)}
+.pk-good{background:rgba(216,135,29,0.1);color:var(--yellow)}
+.pk-ok{background:rgba(141,123,214,0.1);color:var(--purple)}
+.pk-neutral{background:var(--muted-bg);color:var(--text3)}
+.sc-reason{font-size:.875rem;line-height:1.65;color:var(--text2)}
+
+/* Footnotes */
+.fn{border-top:1px solid var(--border);padding-top:var(--space-6);margin-top:var(--space-12)}
+.fn h2{font-size:1rem;font-weight:700;margin-bottom:var(--space-4)}
+.fn ol{list-style:none;padding:0;counter-reset:fn}
+.fn li{counter-increment:fn;font-size:.8125rem;line-height:1.7;color:var(--text3);margin-bottom:.5rem;padding-left:2rem;position:relative}
+.fn li::before{content:counter(fn);position:absolute;left:0;top:0;font-size:.6875rem;font-weight:700;color:var(--text3);width:18px;height:18px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:50%}
+.footer{margin-top:var(--space-12);padding-top:var(--space-6);border-top:1px solid var(--border);color:var(--text3);font-size:.8125rem;text-align:center}
+strong{color:var(--accent-d);font-weight:600}
+
+@media(max-width:640px){.numbers{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="../">← nini-research</a>
+    <button class="theme-btn" id="theme-toggle">🌓</button>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- ═══ Hero ═══ -->
+  <header class="hero">
+    <span class="hero-badge">📊 终端 AI 编程工具 · 决策分析</span>
+    <h1>DeepSeek TUI · Codex CLI<br>Claude Code CLI <em>选型对比</em></h1>
+    <p class="meta">2026 年 5 月 &nbsp;|&nbsp; 数据：官方文档 · 社区评测 · ccusage 真实账单 · <a href="https://she-llac.com/claude-limits">Claude 限额逆向</a></p>
+  </header>
+
+  <!-- ═══ The Answer ═══ -->
+  <section class="section">
+    <p class="section-label">结论</p>
+
+    <div class="answer">
+      <h2><span>🎯</span> 能不能取代？</h2>
+      <p style="margin-bottom:var(--space-4)"><strong style="color:var(--green);font-size:1.125rem">能，但在你的实际场景下不划算。</strong></p>
+      <p>DeepSeek TUI 功能层面覆盖 Claude Code 80%+。但你的数据（ccusage，月均 2006M Cache Read）揭示了一个反直觉的事实：</p>
+
+      <p style="margin:var(--space-4) 0;font-size:1.125rem;text-align:center">
+        <strong>V4 Pro 对标 Opus 时，Cache Read 收费 → $531/月<br>
+        Claude Max 5×，Cache Read 免费 → $100/月</strong>
+      </p>
+
+      <p>这还没算模型准确率的差距：SWE-bench Pro 上 Opus 4.7 领先 V4 Pro 近 9 个百分点。生产级代码修改中，更高的失败率意味着更多重试、更多 Token 浪费、更多等待时间。</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ═══ Key Numbers ═══ -->
+  <section class="section">
+    <p class="section-label">关键数字</p>
+
+    <div class="numbers">
+      <div class="num-card">
+        <div class="num-label">💰 你的 Claude 订阅</div>
+        <div class="num-value">$100<small>/月</small></div>
+      </div>
+      <div class="num-card">
+        <div class="num-label">📊 API 等效价值</div>
+        <div class="num-value">$1,500<small>/月（15×）</small></div>
+      </div>
+      <div class="num-card">
+        <div class="num-label" style="color:var(--red)">⚠️ V4 Pro 等效</div>
+        <div class="num-value" style="color:var(--red)">$531<small>/月（贵 5×）</small></div>
+      </div>
+      <div class="num-card">
+        <div class="num-label">📐 SWE-bench Pro</div>
+        <div class="num-value">Opus 64.3%<small> vs V4 Pro 55.4%</small></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ═══ CLI 工具对比 ═══ -->
+  <section class="section">
+    <p class="section-label">CLI 工具本身</p>
+
+    <div class="answer" style="margin-bottom:var(--space-6)">
+      <h2><span>🔧</span> 三个工具的功能差异</h2>
+      <p>模型选好之后，CLI 工具决定了<strong>怎么用</strong>。以下是影响开发体验的关键维度：</p>
+
+      <table class="tbl" style="margin-top:var(--space-4)">
+        <thead><tr><th style="width:20%">维度</th><th>DeepSeek TUI</th><th>Codex CLI</th><th>Claude Code</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="hi">运行模式</td>
+            <td>Plan（只读）/ Agent（审批）/ <strong>Yolo</strong>（自动）</td>
+            <td>Auto / Safe / 自定义审批</td>
+            <td>Plan（只读）/ Agent（审批）</td>
+          </tr>
+          <tr>
+            <td class="hi">子代理</td>
+            <td class="win">最多 20 并发，RLM 递归</td>
+            <td>2026 新增 Multi-Agent，实验性</td>
+            <td class="win">Explore / Plan / 通用，最成熟</td>
+          </tr>
+          <tr>
+            <td class="hi">上下文窗口</td>
+            <td class="win">100 万 Token — 最大</td>
+            <td>40 万 Token</td>
+            <td>20–50 万 Token（视模型）</td>
+          </tr>
+          <tr>
+            <td class="hi">Skills 技能</td>
+            <td>SKILL.md 本地文件</td>
+            <td class="lose">有限，靠 MCP 间接</td>
+            <td class="win">最成熟，丰富生态</td>
+          </tr>
+          <tr>
+            <td class="hi">IDE 集成</td>
+            <td class="lose">无 — 纯终端</td>
+            <td class="win">VS Code / Cursor / Windsurf</td>
+            <td>有限，主要靠终端</td>
+          </tr>
+          <tr>
+            <td class="hi">Git</td>
+            <td>status / diff / log / show / blame</td>
+            <td class="win">+ GitHub PR Review（付费）</td>
+            <td>+ PR 描述生成</td>
+          </tr>
+          <tr>
+            <td class="hi">MCP 协议</td>
+            <td>✅</td>
+            <td>✅ 可作 MCP Server</td>
+            <td class="win">✅ + Hooks + Slash Cmd</td>
+          </tr>
+          <tr>
+            <td class="hi">安装</td>
+            <td><code>npm i -g deepseek-tui</code> 或 Cargo</td>
+            <td><code>npm i -g @openai/codex</code> 或 Homebrew</td>
+            <td><code>npm i -g @anthropic-ai/claude-code</code></td>
+          </tr>
+          <tr>
+            <td class="hi">开源</td>
+            <td class="win">✅ Rust</td>
+            <td class="win">✅ Rust</td>
+            <td class="lose">❌ TypeScript 闭源</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note" style="margin-top:var(--space-4)">
+        <strong>功能层面，三者高度趋同。</strong>DeepSeek TUI 在上下文窗口（1M）和子代理并发（20）上甚至领先。差距在于打磨——Claude Code 的 Todo 系统、错误恢复、CLAUDE.md 配置比 DeepSeek TUI 成熟。Codex 的 IDE 集成是独占优势。
+      </div>
+    </div>
+
+    <div class="answer">
+      <h2><span>🔒</span> 供应商锁定</h2>
+      <p>三个工具都只支持自家的模型。选了 CLI 就锁定了背后的模型供应商：</p>
+      <table class="tbl" style="margin-top:var(--space-4)">
+        <thead><tr><th>工具</th><th>可用模型</th><th>锁定程度</th></tr></thead>
+        <tbody>
+          <tr><td class="hi">DeepSeek TUI</td><td>仅 DeepSeek V4（Flash / Pro）</td><td>锁定 DeepSeek API</td></tr>
+          <tr><td class="hi">Codex CLI</td><td>仅 OpenAI（GPT-5.3-Codex / Spark）</td><td>锁定 OpenAI</td></tr>
+          <tr><td class="hi">Claude Code</td><td>仅 Anthropic（Opus / Sonnet / Haiku）</td><td>锁定 Anthropic</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:var(--space-4)">迁移成本很低——三者都是 <code>npm install -g</code>。瓶颈不在工具切换，而在<strong>模型能力、定价和 cache 策略</strong>的差异。</p>
+    </div>
+  </section>
+
+
+<hr class="divider">
+
+  <!-- ═══ Why ═══ -->
+  <section class="section">
+    <p class="section-label">为什么 V4 Pro 反而更贵</p>
+
+    <div class="answer" style="margin-bottom:var(--space-6)">
+      <h2><span>🔬</span> Cache Read 是杀手锏</h2>
+      <p>你的 ccusage 数据：月均 2006M Cache Read，占总 Token 的 <strong>95%</strong>。</p>
+      <table class="tbl" style="margin-top:var(--space-4)">
+        <thead><tr><th>计费项</th><th>Claude Max 5×</th><th>DeepSeek V4 Pro API</th></tr></thead>
+        <tbody>
+          <tr><td>Cache Read（2006M/月）</td><td class="win">免费</td><td class="lose">$0.174/M → $349</td></tr>
+          <tr><td>Cache Write（94M/月）</td><td>输入价计入积分</td><td>$1.74/M → $164</td></tr>
+          <tr><td>新输入 + 输出（6.2M/月）</td><td>输入价计入积分</td><td>≈ $18</td></tr>
+          <tr><td class="hi">月费</td><td class="win hi">$100</td><td class="lose hi">$531</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:var(--space-4)">Claude 订阅把 Cache Read 全免了。这在你这种高频 agentic 场景下是决定性优势。如果 DeepSeek 未来也推出 Cache Read 免费的订阅计划，V4 Pro 会降到 ≈ $182/月——仍然贵，但至少能比了。</p>
+    </div>
+
+    <div class="answer">
+      <h2><span>📐</span> 准确率差距也在吞噬「便宜」</h2>
+      <p>SWE-bench 是目前最权威的代码能力基准：</p>
+      <table class="tbl" style="margin-top:var(--space-4)">
+        <thead><tr><th>模型</th><th>SWE-bench Verified</th><th>SWE-bench Pro（生产）</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Opus 4.7</td><td class="win">87.6%</td><td class="win">64.3%</td></tr>
+          <tr><td>DeepSeek V4 Pro（xhigh）</td><td>80.6%</td><td>55.4%</td></tr>
+          <tr><td>DeepSeek V4 Flash</td><td>79.0%</td><td>≈ 50%</td></tr>
+          <tr><td>GPT-5.3-Codex</td><td>≈ 84%</td><td>≈ 60%</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:var(--space-4)">SWE-bench Pro（多文件真实生产场景）的 8.9 个百分点差距意味着：V4 Pro 失败的次数比 Opus 多 25%。每次失败 = 至少 2× Token 重试 + 等待时间。</p>
+
+      <div class="note" style="margin-top:var(--space-4)">
+        <strong>但这不是「永远用 Opus」的理由。</strong>Forbes 的研究（"Token Paradox"）和 arxiv 的 CLEAR 框架都证明：无脑追最强模型会让成本膨胀 4–10×。答案取决于任务有多难、失败代价多大。
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ═══ How to choose ═══ -->
+  <section class="section">
+    <p class="section-label">怎么选</p>
+
+    <div class="sc-grid">
+      <div class="sc-card">
+        <span class="sc-icon">🏗️</span>
+        <h3 class="sc-title">生产级重构 / 复杂多文件</h3>
+        <span class="sc-pick pk-ok">Claude Opus 4.7</span>
+        <p class="sc-reason">SWE-bench Pro 领先 9 点。失败的代价 > 省下的 Token 费。</p>
+      </div>
+      <div class="sc-card">
+        <span class="sc-icon">💻</span>
+        <h3 class="sc-title">日常开发 / 中等复杂度</h3>
+        <span class="sc-pick pk-good">V4 Pro 或 Opus 4.6</span>
+        <p class="sc-reason">V4 Pro 80.6% 对标 Opus 4.6。但你的月用量下 Claude 订阅更划算。</p>
+      </div>
+      <div class="sc-card">
+        <span class="sc-icon">🔧</span>
+        <h3 class="sc-title">简单修改 / 单文件小改动</h3>
+        <span class="sc-pick pk-best">V4 Flash</span>
+        <p class="sc-reason">79% 成功率够用，$0.14/M 输入极便宜。失败重试成本可忽略。</p>
+      </div>
+      <div class="sc-card">
+        <span class="sc-icon">🔄</span>
+        <h3 class="sc-title">长会话 agentic（15 轮+）</h3>
+        <span class="sc-pick pk-best">V4 Flash + 按需 Opus</span>
+        <p class="sc-reason">上下文开销主导。Cursor 实践：弱模型 + 好缓存 > 追最强。</p>
+      </div>
+      <div class="sc-card">
+        <span class="sc-icon">✍️</span>
+        <h3 class="sc-title">非编程（写作/分析/研究）</h3>
+        <span class="sc-pick pk-best">V4 Pro / Flash</span>
+        <p class="sc-reason">DeepSeek 在非编程 benchmark 表现强劲，单价比 Claude 便宜 7–100×。</p>
+      </div>
+      <div class="sc-card">
+        <span class="sc-icon">🌐</span>
+        <h3 class="sc-title">国内网络 / API 受限</h3>
+        <span class="sc-pick pk-best">V4 Pro（国内直连）</span>
+        <p class="sc-reason">DeepSeek API 无需代理。这是 Codex/Claude 没有的刚需优势。</p>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:var(--space-6)">
+      <strong>对于你的具体情况：</strong>Claude Max 5× $100/月 做主引擎。DeepSeek V4 Flash 做轻量任务分流（$30–40/月）。两者互补，月均 $130–140，覆盖全场景。
+    </div>
+  </section>
+
+  <!-- ═══ Footnotes ═══ -->
+  <section class="fn">
+    <h2>数据来源</h2>
+    <ol>
+      <li><strong>DeepSeek API 定价</strong> — <a href="https://api-docs.deepseek.com/quick_start/pricing/">api-docs.deepseek.com</a>（2026.04）</li>
+      <li><strong>Claude 定价 &amp; 限额逆向</strong> — <a href="https://claude.com/pricing">claude.com/pricing</a>；<a href="https://she-llac.com/claude-limits">she-llac.com/claude-limits</a>（SSE 浮点数 + Stern-Brocot 逆向）</li>
+      <li><strong>Codex CLI / 定价</strong> — <a href="https://github.com/openai/codex">GitHub</a>；<a href="https://developers.openai.com/codex/pricing">Codex Pricing</a></li>
+      <li><strong>真实用量</strong> — <code>npx ccusage@latest</code> 实际运行输出（2026.05.11）</li>
+      <li><strong>SWE-bench 基准</strong> — <a href="https://codersera.com/blog/deepseek-v4-vs-claude-opus-4-7/">codersera.com</a>；<a href="https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026">buildfastwithai.com</a></li>
+      <li><strong>Token Paradox / CLEAR 框架</strong> — <a href="https://www.forbes.com/sites/saharhashmi/2025/11/03/agentic-ais-token-paradox-when-cheaper-means-more-expensive/">Forbes</a>（2025.11）；arxiv 2511.14136</li>
+      <li><strong>方法论</strong> — 横纵分析法（数字生命卡兹克）。分析时间：2026.05.11。</li>
+    </ol>
+  </section>
+
+  <footer class="footer">横纵分析法（数字生命卡兹克）· 2026 年 5 月</footer>
+</main>
+
+<script>
+const h=document.documentElement;
+if(localStorage.getItem('theme')==='dark')h.setAttribute('data-theme','dark');
+document.getElementById('theme-toggle').addEventListener('click',()=>{
+  const d=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',d?'':'dark');
+  localStorage.setItem('theme',d?'light':'dark');
+});
+</script>
+</body>
+</html>
