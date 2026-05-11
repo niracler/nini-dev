@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 算力饥渴：内存暴涨、SORA 之死与中美约束链</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+/* ── Bokushi Design Tokens (inline) ── */
+:root {
+  --font-size-2xs: 0.6875rem;
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-base: 1.0625rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.875rem;
+  --font-size-3xl: 2.25rem;
+  --line-height-base: 1.75;
+  --line-height-compact: 1.5;
+  --line-height-tight: 1.22;
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem; --space-12: 3rem;
+  --radius-xs: 2px; --radius-sm: 6px; --radius-md: 10px;
+  --radius-lg: 16px; --radius-full: 9999px;
+  --transition-base: 0.2s ease; --transition-slow: 0.3s ease;
+  --layout-max-width: 72rem;
+  /* Light theme */
+  --color-bg-page: #fffaf4;
+  --color-bg-surface: #ffffff;
+  --color-bg-muted: #f8efe4;
+  --color-text-primary: #2a1c17;
+  --color-text-primary-rgb: 42 28 23;
+  --color-text-secondary: #46342a;
+  --color-text-muted: #5f4d42;
+  --color-text-inverse: #fef9f0;
+  --color-border: #dcc9ba;
+  --color-border-soft: rgba(42, 28, 23, 0.1);
+  --color-accent: #fb8f68;
+  --color-accent-dark: #d67046;
+  --color-accent-soft: #ffe7dc;
+  --color-accent-rgb: 251 143 104;
+  --color-accent-tint: rgba(251, 143, 104, 0.16);
+  --color-success: #4f8b63;
+  --color-warning: #d8871d;
+  --color-danger: #c84c3a;
+  --color-note: #8d7bd6;
+  --shadow-soft: 0 6px 18px rgba(47, 37, 25, 0.08);
+  --shadow-strong: 0 16px 36px rgba(47, 37, 25, 0.14);
+  --color-code-bg: #f6f8fa;
+  /* Chart palette */
+  --chart-1: #fb8f68;
+  --chart-2: #8d7bd6;
+  --chart-3: #4f8b63;
+  --chart-4: #d8871d;
+  --chart-5: #c84c3a;
+  --chart-6: #5ba3cf;
+}
+
+[data-theme="dark"] {
+  --color-bg-page: #140e0b;
+  --color-bg-surface: #1b140f;
+  --color-bg-muted: #241914;
+  --color-text-primary: #f8ede1;
+  --color-text-primary-rgb: 248 237 225;
+  --color-text-secondary: #d7c6b8;
+  --color-text-muted: #b8a090;
+  --color-text-inverse: #1b120c;
+  --color-border: #3b2b22;
+  --color-border-soft: rgba(248, 237, 225, 0.12);
+  --color-accent-soft: rgba(251, 143, 104, 0.16);
+  --color-accent-tint: rgba(251, 143, 104, 0.22);
+  --color-success: #8bcaa0;
+  --color-warning: #f3b05b;
+  --color-danger: #f18879;
+  --color-note: #a79fe6;
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.32);
+  --shadow-strong: 0 24px 42px rgba(0, 0, 0, 0.44);
+  --color-code-bg: #1e1e2e;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: "jf-openhuninn-2.0", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Helvetica Neue", Arial, "Noto Sans SC", "Noto Sans", sans-serif;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  letter-spacing: 0.01em;
+  transition: background var(--transition-slow), color var(--transition-slow);
+}
+
+/* ── Layout ── */
+.page-shell {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+}
+@media (min-width: 640px) { .page-shell { padding-inline: var(--space-6); } }
+@media (min-width: 1024px) { .page-shell { padding-inline: var(--space-8); } }
+
+/* ── Navigation ── */
+.nav-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in srgb, var(--color-bg-page) 85%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border-soft);
+  padding: var(--space-2) var(--space-4);
+}
+.nav-inner {
+  max-width: 52rem;
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--space-2);
+}
+.nav-links {
+  display: flex; gap: var(--space-1); flex-wrap: wrap;
+}
+.nav-links a {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+}
+.theme-btn {
+  background: none; border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-text-secondary);
+  cursor: pointer; font-size: var(--font-size-xs);
+  transition: all var(--transition-base);
+}
+.theme-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* ── Hero ── */
+.hero {
+  padding: var(--space-12) 0 var(--space-8);
+  text-align: center;
+}
+.hero h1 {
+  font-size: clamp(1.875rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+.hero h1 .accent { color: var(--color-accent); }
+.hero .subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  max-width: 52ch; margin: 0 auto var(--space-8);
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin: 0 auto;
+}
+.stat-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-3);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+.stat-card .number {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-accent);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.stat-card .label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+  line-height: var(--line-height-compact);
+}
+
+/* ── Sections ── */
+.section {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-soft);
+}
+.section-header {
+  margin-bottom: var(--space-6);
+}
+.section-header .eyebrow {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+.section-header h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: var(--line-height-tight);
+}
+.section-header p {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2);
+  max-width: 68ch;
+}
+
+/* ── Cards ── */
+.surface-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: var(--space-6);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.surface-card:hover {
+  border-color: var(--color-border);
+}
+.card-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+.card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+/* ── Chart containers ── */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 300px;
+}
+.chart-wrap canvas { width: 100% !important; height: 100% !important; }
+.chart-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+.chart-caption {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+  line-height: var(--line-height-compact);
+}
+
+/* ── Timeline ── */
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before {
+  content: ""; position: absolute; left: 0.5rem; top: 0; bottom: 0;
+  width: 2px; background: var(--color-border);
+}
+.timeline-item {
+  position: relative; padding-bottom: var(--space-6);
+}
+.timeline-item::before {
+  content: ""; position: absolute; left: -1.625rem; top: 0.35rem;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg-page);
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+.timeline-item.critical::before {
+  background: var(--color-danger);
+  box-shadow: 0 0 0 2px var(--color-danger);
+}
+.timeline-item.success::before {
+  background: var(--color-success);
+  box-shadow: 0 0 0 2px var(--color-success);
+}
+.timeline-date {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.timeline-title {
+  font-weight: 700;
+  margin: var(--space-1) 0;
+}
+.timeline-body {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* ── Comparison bars ── */
+.compare-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+.compare-label {
+  flex: 0 0 120px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: right;
+}
+.compare-bar-wrap {
+  flex: 1; height: 28px;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+.compare-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; align-items: center;
+  padding-left: var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-inverse);
+  white-space: nowrap;
+}
+.compare-value {
+  flex: 0 0 80px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-align: left;
+  color: var(--color-text-primary);
+}
+
+/* ── Pill ── */
+.pill {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-bg-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+.pill.accent {
+  background: var(--color-accent-tint);
+  border-color: color-mix(in srgb, var(--color-accent) 32%, var(--color-border-soft));
+  color: var(--color-accent);
+}
+.pill.danger {
+  background: color-mix(in srgb, var(--color-danger) 15%, var(--color-bg-surface));
+  border-color: color-mix(in srgb, var(--color-danger) 32%, var(--color-border-soft));
+  color: var(--color-danger);
+}
+.pill.success {
+  background: color-mix(in srgb, var(--color-success) 15%, var(--color-bg-surface));
+  border-color: color-mix(in srgb, var(--color-success) 32%, var(--color-border-soft));
+  color: var(--color-success);
+}
+
+/* ── Detail/expand ── */
+details.expandable {
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg-surface) 95%, var(--color-accent-soft) 5%);
+  box-shadow: var(--shadow-soft);
+  margin-top: var(--space-4);
+  overflow: hidden;
+  transition: border-color var(--transition-base);
+}
+details.expandable:hover { border-color: var(--color-border); }
+details.expandable[open] {
+  border-color: color-mix(in srgb, var(--color-border) 60%, var(--color-accent) 40%);
+}
+details.expandable summary {
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  list-style: none;
+  display: flex; align-items: center; gap: var(--space-2);
+  user-select: none;
+}
+details.expandable summary::-webkit-details-marker { display: none; }
+details.expandable summary::before {
+  content: ""; flex-shrink: 0;
+  width: 0.5em; height: 0.5em;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.25s ease;
+}
+details.expandable[open] summary::before { transform: rotate(45deg); }
+details.expandable .detail-body {
+  padding: 0 var(--space-4) var(--space-4);
+  border-top: 1px solid var(--color-border-soft);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+details.expandable .detail-body p + p { margin-top: var(--space-3); }
+details.expandable .detail-body a {
+  color: var(--color-accent-dark);
+  text-decoration-color: color-mix(in srgb, var(--color-accent-dark) 40%, transparent);
+}
+
+/* ── Key insight block ── */
+.insight-block {
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: rgba(var(--color-accent-rgb), 0.08);
+  padding: var(--space-4) var(--space-5);
+  margin: var(--space-4) 0;
+  color: var(--color-text-secondary);
+}
+.insight-block strong { color: var(--color-accent); }
+
+/* ── Big number highlight ── */
+.big-vs {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--space-6); flex-wrap: wrap;
+  padding: var(--space-6) 0;
+}
+.big-vs .side { text-align: center; }
+.big-vs .big-num {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.big-vs .big-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+.big-vs .vs {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-muted);
+  font-weight: 300;
+}
+
+/* ── Scenario cards ── */
+.scenario-card {
+  border-top: 4px solid var(--color-border);
+}
+.scenario-card.most-likely { border-top-color: var(--color-accent); }
+.scenario-card.dangerous { border-top-color: var(--color-danger); }
+.scenario-card.optimistic { border-top-color: var(--color-success); }
+
+/* ── Source list ── */
+.source-list { columns: 2; column-gap: var(--space-6); }
+@media (max-width: 768px) { .source-list { columns: 1; } }
+.source-list li {
+  break-inside: avoid;
+  padding: var(--space-1) 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  list-style: none;
+  line-height: var(--line-height-compact);
+}
+.source-list a { color: var(--color-accent-dark); text-decoration: none; }
+.source-list a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .hero-stats { grid-template-columns: repeat(2, 1fr) !important; }
+  .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; }
+  .compare-label { flex: 0 0 80px; font-size: var(--font-size-xs); }
+  .big-vs { flex-direction: column; gap: var(--space-3); }
+  .chart-wrap { aspect-ratio: 4 / 3; min-height: 250px; }
+  .nav-links { display: none; }
+}
+
+/* ── Scroll animation ── */
+.fade-in {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Markdown-like inline ── */
+.text-accent { color: var(--color-accent); }
+.text-danger { color: var(--color-danger); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.fw-800 { font-weight: 800; }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.flex-gap-2 { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+/* ── Prose sections (article-style narrative) ── */
+.prose-section {
+  max-width: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+.prose-section p { margin: 0; }
+.prose-section p + p { margin-top: var(--space-4); }
+.prose-section strong { color: var(--color-accent); font-weight: 600; }
+.prose-section a { color: var(--color-accent-dark); }
+.prose-section h3 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+.prose-section ul, .prose-section ol {
+  padding-left: var(--space-6);
+  margin: var(--space-3) 0;
+  display: grid; gap: var(--space-2);
+}
+.prose-section li { line-height: var(--line-height-compact); }
+.prose-section li::marker { color: var(--color-text-muted); }
+
+/* Chart inside prose — constrained width, centered */
+.prose-chart {
+  margin: var(--space-6) auto;
+  max-width: 100%;
+}
+</style>
+</head>
+<body>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <div class="nav-links">
+      <a href="#demand">需求冲击</a>
+      <a href="#constraints">约束链</a>
+      <a href="#casualties">牺牲品</a>
+      <a href="#arms-race">军备竞赛</a>
+      <a href="#another-way">另一条路</a>
+      <a href="#scenarios">未来推演</a>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">Dark</button>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div class="page-shell">
+<section class="hero" id="top">
+  <h1>AI 的算力饥渴<br>正在<span class="accent">重塑一切</span></h1>
+  <p class="subtitle">从内存暴涨到 SORA 之死，从 OpenAI 万亿采购到 DeepSeek 五层降本，从美国电网告急到中国另辟蹊径。同一条约束链上，不同的玩家走出了截然不同的路。</p>
+  <div class="hero-stats">
+    <div class="stat-card"><div class="number">4.5x</div><div class="label">NAND 三季度累计涨幅</div></div>
+    <div class="stat-card"><div class="number">$210万</div><div class="label">SORA 全生命周期总收入</div></div>
+    <div class="stat-card"><div class="number">$1.15万亿</div><div class="label">OpenAI 基础设施承诺</div></div>
+    <div class="stat-card"><div class="number">89x</div><div class="label">Claude vs DeepSeek API 价差</div></div>
+    <div class="stat-card"><div class="number">7 GW</div><div class="label">美国延迟/取消的数据中心</div></div>
+    <div class="stat-card"><div class="number">543 GW</div><div class="label">中国 2024 新增发电容量</div></div>
+  </div>
+</section>
+
+<!-- 调研起点 -->
+<section class="section fade-in">
+  <div class="prose-section">
+    <p style="color:var(--color-text-muted);font-size:var(--font-size-sm)"><strong>调研起点</strong>：这篇报告源于一个朴素的问题——最近半年内存为什么涨得这么凶？SORA 被 OpenAI 放弃是不是也因为这个？调研过程中问题不断展开：AI 的算力成本跟电费有多大关系？DeepSeek 的低价到底靠什么？Claude 和 OpenAI 的 API 定价里藏了多少利润？美国电网扩不动是不是 AI 发展的根本瓶颈？这些问题最终汇成一条线索：<strong>AI 对算力的饥渴正在拧紧一根全球性的约束链，链上每个环节都在发生不同的故事。</strong></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     第一幕：需求冲击
+     ═══════════════════════════════════════ -->
+<section class="section fade-in" id="demand">
+  <div class="section-header">
+    <div class="eyebrow">第一幕</div>
+    <h2>需求冲击：AI 吃掉了消费级内存产线</h2>
+  </div>
+
+  <div class="prose-section">
+    <p>内存芯片是人类工业史上最具周期性的产品。三家公司（Samsung、SK Hynix、Micron）控制着全球约 95% 的 DRAM 产能，过去三十年反复经历<strong>扩产 → 过剩 → 暴跌 → 减产 → 短缺 → 暴涨</strong>的循环，每轮 3-5 年（<a href="https://www.uncoveralpha.com/p/every-memory-cycle-ends-the-same" target="_blank">Uncover Alpha</a>）。但 2024 年开始的这一轮可能真的不一样了。</p>
+
+    <p>关键在于一种叫 <strong>HBM（高带宽内存）</strong>的特殊内存。HBM 通过硅通孔（TSV）把多层 DRAM 芯片垂直叠在一起，带宽远超传统 DDR（<a href="https://en.wikipedia.org/wiki/High_Bandwidth_Memory" target="_blank">Wikipedia</a>）。如果 DDR5 是四车道公路，HBM 就是 1024 车道立交桥。AI 芯片需要它来快速读取模型参数——GPT-4 据估计有 1.8 万亿参数（<a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a>），每次推理都要从 HBM 中读取这些数据。</p>
+
+    <p>致命的问题是：<strong>生产 1 GB 的 HBM 需要消耗 3 倍于 DDR5 的晶圆面积</strong>（<a href="https://www.cnbc.com/2026/01/10/micron-ai-memory-shortage-hbm-nvidia-samsung.html" target="_blank">Micron 财报 / CNBC</a>）。2026 年 AI 相关内存预计消耗全球 DRAM 晶圆产能的 20%（<a href="https://www.trendforce.com/news/2025/12/26/news-ai-reportedly-to-consume-20-of-global-dram-wafer-capacity-in-2026-hbm-gddr7-lead-demand/" target="_blank">TrendForce</a>）。每一片分配给 HBM 的晶圆，就是一片从笔记本内存、手机内存中拿走的晶圆。这不是传统的供需错配，而是晶圆产能的结构性再分配。</p>
+  </div>
+
+  <div class="prose-chart surface-card">
+    <div class="chart-title">DRAM 价格周期示意 (1995-2026)</div>
+    <div class="chart-wrap"><canvas id="chartCycle"></canvas></div>
+    <div class="chart-caption">数据来源：<a href="https://www.trendforce.com" target="_blank">TrendForce</a>, <a href="https://www.techinsights.com" target="_blank">TechInsights</a>, <a href="https://www.idc.com" target="_blank">IDC</a>。每个低谷对应一次危机（亚洲金融、互联网泡沫、全球金融），每个高峰对应一波新需求（PC、手机、云计算）。2024 年开始的这一轮由 AI 驱动。</div>
+  </div>
+
+  <div class="prose-section mt-4">
+    <p>具体涨幅：DDR5 32GB 套件从 $95 涨到 $184（<a href="https://sourceability.com/post/tracking-memory-price-increases-across-the-last-several-quarters" target="_blank">Sourceability</a>）；DDR5 芯片单价从 2025 年 9 月的 $6.84 涨到 12 月的 $27.20（接近 4 倍）。NAND 更猛——<a href="https://www.tomshardware.com/pc-components/ssds/phison-ceo-confirms-nand-prices-have-more-than-doubled-and-will-continue-to-rise-all-2026-production-already-sold-out-ssds-facing-pricing-apocalypse-throughout-2027" target="_blank">Phison CEO 确认 6 个月内翻倍</a>，Kingston 报告年涨 246%。2026 年第一季度 DRAM 合约价单季环比涨 55-60%，<a href="https://www.trendforce.com/presscenter/news/20251211-12831.html" target="_blank">TrendForce 分析师 Tom Hsu 用了「前所未有」来形容</a>。消费者能感知的影响：2TB NVMe SSD 从 $120-150 涨到 $300-480，<a href="https://www.trendforce.com/news/2025/12/05/exclusive-memory-crunch-hits-pcs-dell-hikes-prices-15-20-mid-december-lenovo-from-january-2026/" target="_blank">Dell 终端产品涨价 15-20%</a>。</p>
+
+    <p>与此同时，每一代 AI 芯片对 HBM 的需求几乎翻倍：H100 搭载 80 GB，H200 升到 141 GB，B200 到 192 GB，Vera Rubin 将达到 288 GB（<a href="https://introl.com/blog/h100-vs-h200-vs-b200-choosing-the-right-nvidia-gpus-for-your-ai-workload" target="_blank">Introl</a>）。HBM 现在占 AI 加速卡制造成本的 30-40%——NVIDIA B200 上 HBM 的成本约 $2400，已超过逻辑芯片本身（<a href="https://intuitionlabs.ai/articles/hbm-vs-ddr-memory-comparison" target="_blank">IntuitionLabs</a>）。</p>
+  </div>
+
+  <div class="card-grid card-grid-2 mt-4">
+    <div class="surface-card">
+      <div class="chart-title">HBM 各代带宽增长 (GB/s)</div>
+      <div class="chart-wrap" style="aspect-ratio:4/3"><canvas id="chartHBM"></canvas></div>
+      <div class="chart-caption">来源：JEDEC 标准、<a href="https://news.skhynix.com" target="_blank">SK Hynix</a></div>
+    </div>
+    <div class="surface-card">
+      <div class="chart-title">AI 芯片单卡 HBM 容量 (GB)</div>
+      <div class="chart-wrap" style="aspect-ratio:4/3"><canvas id="chartGPUMemory"></canvas></div>
+      <div class="chart-caption">来源：<a href="https://www.nvidia.com" target="_blank">NVIDIA</a>, <a href="https://www.amd.com" target="_blank">AMD</a>, <a href="https://cloud.google.com/tpu" target="_blank">Google Cloud</a></div>
+    </div>
+  </div>
+
+  <details class="expandable">
+    <summary>HBM 市场的三国杀：SK Hynix / Samsung / Micron</summary>
+    <div class="detail-body">
+      <p><strong>SK Hynix</strong>：2025Q1 以 36% 份额首次超越 Samsung 成为全球 DRAM 第一。HBM 细分市场占 70%+。十年 TSV 技术积累 + NVIDIA 深度绑定（约 90% 的 HBM 来自 SK Hynix）。</p>
+      <p><strong>Samsung</strong>：HBM3E 验证在 NVIDIA 那里反复失败（散热/功耗问题），直到 2025.09 才通过。份额从 2024 年的 39% 跌到 17%，一度被 Micron 反超。</p>
+      <p><strong>Micron</strong>：从 2024 年的 7% 增长到 2025Q2 的 21%，率先量产 1-gamma 制程。</p>
+      <p>来源：<a href="https://counterpointresearch.com" target="_blank">Counterpoint</a>, <a href="https://www.cnbc.com" target="_blank">CNBC</a>, <a href="https://www.kedglobal.com" target="_blank">KED Global</a></p>
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════════════════
+     第二幕：约束链
+     ═══════════════════════════════════════ -->
+<section class="section fade-in" id="constraints">
+  <div class="section-header">
+    <div class="eyebrow">第二幕</div>
+    <h2>约束链：封装、内存、电力——一根越拧越紧的链条</h2>
+  </div>
+
+  <div class="prose-section">
+    <p>AI 基础设施的扩张不是被单一瓶颈卡住的，而是被一条串联的约束链锁住的。理解这条链的结构，比知道任何一个数字更重要。</p>
+
+    <p><a href="https://epoch.ai/data-insights/ai-chip-supply-chain-constraints" target="_blank">Epoch AI 的量化分析</a>最清晰：2025 年四大 AI 芯片设计公司消耗了全球 CoWoS 先进封装产能的 <strong>>90%</strong> 和 HBM 供应的 <strong>>90%</strong>，但只消耗了先进逻辑晶圆制造产能的 <strong>~12%</strong>。瓶颈不在芯片本身，在封装和内存。即使芯片设计好了、HBM 也有了，如果没有 CoWoS 封装把它们组合起来，就是一堆散件（<a href="https://medium.com/@Elongated_musk/cowos-not-hbm-is-the-real-ai-supply-bottleneck-d0ae8f3f7ce4" target="_blank">详细分析</a>）。</p>
+
+    <p>但这条链在动态移动。TSMC 的 CoWoS 产能正在从 35K 晶圆/月扩到 130K 晶圆/月（<a href="https://info.fusionww.com/blog/inside-the-ai-bottleneck-cowos-hbm-and-2-3nm-capacity-constraints-through-2027" target="_blank">Fusion Worldwide</a>）。随着封装和内存逐步追上来，<strong>电力正在变成下一个 binding constraint</strong>。Satya Nadella 在 2026 年说：「最大的问题不是算力不够，而是电力不够。」（<a href="https://www.cnn.com/2026/04/23/business/ai-compute-power-electricity-grid" target="_blank">CNN</a>）</p>
+  </div>
+
+  <div class="surface-card mt-4 mb-4">
+    <div class="chart-title">各约束的紧张程度与解决时间线</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:var(--font-size-sm)">
+      <thead><tr style="background:var(--color-accent-tint)">
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">约束</th>
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">2026 紧张度</th>
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">靠钱加速？</th>
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">解决时间线</th>
+      </tr></thead>
+      <tbody style="color:var(--color-text-secondary)">
+        <tr style="border-bottom:1px solid var(--color-border-soft)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">CoWoS 先进封装</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-danger)">极紧——当前最紧</strong></td><td style="padding:var(--space-2) var(--space-3)">部分（TSMC 4x 扩产中）</td><td style="padding:var(--space-2) var(--space-3)">1-2 年</td></tr>
+        <tr style="border-bottom:1px solid var(--color-border-soft);background:var(--color-bg-muted)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">HBM 内存</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-danger)">极紧</strong>（售罄到 2026 底）</td><td style="padding:var(--space-2) var(--space-3)">部分（下订单 + 建厂）</td><td style="padding:var(--space-2) var(--space-3)">1-3 年</td></tr>
+        <tr style="border-bottom:1px solid var(--color-border-soft)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">逻辑芯片制造</td><td style="padding:var(--space-2) var(--space-3)"><span style="color:var(--color-success)">宽松</span>（只用了 12%）</td><td style="padding:var(--space-2) var(--space-3)">能</td><td style="padding:var(--space-2) var(--space-3)">2-3 年</td></tr>
+        <tr style="background:var(--color-bg-muted)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">电力 / 电网</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-warning)">正在收紧</strong>（7/12 GW 延迟）</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-danger)">基本不能</strong></td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-danger)">5-10 年</strong></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="chart-caption mt-4">来源：<a href="https://epoch.ai" target="_blank">Epoch AI</a>, <a href="https://info.fusionww.com" target="_blank">Fusion Worldwide</a>, <a href="https://www.powermag.com" target="_blank">Power Magazine</a>, <a href="https://www.tomshardware.com" target="_blank">Tom's Hardware</a></div>
+  </div>
+
+  <div class="prose-section">
+    <h3>美国电网：去工业化的代价</h3>
+    <p>芯片和内存的产能可以靠下订单、付钱来解决（工厂在韩国、台湾，供应链是全球化的）。但数据中心必须部署在本土电网上，而美国的电网扩容能力在去工业化之后严重退化：</p>
+    <ul>
+      <li>2026 年计划上线的 12 GW 数据中心容量中，只有 5 GW 实际在建，<strong>7 GW 延迟或取消</strong>（<a href="https://tech-insider.org/us-ai-data-center-delays-cancellations-7gw-capacity-crisis-2026/" target="_blank">Tech Insider</a>）</li>
+      <li>高压变压器交货期从疫情前 24-30 个月延长到 <strong>5 年</strong>。美国只生产自用 20%，<strong>中国控制全球 60% 产能</strong>（<a href="https://www.powermag.com/transformers-in-2026-shortage-scramble-or-self-inflicted-crisis/" target="_blank">Power Magazine</a>）</li>
+      <li>弗吉尼亚并网排队等待时间 <strong>7 年</strong>（<a href="https://www.bloomberg.com/news/articles/2024-08-29/data-centers-face-seven-year-wait-for-power-hookups-in-virginia" target="_blank">Bloomberg</a>），PJM 容量市场拍卖价格三连涨（$29→$270→$333/MW-day）（<a href="https://www.utilitydive.com/news/pjm-interconnection-capacity-auction-data-center/808264/" target="_blank">Utility Dive</a>）</li>
+      <li>数据中心建设周期 12-18 个月，但变压器采购 5 年、核电超 10 年。<strong>时间错配，资本解决不了</strong></li>
+    </ul>
+    <p>Gartner 预测到 2027 年电力短缺将限制 <strong>40%</strong> 的 AI 数据中心。Morgan Stanley 估计 2025-2028 年美国面临 <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/half-of-planned-us-data-center-builds-have-been-delayed-or-canceled-growth-limited-by-shortages-of-power-infrastructure-and-parts-from-china-the-ai-build-out-flips-the-breakers" target="_blank">55 GW 电力供应缺口</a>。</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     第三幕：牺牲品
+     ═══════════════════════════════════════ -->
+<section class="section fade-in" id="casualties">
+  <div class="section-header">
+    <div class="eyebrow">第三幕</div>
+    <h2>牺牲品：内存涨价让消费者买单，SORA 因算力争夺而死</h2>
+  </div>
+
+  <div class="prose-section">
+    <p>约束链收紧的第一批牺牲品，是所有使用内存的消费产品。30TB 企业 SSD 从 $3,062 涨到 $11,000，Dell 终端产品涨价 15-20%，<a href="https://www.idc.com/resource-center/blog/global-memory-shortage-crisis-market-analysis-and-the-potential-impact-on-the-smartphone-and-pc-markets-in-2026/" target="_blank">TrendForce 将 2026 年笔电出货预期从增长 1.7% 下调至下降 2.4%</a>。低端手机可能被迫回退到 4GB 内存。</p>
+
+    <p>但更戏剧性的牺牲品是 SORA。</p>
+
+    <p>2024 年 2 月 OpenAI 发布 SORA 的 demo 视频，整个互联网为之震撼。但每段 10 秒视频需要约 <strong>40 分钟 GPU 时间</strong>（4 个 GPU 并行跑 8-10 分钟），成本约 $1.30（<a href="https://medium.com/@shubhamnv2/openai-sora-shutdown-15m-day-costs-2-1m-revenue-the-full-story-088380118243" target="_blank">Cantor Fitzgerald 分析师估算</a>）。以 450 万用户、25% 日活、日均 10 段计算，<strong>日均成本约 $1500 万</strong>。而 SORA 从上线到关停的全部应用内购收入——<a href="https://www.remio.ai/post/the-real-sora-cost-openai-s-5-billion-ai-video-problem" target="_blank">$210 万</a>（Appfigures 数据）。不是每月，是总计。</p>
+  </div>
+
+  <div class="big-vs">
+    <div class="side"><div class="big-num text-danger">$1500万/天</div><div class="big-label">SORA 峰值日均成本</div></div>
+    <div class="vs">vs</div>
+    <div class="side"><div class="big-num text-success">$210万</div><div class="big-label">全生命周期总收入</div></div>
+  </div>
+
+  <div class="prose-section">
+    <p>但 SORA 自身的亏损只是内因。真正让 OpenAI 在 2026 年 3 月动刀的催化剂，是一个外部事件：<strong>Anthropic 的 Claude Code 在编码领域的爆发式增长</strong>。</p>
+
+    <p>2025 年 5 月 Claude Code 发布，6 个月内达到 10 亿美元 ARR（<a href="https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/" target="_blank">SaaStr</a>）。到 2026 年 2 月超过 25 亿美元。Anthropic 整体 ARR 暴涨到 300 亿美元，<strong><a href="https://venturebeat.com/technology/anthropic-says-it-hit-a-30-billion-revenue-run-rate-after-crazy-80x-growth" target="_blank">超越了 OpenAI 的 250 亿</a></strong>。OpenAI 企业 API 份额从约 50% 跌到 25%。<a href="https://www.wsj.com" target="_blank">WSJ</a> 获取了 CEO Fidji Simo 的全员会议记录：她把 Anthropic 的崛起称为「wake-up call」，宣布砍掉所有<a href="https://futurism.com/artificial-intelligence/openai-cutting-projects" target="_blank">「side quests」</a>。<strong>八天后，<a href="https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation" target="_blank">SORA 正式关停</a>。</strong></p>
+  </div>
+
+  <div class="prose-chart surface-card">
+    <div class="chart-title">AI 编码工具 ARR 对比 vs SORA 总收入（对数刻度）</div>
+    <div class="chart-wrap" style="aspect-ratio:2/1;min-height:250px"><canvas id="chartCodeVsSora"></canvas></div>
+    <div class="chart-caption">$210 万在 $25 亿旁边几乎不可见。来源：<a href="https://www.saastr.com" target="_blank">SaaStr</a>, <a href="https://venturebeat.com" target="_blank">VentureBeat</a>, <a href="https://sacra.com" target="_blank">Sacra</a>, Appfigures</div>
+  </div>
+
+  <div class="prose-section mt-4">
+    <p>视频生成为什么比文本贵 1000 倍？5 秒 24fps 视频 = 120 帧，每帧需要空间一致性 + 帧间时间一致性。处理超过 8 万个 token，attention 操作占推理时间 85% 以上，二次方缩放。而且视频生成高度依赖<strong>内存带宽</strong>而非纯 FLOPS，恰好撞上 HBM 最紧缺的时点。</p>
+  </div>
+
+  <div class="prose-chart surface-card">
+    <div class="chart-title">每模态单次请求成本（对数刻度）</div>
+    <div class="chart-wrap" style="aspect-ratio:2/1;min-height:200px"><canvas id="chartCostPerRequest"></canvas></div>
+    <div class="chart-caption">ChatGPT 查询 ~$0.005，DALL-E 图像 ~$0.03，SORA 视频 ~$1.30。差距两到三个数量级。来源：<a href="https://www.cantorfitzgerald.com" target="_blank">Cantor Fitzgerald</a>, <a href="https://epoch.ai" target="_blank">Epoch AI</a></div>
+  </div>
+
+  <details class="expandable">
+    <summary>SORA 生死时间线：从 App Store 第一到关停，共 6 个月</summary>
+    <div class="detail-body">
+      <p><strong>2024.02</strong> Demo 发布 → <strong>2024.12</strong> 正式上线 Plus/Pro → <strong>2025.10</strong> 负责人承认经济不可持续 → <strong>2025.12</strong> Disney 10 亿美元合作崩盘 → <strong>2026.02</strong> 下载量暴跌 66% → <strong>2026.03.16</strong> Fidji Simo 全员会议「no more side quests」→ <strong>2026.03.24</strong> 正式关停</p>
+      <p>来源：<a href="https://help.openai.com/en/articles/20001152" target="_blank">OpenAI 官方</a>, <a href="https://www.wsj.com" target="_blank">WSJ</a>, <a href="https://the-decoder.com" target="_blank">The Decoder</a></p>
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════════════════
+     第四幕：军备竞赛
+     ═══════════════════════════════════════ -->
+<section class="section fade-in" id="arms-race">
+  <div class="section-header">
+    <div class="eyebrow">第四幕</div>
+    <h2>军备竞赛：OpenAI 的万亿采购与供应链垂直整合</h2>
+  </div>
+
+  <div class="prose-section">
+    <p>面对约束链的挤压和 Anthropic 的竞争压力，OpenAI 的应对是前所未有的垂直整合——从「微软的最大客户」变成「自己造芯片、自己建数据中心、直接跟内存厂签合同」。三条路径同时推进：</p>
+  </div>
+
+  <div class="surface-card mb-4">
+    <div class="chart-title">三条算力获取路径</div>
+    <svg viewBox="0 0 900 420" style="width:100%;height:auto;font-family:inherit" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="10" width="260" height="400" rx="12" fill="var(--color-bg-muted)" stroke="var(--color-border)" stroke-width="1.5"/>
+      <text x="150" y="42" text-anchor="middle" fill="var(--color-accent)" font-weight="800" font-size="15">路径 A：云租赁</text>
+      <rect x="55" y="60" width="190" height="38" rx="8" fill="var(--color-accent-tint)" stroke="var(--color-accent)" stroke-width="1.2"/>
+      <text x="150" y="84" text-anchor="middle" fill="var(--color-text-primary)" font-size="12" font-weight="600">HBM 厂 → NVIDIA → 云厂商</text>
+      <line x1="150" y1="98" x2="150" y2="128" stroke="var(--color-text-muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+      <rect x="55" y="128" width="190" height="38" rx="8" fill="var(--color-accent)" stroke="none"/>
+      <text x="150" y="152" text-anchor="middle" fill="var(--color-text-inverse)" font-size="13" font-weight="700">OpenAI 租用</text>
+      <text x="150" y="190" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">Azure $2500亿 + AWS $1380亿</text>
+      <text x="150" y="206" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">+ Oracle $3000亿 + CoreWeave $224亿</text>
+      <text x="150" y="228" text-anchor="middle" fill="var(--color-accent)" font-size="12" font-weight="700">合计 ~$7100 亿</text>
+      <rect x="310" y="10" width="260" height="400" rx="12" fill="var(--color-bg-muted)" stroke="var(--color-border)" stroke-width="1.5"/>
+      <text x="440" y="42" text-anchor="middle" fill="var(--color-note)" font-weight="800" font-size="15">路径 B：Stargate 自建</text>
+      <rect x="345" y="60" width="190" height="38" rx="8" fill="color-mix(in srgb, var(--color-note) 15%, var(--color-bg-surface))" stroke="var(--color-note)" stroke-width="1.2"/>
+      <text x="440" y="84" text-anchor="middle" fill="var(--color-text-primary)" font-size="12" font-weight="600">HBM 直签 → NVIDIA/AMD</text>
+      <line x1="440" y1="98" x2="440" y2="128" stroke="var(--color-text-muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+      <rect x="345" y="128" width="190" height="38" rx="8" fill="var(--color-note)" stroke="none"/>
+      <text x="440" y="152" text-anchor="middle" fill="var(--color-text-inverse)" font-size="13" font-weight="700">OpenAI 自有运营</text>
+      <text x="440" y="190" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">德州 Abilene: 45万+ GB200, 1.2GW</text>
+      <text x="440" y="206" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">+ 5 个新站点 + 海外站点</text>
+      <text x="440" y="228" text-anchor="middle" fill="var(--color-note)" font-size="12" font-weight="700">总投资 $5000 亿</text>
+      <rect x="600" y="10" width="280" height="400" rx="12" fill="var(--color-bg-muted)" stroke="var(--color-border)" stroke-width="1.5"/>
+      <text x="740" y="42" text-anchor="middle" fill="var(--color-success)" font-weight="800" font-size="15">路径 C：自研芯片 Titan</text>
+      <rect x="635" y="60" width="210" height="38" rx="8" fill="color-mix(in srgb, var(--color-success) 15%, var(--color-bg-surface))" stroke="var(--color-success)" stroke-width="1.2"/>
+      <text x="740" y="84" text-anchor="middle" fill="var(--color-text-primary)" font-size="12" font-weight="600">Samsung HBM4 独占 → Broadcom + TSMC</text>
+      <line x1="740" y1="98" x2="740" y2="128" stroke="var(--color-text-muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+      <rect x="645" y="128" width="190" height="38" rx="8" fill="var(--color-success)" stroke="none"/>
+      <text x="740" y="152" text-anchor="middle" fill="var(--color-text-inverse)" font-size="13" font-weight="700">OpenAI 自有芯片</text>
+      <text x="740" y="190" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">Broadcom $3500亿 + AMD $900亿</text>
+      <text x="740" y="206" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">+ Cerebras $100-200亿 (推理)</text>
+      <text x="740" y="228" text-anchor="middle" fill="var(--color-success)" font-size="12" font-weight="700">合计 ~$4500 亿</text>
+      <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--color-text-muted)"/></marker></defs>
+    </svg>
+    <div class="chart-caption">来源：<a href="https://openai.com" target="_blank">OpenAI 官方</a>, <a href="https://www.cnbc.com" target="_blank">CNBC</a>, <a href="https://techcrunch.com" target="_blank">TechCrunch</a>, <a href="https://tomtunguz.com" target="_blank">Tomasz Tunguz</a></div>
+  </div>
+
+  <div class="prose-section">
+    <p>最出人意料的是 OpenAI 直接跟内存厂签了合同：2025 年 10 月与 Samsung 和 SK Hynix 签署意向书，<strong>每月供应 90 万片 DRAM 晶圆</strong>（<a href="https://tomtunguz.com/openai-hardware-spending-2025-2035/" target="_blank">Tomasz Tunguz</a>）；2026 年 3 月与 Samsung 签 <a href="https://tech-insider.org/openai-titan-chip-samsung-hbm4-custom-ai-chip-2026/" target="_blank">HBM4 独占供应协议</a>。这在行业中极为罕见——通常只有 NVIDIA 级别的公司才会直接跟 HBM 厂签约。</p>
+    <p>钱从哪来？累计融资 $1800 亿，2026 年 3 月 Series G 关闭 $1220 亿，估值 $8520 亿。2025 年收入 $131 亿，但毛利率只有 33%，推理成本 $84 亿。预计到盈利前累计亏损约 $440 亿，2029-2030 年才能现金流转正。VP of Hardware Richard Ho：「目标不是造芯片，是让智能在规模上变得便宜。」</p>
+  </div>
+
+  <div class="prose-chart surface-card">
+    <div class="chart-title">基础设施承诺金额分布 (2025-2035)，总计 $1.15 万亿</div>
+    <div class="chart-wrap" style="aspect-ratio:16/9"><canvas id="chartProcurement"></canvas></div>
+    <div class="chart-caption">来源：<a href="https://openai.com" target="_blank">OpenAI</a>, <a href="https://www.cnbc.com" target="_blank">CNBC</a>, <a href="https://tomtunguz.com" target="_blank">Tomasz Tunguz</a></div>
+  </div>
+
+  <details class="expandable">
+    <summary>微软关系的三次重新谈判</summary>
+    <div class="detail-body">
+      <p><strong>原始协议</strong>：微软独占云供应 + 优先拒绝权 + 双向收入分成。<strong>2025.10</strong>：取消优先拒绝权，微软获 27% 股权 + $2500 亿 Azure 承诺。<strong>2026.04</strong>：微软许可变非独占，停止向 OpenAI 付分成，新前沿模型 Azure 有 4 个月独占窗口。</p>
+      <p>来源：<a href="https://openai.com/index/next-phase-of-microsoft-partnership/" target="_blank">OpenAI</a>, <a href="https://www.cnbc.com/2026/04/27/openai-microsoft-partnership-revenue-cap.html" target="_blank">CNBC</a></p>
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════════════════
+     第五幕：另一条路
+     ═══════════════════════════════════════ -->
+<section class="section fade-in" id="another-way">
+  <div class="section-header">
+    <div class="eyebrow">第五幕</div>
+    <h2>另一条路：DeepSeek 的五层降本与中国的约束结构</h2>
+  </div>
+
+  <div class="prose-section">
+    <p>OpenAI 选择用万亿美元砸开约束链。DeepSeek 选了另一条路——<strong>在约束内做到极致效率</strong>。V4-Flash 输出定价 $0.28/百万 token，Claude Opus 4.7 是 $25。差距 89 倍。这不是靠电费便宜实现的，而是五层技术叠加的结果。</p>
+
+  </div>
+
+  <!-- 五层阶梯式递减卡片 -->
+  <div style="display:grid;gap:var(--space-3);margin-top:var(--space-6)">
+    <div style="width:100%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-text-muted);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
+      <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-text-muted);line-height:1">0</div>
+      <div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)">Dense 基线（GPT-4 级别）</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">约 280B 参数全部激活，每 token 消耗约 560 TFLOPS（<a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a>）</div>
+      </div>
+      <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-text-muted)">100%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">相对成本</div></div>
+    </div>
+
+    <div style="width:92%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-accent);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
+      <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-accent);line-height:1">1</div>
+      <div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)">MoE 稀疏激活</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">1.6T 总参数只激活 49B（3.1%），每次只点亮大脑的 30 个区域（GPT-4 要 150 个）（<a href="https://www.morphllm.com/deepseek-v4" target="_blank">Morph</a>）</div>
+      </div>
+      <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-accent)">~18%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ 5x</div></div>
+    </div>
+
+    <div style="width:78%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-note);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
+      <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-note);line-height:1">2</div>
+      <div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)">混合注意力压缩 (CSA + HCA)</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">FLOPs 再降到 V3 的 27%，KV cache 降到 10%（<a href="https://www.marktechpost.com/2026/04/24/deepseek-ai-releases-deepseek-v4-compressed-sparse-attention-and-heavily-compressed-attention-enable-one-million-token-contexts/" target="_blank">MarkTechPost</a>）</div>
+      </div>
+      <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-note)">~5%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ 再 73%</div></div>
+    </div>
+
+    <div style="width:62%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-success);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
+      <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-success);line-height:1">3</div>
+      <div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)">FP4 量化感知训练</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">4 位精度从训练开始，GPU 数量减半。质量不降：SWE-bench 80.6% vs Claude 80.8%（<a href="https://venturebeat.com/technology/deepseek-v4-arrives-with-near-state-of-the-art-intelligence-at-1-6th-the-cost-of-opus-4-7-gpt-5-5" target="_blank">VentureBeat</a>）</div>
+      </div>
+      <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-success)">~2.5%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ 再半</div></div>
+    </div>
+
+    <div style="width:46%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-warning);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
+      <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-warning);line-height:1">4</div>
+      <div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)">激进缓存定价</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">Cache hit 只收原价 2%，有效输入成本 $0.014/M token（<a href="https://api-docs.deepseek.com/quick_start/pricing/" target="_blank">DeepSeek 定价</a>）</div>
+      </div>
+      <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-warning)">~0.8%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ GPT 的 1/357</div></div>
+    </div>
+
+    <div style="width:34%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid #5ba3cf;border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
+      <div style="font-size:var(--font-size-3xl);font-weight:800;color:#5ba3cf;line-height:1">5</div>
+      <div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)">国产芯片协同</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">华为昇腾 <a href="https://www.trendforce.com/news/2026/04/29/news-huawei-ascend-cambricon-and-hygon-completed-day-0-adaptation-to-deepseek-v4/" target="_blank">Day 0 适配</a>，<a href="https://finance.biggo.com/news/NiU5zZ0BQ45Y7dX6OjuU" target="_blank">Goldman Sachs</a> 预测 H2 还会降</div>
+      </div>
+      <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:#5ba3cf">→更低</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">H2 2026</div></div>
+    </div>
+  </div>
+
+  <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-3);line-height:var(--line-height-compact)">卡片宽度按比例递减，直观反映每层叠加后的成本压缩效果。百分比为相对 Dense 基线的等效推理成本估算。来源：<a href="https://www.morphllm.com/deepseek-v4" target="_blank">Morph</a>, <a href="https://venturebeat.com" target="_blank">VentureBeat</a>, <a href="https://fortune.com" target="_blank">Fortune</a>, <a href="https://www.chinatalk.media/p/deepseek-v4" target="_blank">ChinaTalk</a></div>
+
+  <div class="prose-section mt-6">
+    <h3>为什么 OpenAI 和 Anthropic 不直接跟进这五层优化</h3>
+    <p>一个自然的疑问：既然 DeepSeek 的技术论文都公开了，OpenAI 和 Anthropic 为什么不直接抄？答案不是「有没有门槛」，而是三个因素叠加：<strong>门槛高低不同、优化目标不同、商业动机不同</strong>。</p>
+
+    <p><strong>可以复制但选择不做的（优化目标冲突）</strong>：GPT-4 已经在用 MoE，但激活比保守得多（15.6% vs 3.1%）。更极端的稀疏在 benchmark 上可能丢 1-2 个百分点。对于在 SWE-bench 上争 0.2% 的公司来说，这个取舍不划算。Anthropic/OpenAI 的目标是「绝对 frontier 性能」，DeepSeek 的目标是「在有限硬件上跑出实用性能」。同一套技术，优化目标不同，取舍就不同。激进的缓存定价也没有技术门槛，但 Anthropic 的 API 是利润中心（约 10 倍 markup），主动降价意味着砍自己的收入。</p>
+
+    <p><strong>有真实技术门槛的（需要特定硬件和工程积累）</strong>：FP4 量化需要硬件原生支持，H100 没有 FP4 tensor core，需要 Blackwell 或昇腾 950（<a href="https://vrlatech.com/fp4-vs-fp8-vs-fp16-for-llm-inference-which-precision-should-you-use/" target="_blank">VRLA Tech</a>）。CSA/HCA 混合注意力不是可以独立插拔的模块，它和 mHC（流形约束超连接）、Muon 优化器是协同设计的（<a href="https://softmaxdata.com/blog/deepseek-v4-is-not-a-bigger-v3-it-is-a-foundation-not-a-finale/" target="_blank">SoftmaxData</a>）。DeepSeek 团队重写了超过 200 个核心算子，华为派驻工程师现场协作 15 个月才跑通（<a href="https://www.chinatalk.media/p/deepseek-v4" target="_blank">ChinaTalk</a>）。论文公开了原理，但工程实现中的细节不在论文里。</p>
+
+    <p><strong>正在被追赶的（时间问题）</strong>：Claude Opus 定价从 $15/$75 降到 $5/$25（66% 降幅）（<a href="https://www.finout.io/blog/claude-opus-4.7-pricing-the-real-cost-story-behind-the-unchanged-price-tag" target="_blank">Finout</a>），GPT-5.3-Codex token 用量降了 25%（<a href="https://openai.com/index/introducing-gpt-5-3-codex/" target="_blank">OpenAI</a>）。<a href="https://a16z.com/llmflation-llm-inference-cost/" target="_blank">a16z 的 LLMflation 数据</a>显示等效性能推理成本每年降约 10 倍。西方实验室确实在跟进效率优化，只是节奏比 DeepSeek 保守，因为它们的商业模式不需要激进降价——高定价下已经有 $14B+ 的年收入。</p>
+  </div>
+
+  <div class="prose-section mt-6">
+    <h3>Claude/OpenAI 的 API 定价里藏了多少利润</h3>
+    <p>一个被忽略的事实：API 定价并不反映实际推理成本。<a href="https://she-llac.com/claude-limits" target="_blank">she-llac.com</a> 的逆向分析显示，Claude Max 5x（$100/月）给的 token 量按 API 定价算值 <strong>$1,354/月</strong>——13.5 倍溢价。<a href="https://martinalderson.com/posts/no-it-doesnt-cost-anthropic-5k-per-claude-code-user/" target="_blank">Martin Alderson 的分析</a>认为 Anthropic 在大部分订阅用户上是盈利的。OpenRouter 上同等规模开源模型的竞争定价约为 Claude API 的 <strong>10%</strong>。这意味着 API 定价中约 90% 是品牌溢价和研发摊销。</p>
+
+    <p>有意思的对比：一个重度 Claude Code 用户每月消耗 500M token，用 Max 5x 订阅只需 <strong>$100</strong>。同等量用 DeepSeek V4-Flash API 约 <strong>$105</strong>。价格几乎持平。<strong>DeepSeek 的成本优势主要体现在 API 对 API 的直接比较中</strong>（89 倍差距），但在订阅模式下差距被大幅缩小。DeepSeek 的真正优势在于：不需要订阅门槛就能拿到低价，对中小企业和批量调用友好，而且开源可自部署。</p>
+  </div>
+
+  <div class="card-grid card-grid-2 mt-4">
+    <div class="surface-card" style="text-align:center">
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">API 定价 vs 估算实际成本</div>
+      <div style="font-size:var(--font-size-2xl);font-weight:800;color:var(--color-accent)">~10x</div>
+      <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">API 定价中约 90% 非计算成本</div>
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-2)">来源：<a href="https://martinalderson.com" target="_blank">Martin Alderson</a></div>
+    </div>
+    <div class="surface-card" style="text-align:center">
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">Max 5x 订阅 vs DeepSeek V4-Flash</div>
+      <div style="font-size:var(--font-size-2xl);font-weight:800;color:var(--color-success)">$100 vs $105</div>
+      <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">500M token/月 订阅模式下差距消失</div>
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-2)">来源：<a href="https://she-llac.com/claude-limits" target="_blank">she-llac.com</a></div>
+    </div>
+  </div>
+
+  <div class="prose-section mt-6">
+    <h3>中国的约束结构：瓶颈在芯片，不在电力</h3>
+    <p>中国的约束链和美国完全不同。出口管制切断了先进制程设备、高端 GPU 和 HBM 的供应（<a href="https://www.cfr.org" target="_blank">CFR</a>）。但电力方面，2024 年中国新增 543 GW 发电容量，<strong>超过美国历史总装机</strong>（<a href="https://www.voronoiapp.com/energy/-China-Generated-More-Electricity-in-2024-Than-the-US-EU--India-Combined-5260" target="_blank">Voronoi</a>）。中国总装机 3,349 GW，发电量已超美国两倍（<a href="https://ember-energy.org/latest-insights/china-energy-transition-review-2025/" target="_blank">Ember</a>）。不存在美国那种 5 年变压器交货期、7 年并网排队的物理瓶颈。</p>
+
+    <p>但中国电价优势没有流传的那么大。<a href="https://www.oxfordenergy.org/wpcms/wp-content/uploads/2026/02/Comment-The-China-data-centre-advantage.pdf" target="_blank">Oxford Institute for Energy Studies 2026.02 报告</a>指出，中美批发电价区间重叠（中国 $43-58/MWh vs 美国 $40-50/MWh）。电力在 AI 推理总成本中的占比也不高——<a href="https://epoch.ai/trends" target="_blank">Epoch AI</a> 的数据显示电力只占前沿模型总摊销成本的 <strong>2-6%</strong>，硬件折旧占 47-65%。中国的真正优势不在电价本身，而在<strong>电力基础设施的扩容速度和物理约束的缺失</strong>。</p>
+
+    <p>简单说：<strong>美国的约束是物理/基础设施层面的（hard constraint），解决周期 5-10 年。中国的约束是芯片/出口管制层面的（policy constraint），取决于地缘政治走向。</strong></p>
+  </div>
+
+  <div class="prose-chart surface-card">
+    <div class="chart-title">每百万 token 推理定价对比 ($)</div>
+    <div class="chart-wrap" style="aspect-ratio:2/1;min-height:200px"><canvas id="chartTokenPrice"></canvas></div>
+    <div class="chart-caption">DeepSeek V4-Flash $0.28 vs OpenAI $30，差距超 100 倍。来源：各厂商官方 API 定价页</div>
+  </div>
+
+  <div class="surface-card mt-4">
+    <div class="chart-title">中美在不同 AI 任务上的比较优势</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:var(--font-size-sm)">
+      <thead><tr style="background:var(--color-accent-tint)">
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">AI 任务</th>
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">美国优势</th>
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">中国优势</th>
+        <th style="padding:var(--space-3);text-align:left;border-bottom:2px solid var(--color-accent)">当前格局</th>
+      </tr></thead>
+      <tbody style="color:var(--color-text-secondary)">
+        <tr style="border-bottom:1px solid var(--color-border-soft)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">前沿训练</td><td style="padding:var(--space-2) var(--space-3)">最先进 GPU + CUDA 生态</td><td style="padding:var(--space-2) var(--space-3)">算法效率降低资源需求</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-note)">美国主导</strong>，算力 21-49x</td></tr>
+        <tr style="border-bottom:1px solid var(--color-border-soft);background:var(--color-bg-muted)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">大规模推理</td><td style="padding:var(--space-2) var(--space-3)">云生态成熟</td><td style="padding:var(--space-2) var(--space-3)">电力无瓶颈 + MoE/FP4 极低成本</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-warning)">中国追上中</strong></td></tr>
+        <tr style="border-bottom:1px solid var(--color-border-soft)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">视频/多模态</td><td style="padding:var(--space-2) var(--space-3)">Google Veo 画质 frontier</td><td style="padding:var(--space-2) var(--space-3)">可灵 $6.99/月 成本竞争力</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-warning)">各有千秋</strong></td></tr>
+        <tr style="background:var(--color-bg-muted)"><td style="padding:var(--space-2) var(--space-3);font-weight:600">企业应用</td><td style="padding:var(--space-2) var(--space-3)">订阅体系 (Max/Copilot)</td><td style="padding:var(--space-2) var(--space-3)">API 直接低价，无订阅门槛</td><td style="padding:var(--space-2) var(--space-3)"><strong style="color:var(--color-success)">中国结构性优势</strong></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="chart-caption mt-4">来源：<a href="https://epoch.ai" target="_blank">Epoch AI</a>, <a href="https://www.cfr.org" target="_blank">CFR</a>, <a href="https://www.oxfordenergy.org" target="_blank">OIES</a></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     第六幕：未来推演
+     ═══════════════════════════════════════ -->
+<section class="section fade-in" id="scenarios">
+  <div class="section-header">
+    <div class="eyebrow">第六幕</div>
+    <h2>未来推演：哪个约束会成为决定性变量</h2>
+  </div>
+
+  <div class="prose-section mb-6">
+    <p>这条约束链上的每个环节都在动态变化。CoWoS/HBM 产能在 2-3 年内有望缓解，但电力基础设施的解决周期是 5-10 年。DeepSeek 证明了算法效率可以部分绕开硬件约束，但前沿训练仍需要绝对算力。中美各有自己跨不过去的坎，但坎的性质不同。以下三个剧本基于这些约束的不同演化路径。</p>
+  </div>
+
+  <div class="card-grid card-grid-3">
+    <div class="surface-card scenario-card most-likely">
+      <div class="flex-gap-2 mb-4"><span class="pill accent">最可能</span></div>
+      <h3 style="font-size:var(--font-size-lg);font-weight:700;margin-bottom:var(--space-2)">电力取代芯片成为主要约束</h3>
+      <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm)">CoWoS/HBM 产能在 2027-2028 逐步追上需求，但电网扩容滞后。美国 AI 发展速度被电力瓶颈拖慢 12-24 个月。内存价格 2027H2 见顶回落，但不回到 2023 低点。中国凭电力优势和算法效率在推理领域加速追赶。AI 编码工具继续蚕食传统 SaaS 收入。</p>
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-3)">关键变量：TSMC CoWoS 扩产速度、美国变压器供应、昇腾 950 量产</div>
+    </div>
+    <div class="surface-card scenario-card dangerous">
+      <div class="flex-gap-2 mb-4"><span class="pill danger">最危险</span></div>
+      <h3 style="font-size:var(--font-size-lg);font-weight:700;margin-bottom:var(--space-2)">AI 投资回报不及预期</h3>
+      <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm)">Scaling law 收益递减，$7250 亿 hyperscaler 资本支出没有产生相应回报。Amazon 2026 年预计负自由现金流 $170 亿，大科技已发债 $1000 亿。如果 AI 不能证明 ROI，杠杆会迅速反转。新建产能变搁浅资产，内存行业重演 2019 暴跌。</p>
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-3)">危险信号：连续两个季度 hyperscaler capex 下调、企业 AI 采购放缓</div>
+    </div>
+    <div class="surface-card scenario-card optimistic">
+      <div class="flex-gap-2 mb-4"><span class="pill success">最乐观</span></div>
+      <h3 style="font-size:var(--font-size-lg);font-weight:700;margin-bottom:var(--space-2)">效率革命绕开硬件约束</h3>
+      <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm)">DeepSeek 式的 MoE + FP4 + 混合注意力被广泛采纳，单位算力产出提升一个数量级。Cerebras 晶圆级芯片在训练场景接近 GPU 灵活性。存内计算 2027-2028 商业化。HBM 的垄断性地位被削弱，电力约束也因效率提升而推迟。推理成本继续每年降 10 倍，视频生成 AI 重新变得可行。</p>
+      <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-3)">关键标志：Llama 5 / Qwen 4 采纳 mHC 架构、Cerebras IPO 后规模部署</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOURCES ═══ -->
+<section class="section fade-in" id="sources">
+  <div class="section-header"><h2>信息来源</h2></div>
+  <ul class="source-list">
+    <li><a href="https://www.trendforce.com" target="_blank">TrendForce</a> — DRAM/NAND/HBM 价格、产能、市场份额 (2024-2026)</li>
+    <li><a href="https://epoch.ai" target="_blank">Epoch AI</a> — AI 芯片供应链约束、OpenAI 算力支出、成本拆解</li>
+    <li><a href="https://counterpointresearch.com" target="_blank">Counterpoint Research</a> — DRAM/HBM 市场份额季度数据</li>
+    <li><a href="https://www.iea.org/reports/electricity-2026/prices" target="_blank">IEA Electricity 2026</a> — 全球电价对比与数据中心能源需求</li>
+    <li><a href="https://www.oxfordenergy.org/wpcms/wp-content/uploads/2026/02/Comment-The-China-data-centre-advantage.pdf" target="_blank">OIES 2026.02</a> — The China data centre advantage: hype versus reality</li>
+    <li><a href="https://openai.com" target="_blank">OpenAI</a> — SORA 停服、微软合作、Stargate/AWS/Codex 公告</li>
+    <li><a href="https://www.cnbc.com" target="_blank">CNBC</a> — Samsung HBM、AI 资本支出、OpenAI-Microsoft 谈判</li>
+    <li><a href="https://www.wsj.com" target="_blank">WSJ</a> — OpenAI 内部全员会议、SORA 运营成本、算力分配</li>
+    <li><a href="https://she-llac.com/claude-limits" target="_blank">she-llac.com</a> — Claude 订阅方案 token 额度逆向分析</li>
+    <li><a href="https://martinalderson.com/posts/no-it-doesnt-cost-anthropic-5k-per-claude-code-user/" target="_blank">Martin Alderson</a> — Anthropic 推理成本估算</li>
+    <li><a href="https://a16z.com/llmflation-llm-inference-cost/" target="_blank">a16z LLMflation</a> — LLM 推理成本 1000 倍下降追踪</li>
+    <li><a href="https://www.morphllm.com/deepseek-v4" target="_blank">Morph</a> — DeepSeek V4 架构详解</li>
+    <li><a href="https://fortune.com/2026/04/24/deepseek-v4-ai-model-price-performance-china-open-source/" target="_blank">Fortune</a> — DeepSeek V4 + 华为昇腾合作</li>
+    <li><a href="https://www.tomshardware.com" target="_blank">Tom's Hardware</a> — NAND 价格、华为 AI 芯片、数据中心延迟</li>
+    <li><a href="https://www.powermag.com" target="_blank">Power Magazine</a> — 美国变压器供应危机</li>
+    <li><a href="https://info.fusionww.com" target="_blank">Fusion Worldwide</a> — CoWoS/HBM 约束分析到 2027</li>
+    <li><a href="https://sacra.com/c/openai/" target="_blank">Sacra</a> — OpenAI/Runway/Pika 收入与估值</li>
+    <li><a href="https://www.saastr.com" target="_blank">SaaStr</a> — Anthropic 超越 OpenAI 收入</li>
+    <li><a href="https://venturebeat.com" target="_blank">VentureBeat</a> — Anthropic $300 亿 ARR、DeepSeek V4 成本分析</li>
+    <li><a href="https://arxiv.org/abs/2412.19437" target="_blank">arXiv</a> — DeepSeek V3 Technical Report</li>
+    <li><a href="https://www.chinatalk.media/p/deepseek-v4" target="_blank">ChinaTalk</a> — DeepSeek V4 技术报告深度解读</li>
+    <li><a href="https://softmaxdata.com/blog/deepseek-v4-is-not-a-bigger-v3-it-is-a-foundation-not-a-finale/" target="_blank">SoftmaxData</a> — V4 架构创新为什么难复制</li>
+    <li><a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a> — GPT-4 架构泄露分析（MoE 16 expert）</li>
+    <li><a href="https://finance.biggo.com/news/NiU5zZ0BQ45Y7dX6OjuU" target="_blank">Goldman Sachs / BigGo</a> — DeepSeek + 昇腾 950 成本预测</li>
+    <li><a href="https://invezz.com/news/2026/04/29/huawei-ascend-950-chip-demand-surges-after-deepseek-v4-launch/" target="_blank">Invezz</a> — 昇腾 950 需求激增</li>
+    <li><a href="https://www.trendforce.com/news/2026/04/29/news-huawei-ascend-cambricon-and-hygon-completed-day-0-adaptation-to-deepseek-v4/" target="_blank">TrendForce</a> — 华为昇腾/寒武纪/海光 Day 0 适配 V4</li>
+    <li><a href="https://www.gpunex.com/blog/ai-inference-economics-2026/" target="_blank">GPUnex</a> — AI 推理经济学：1000 倍成本坍缩</li>
+    <li><a href="https://www.finout.io/blog/claude-opus-4.7-pricing-the-real-cost-story-behind-the-unchanged-price-tag" target="_blank">Finout</a> — Claude Opus 4.7 定价真实成本分析</li>
+    <li><a href="https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_a" target="_blank">EIA</a> — 美国各州工业电价月度数据</li>
+    <li><a href="https://www.ceicdata.com/en/china/electricity-price-36-city" target="_blank">CEIC</a> — 中国 36 城市工业电价数据</li>
+    <li><a href="https://www.china-briefing.com/news/chinas-industrial-power-rates-category-electricity-usage-region-classification/" target="_blank">China Briefing</a> — 中国工业电价分类与区域差异</li>
+    <li><a href="https://enkiai.com/data-center/data-center-power-crisis-2026-the-grid-bottleneck/" target="_blank">EnkiAI</a> — 2026 数据中心电力危机</li>
+    <li><a href="https://medium.com/@Elongated_musk/cowos-not-hbm-is-the-real-ai-supply-bottleneck-d0ae8f3f7ce4" target="_blank">Medium</a> — CoWoS 才是真正的 AI 供应瓶颈</li>
+    <li><a href="https://www.cfr.org" target="_blank">CFR</a> — 中国 AI 芯片差距与出口管制分析</li>
+    <li><a href="https://www.belfercenter.org" target="_blank">Belfer Center</a> — AI 数据中心与美国电网</li>
+    <li><a href="https://www.utilitydive.com" target="_blank">Utility Dive</a> — PJM 容量市场拍卖价格与数据中心份额</li>
+  </ul>
+  <p style="color:var(--color-text-muted);font-size:var(--font-size-xs);margin-top:var(--space-4)">
+    研究方法：横纵分析法（数字生命卡兹克）。本报告由 AI（Claude）在人类引导下生成，信息来自公开来源但未经人工逐条核实。分析判断是 AI 基于已检索信息的推断，引用前建议回溯原始来源。研究时间 2026 年 5 月。
+  </p>
+</section>
+
+</div><!-- .page-shell -->
+
+<script>
+/* ── Theme Toggle ── */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? '' : 'dark');
+  document.getElementById('themeBtn').textContent = isDark ? 'Dark' : 'Light';
+  initCharts();
+}
+
+/* ── Scroll Animation ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ── Chart Helpers ── */
+function getCSS(prop) {
+  return getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
+}
+function chartColors() {
+  return {
+    accent: getCSS('--color-accent') || '#fb8f68',
+    note: getCSS('--color-note') || '#8d7bd6',
+    success: getCSS('--color-success') || '#4f8b63',
+    warning: getCSS('--color-warning') || '#d8871d',
+    danger: getCSS('--color-danger') || '#c84c3a',
+    blue: getCSS('--chart-6') || '#5ba3cf',
+    text: getCSS('--color-text-secondary') || '#46342a',
+    muted: getCSS('--color-text-muted') || '#5f4d42',
+    grid: getCSS('--color-border-soft') || 'rgba(42,28,23,0.1)',
+    bg: getCSS('--color-bg-surface') || '#ffffff',
+  };
+}
+
+const charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function initCharts() {
+  const c = chartColors();
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: c.text, font: { size: 12 } } } },
+    scales: {
+      x: { ticks: { color: c.muted, font: { size: 11 } }, grid: { color: c.grid } },
+      y: { ticks: { color: c.muted, font: { size: 11 } }, grid: { color: c.grid } }
+    }
+  };
+
+  /* 1. Memory Price Cycle */
+  destroyChart('cycle');
+  charts.cycle = new Chart(document.getElementById('chartCycle'), {
+    type: 'line',
+    data: {
+      labels: ['1995','1997','2000','2002','2005','2007','2009','2012','2015','2018','2019','2021','2023','2024','2025','2026'],
+      datasets: [{
+        label: 'DRAM 价格指数 (示意)',
+        data: [100, 30, 80, 25, 60, 75, 35, 50, 70, 110, 55, 65, 30, 50, 95, 160],
+        borderColor: c.accent, backgroundColor: c.accent + '22',
+        fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 7, borderWidth: 2.5,
+      }]
+    },
+    options: {
+      ...baseOpts,
+      plugins: {
+        ...baseOpts.plugins,
+        annotation: {
+          annotations: {
+            a1: { type: 'label', xValue: '1997', yValue: 25, content: '亚洲金融危机', font: { size: 10 }, color: c.danger },
+            a2: { type: 'label', xValue: '2002', yValue: 20, content: '互联网泡沫', font: { size: 10 }, color: c.danger },
+            a3: { type: 'label', xValue: '2009', yValue: 30, content: '金融危机', font: { size: 10 }, color: c.danger },
+            a4: { type: 'label', xValue: '2018', yValue: 115, content: '超级周期', font: { size: 10 }, color: c.success },
+            a5: { type: 'label', xValue: '2023', yValue: 25, content: 'SK Hynix 巨亏', font: { size: 10 }, color: c.danger },
+            a6: { type: 'label', xValue: '2026', yValue: 165, content: 'AI 驱动暴涨', font: { size: 10, weight: 'bold' }, color: c.accent },
+          }
+        }
+      },
+      scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, display: false } }
+    }
+  });
+
+  /* 2. HBM Bandwidth */
+  destroyChart('hbm');
+  charts.hbm = new Chart(document.getElementById('chartHBM'), {
+    type: 'bar',
+    data: {
+      labels: ['HBM1\n2013', 'HBM2\n2016', 'HBM2E\n2018', 'HBM3\n2022', 'HBM3E\n2024', 'HBM4\n2025', 'HBM4E\n2027*'],
+      datasets: [{
+        label: '带宽 (GB/s per stack)',
+        data: [128, 256, 460, 819, 1229, 2000, 3500],
+        backgroundColor: [c.muted, c.muted, c.blue, c.note, c.accent, c.accent, c.warning],
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      ...baseOpts,
+      plugins: { ...baseOpts.plugins, legend: { display: false } },
+      scales: {
+        ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, title: { display: true, text: 'GB/s', color: c.muted } }
+      }
+    }
+  });
+
+  /* 3. Cost per request */
+  destroyChart('costReq');
+  charts.costReq = new Chart(document.getElementById('chartCostPerRequest'), {
+    type: 'bar',
+    data: {
+      labels: ['ChatGPT 查询', 'DALL-E 图像', 'SORA 视频 (10s)'],
+      datasets: [{
+        label: '单次成本 ($)',
+        data: [0.005, 0.03, 1.30],
+        backgroundColor: [c.success, c.note, c.danger],
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      ...baseOpts, indexAxis: 'y',
+      plugins: { ...baseOpts.plugins, legend: { display: false } },
+      scales: {
+        x: { ...baseOpts.scales.x, type: 'logarithmic', title: { display: true, text: '$ (对数刻度)', color: c.muted } },
+        y: { ...baseOpts.scales.y, grid: { display: false } }
+      }
+    }
+  });
+
+  /* 4. HBM Market Share */
+  destroyChart('hbmShare');
+  if (!document.getElementById('chartHBMShare')) { /* canvas removed in restructure */ }
+  else charts.hbmShare = new Chart(document.getElementById('chartHBMShare'), {
+    type: 'bar',
+    data: {
+      labels: ['2024', '2025 Q1', '2025 Q2'],
+      datasets: [
+        { label: 'SK Hynix', data: [54, 70, 62], backgroundColor: c.accent, borderRadius: 4 },
+        { label: 'Samsung', data: [39, 13, 17], backgroundColor: c.note, borderRadius: 4 },
+        { label: 'Micron', data: [7, 17, 21], backgroundColor: c.success, borderRadius: 4 },
+      ]
+    },
+    options: {
+      ...baseOpts,
+      scales: {
+        ...baseOpts.scales,
+        x: { ...baseOpts.scales.x, stacked: true },
+        y: { ...baseOpts.scales.y, stacked: true, max: 100, title: { display: true, text: '%', color: c.muted } }
+      }
+    }
+  });
+
+  /* 5. GPU Memory */
+  destroyChart('gpuMem');
+  charts.gpuMem = new Chart(document.getElementById('chartGPUMemory'), {
+    type: 'bar',
+    data: {
+      labels: ['H100', 'H200', 'B200', 'MI300X', 'MI350X', 'TPU v7', 'Vera Rubin'],
+      datasets: [{
+        label: 'HBM 容量 (GB)',
+        data: [80, 141, 192, 192, 288, 192, 288],
+        backgroundColor: [c.accent, c.accent, c.accent, c.note, c.note, c.success, c.warning],
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      ...baseOpts,
+      plugins: { ...baseOpts.plugins, legend: { display: false } },
+      scales: {
+        ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, title: { display: true, text: 'GB', color: c.muted } }
+      }
+    }
+  });
+
+  /* 6. Code tools vs SORA revenue */
+  destroyChart('codeVsSora');
+  charts.codeVsSora = new Chart(document.getElementById('chartCodeVsSora'), {
+    type: 'bar',
+    data: {
+      labels: ['Claude Code\nARR', 'GitHub Copilot\nARR', 'Cursor\nARR', 'SORA\n总收入'],
+      datasets: [{
+        label: '$ (百万)',
+        data: [2500, 2000, 2000, 2.1],
+        backgroundColor: [c.note, c.success, c.blue, c.danger],
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      ...baseOpts,
+      plugins: { ...baseOpts.plugins, legend: { display: false } },
+      scales: {
+        ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, type: 'logarithmic', title: { display: true, text: '$ 百万 (对数刻度)', color: c.muted } },
+        x: { ...baseOpts.scales.x, grid: { display: false } }
+      }
+    }
+  });
+
+  /* 7. Procurement */
+  destroyChart('proc');
+  charts.proc = new Chart(document.getElementById('chartProcurement'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Broadcom (Titan 芯片) $3500亿', 'Oracle (Stargate) $3000亿', 'Azure $2500亿', 'AWS $1380亿', 'NVIDIA $1000亿', 'AMD $900亿', 'CoreWeave $224亿', 'Cerebras $100-200亿'],
+      datasets: [{
+        data: [3500, 3000, 2500, 1380, 1000, 900, 224, 150],
+        backgroundColor: [c.accent, c.note, c.blue, c.success, c.warning, c.danger, c.muted, '#a0d0e0'],
+        borderWidth: 2, borderColor: c.bg,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: c.text, font: { size: 11 }, padding: 12 } },
+      }
+    }
+  });
+
+  /* 8. Token price comparison */
+  destroyChart('tokenPrice');
+  charts.tokenPrice = new Chart(document.getElementById('chartTokenPrice'), {
+    type: 'bar',
+    data: {
+      labels: ['OpenAI', 'Anthropic', 'DeepSeek V4-Pro', 'DeepSeek V4-Flash'],
+      datasets: [{
+        label: '$/百万 token (输出)',
+        data: [30, 25, 3.48, 0.28],
+        backgroundColor: [c.danger, c.note, c.success, c.success],
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      ...baseOpts, indexAxis: 'y',
+      plugins: { ...baseOpts.plugins, legend: { display: false } },
+      scales: {
+        x: { ...baseOpts.scales.x, title: { display: true, text: '$/百万 token', color: c.muted } },
+        y: { ...baseOpts.scales.y, grid: { display: false } }
+      }
+    }
+  });
+
+  /* 9. DeepSeek Cost Layers */
+  destroyChart('costLayers');
+  const costLayersCanvas = document.getElementById('chartCostLayers');
+  if (costLayersCanvas) {
+    charts.costLayers = new Chart(costLayersCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['Dense 基线\n(~280B 激活)', 'MoE 稀疏\n(49B 激活)', '+ 混合注意力\n(FLOPs 27%)', '+ FP4 量化\n(GPU 减半)', '+ 缓存优化\n(hit 2% 价)', '+ 国产芯片\n(H2 2026)'],
+        datasets: [{
+          label: '相对推理成本',
+          data: [100, 18, 5, 2.5, 0.8, 0.4],
+          backgroundColor: [c.muted, c.accent, c.note, c.success, c.warning, c.blue],
+          borderRadius: 6, borderSkipped: false,
+        }]
+      },
+      options: {
+        ...baseOpts,
+        plugins: { ...baseOpts.plugins, legend: { display: false } },
+        scales: {
+          ...baseOpts.scales,
+          y: { ...baseOpts.scales.y, title: { display: true, text: '相对成本 (%)', color: c.muted } }
+        }
+      }
+    });
+  }
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', initCharts);
+
+/* ── Active nav link ── */
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+
+</body>
+</html>

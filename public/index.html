@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nini-dev research</title>
+<style>
+:root {
+  --color-bg-page: #fffaf4;
+  --color-bg-surface: #ffffff;
+  --color-bg-muted: #f8efe4;
+  --color-text-primary: #2a1c17;
+  --color-text-secondary: #46342a;
+  --color-text-muted: #5f4d42;
+  --color-accent: #fb8f68;
+  --color-accent-dark: #d67046;
+  --color-accent-rgb: 251 143 104;
+  --color-border: #dcc9ba;
+  --color-border-soft: rgba(42, 28, 23, 0.1);
+  --shadow-soft: 0 6px 18px rgba(47, 37, 25, 0.08);
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-full: 9999px;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --transition-base: 0.2s ease;
+}
+[data-theme="dark"] {
+  --color-bg-page: #140e0b;
+  --color-bg-surface: #1b140f;
+  --color-bg-muted: #241914;
+  --color-text-primary: #f8ede1;
+  --color-text-secondary: #d7c6b8;
+  --color-text-muted: #b8a090;
+  --color-border: #3b2b22;
+  --color-border-soft: rgba(248, 237, 225, 0.12);
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+body {
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  transition: background var(--transition-base), color var(--transition-base);
+}
+.shell {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-4);
+}
+@media (min-width: 640px) { .shell { padding-inline: var(--space-6); } }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-12);
+}
+h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+h1 span { color: var(--color-accent); }
+.subtitle {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2);
+  font-size: 1.0625rem;
+}
+.theme-btn {
+  background: none;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: all var(--transition-base);
+}
+.theme-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.report-list {
+  display: grid;
+  gap: var(--space-6);
+}
+.report-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-soft);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+.report-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 12px 32px rgba(47, 37, 25, 0.12);
+  transform: translateY(-2px);
+}
+.report-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+.report-date {
+  font-size: 0.8125rem;
+  color: var(--color-accent);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.pill {
+  display: inline-flex;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border-soft);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.report-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: var(--space-2);
+}
+.report-desc {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.report-tags {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+.tag {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg-muted);
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-md);
+}
+footer {
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-soft);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+/* ── Disclaimer ── */
+.disclaimer {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
+  border-left: 4px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg-surface));
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-12);
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.disclaimer strong { color: var(--color-accent); font-weight: 700; }
+.disclaimer ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-6);
+  display: grid;
+  gap: var(--space-1);
+}
+.disclaimer li { line-height: 1.6; }
+.disclaimer li::marker { color: var(--color-text-muted); }
+
+/* ── Methodology ── */
+.method-section {
+  margin-bottom: var(--space-12);
+}
+.method-section h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-4);
+}
+.method-desc {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  margin-bottom: var(--space-6);
+  max-width: 60ch;
+}
+.flow {
+  display: grid;
+  gap: 0;
+}
+.flow-step {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--space-4);
+  position: relative;
+}
+.flow-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.flow-dot {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.flow-line {
+  width: 2px;
+  flex: 1;
+  background: var(--color-border);
+  margin-top: var(--space-1);
+}
+.flow-step:last-child .flow-line { display: none; }
+.flow-body {
+  padding-bottom: var(--space-6);
+}
+.flow-title {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  margin-bottom: var(--space-1);
+}
+.flow-text {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.flow-detail {
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* ── Section divider ── */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-soft);
+  margin: 0 0 var(--space-8);
+}
+.section-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-4);
+}
+
+/* ── Skill cards ── */
+.skill-list {
+  display: grid;
+  gap: var(--space-4);
+}
+.skill-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  box-shadow: var(--shadow-soft);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.skill-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 12px 32px rgba(47, 37, 25, 0.12);
+}
+.skill-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+.skill-name {
+  font-family: "Fira Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.skill-author {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+.skill-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header>
+    <div>
+      <h1>nini-dev <span>research</span></h1>
+      <p class="subtitle">横纵分析法深度研究报告集</p>
+    </div>
+    <button class="theme-btn" onclick="const d=document.documentElement;d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'':'dark');this.textContent=d.getAttribute('data-theme')==='dark'?'Light':'Dark'" id="themeBtn">Dark</button>
+  </header>
+
+  <!-- ── AI Disclaimer ── -->
+  <div class="disclaimer">
+    <strong>AI 生成内容声明</strong>
+    <p>本站所有调研报告由 AI（Claude）在人类引导下生成，包括信息检索、数据整理、叙事撰写和可视化呈现。以下事项需要阅读者留意：</p>
+    <ul>
+      <li>报告中的事实性数据来自公开信息源（已标注出处），但<strong>未经人工逐条核实</strong>。引用前建议回溯原始来源。</li>
+      <li>分析判断和因果推理是 AI 基于已检索信息的推断，不代表任何专业机构或个人的立场。</li>
+      <li>信息检索受限于 AI 可访问的网页内容，可能存在遗漏、过时或误读。</li>
+      <li>图表中的数据点经过简化处理以适配可视化，精确数值请以原始来源为准。</li>
+    </ul>
+  </div>
+
+  <!-- ── Methodology ── -->
+  <div class="method-section">
+    <h2>调研流程</h2>
+    <p class="method-desc">每篇报告遵循固定的五步流程，从提问到发布约 2-3 小时。整个过程由人类提出问题和方向，AI 负责执行检索、写作和可视化。</p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-marker"><div class="flow-dot">1</div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">定义研究问题</div>
+          <div class="flow-text">人类提出想要研究的主题和关注角度。AI 确认研究对象的类型（产品 / 公司 / 概念 / 现象），明确纵向（时间线）和横向（竞争格局）的分析范围。</div>
+          <div class="flow-detail"><strong>以本次调研为例，人类的初始提问：</strong>「我想深入地了解一下最近半年的内存价格暴涨的原因，以及 SORA 之所以被 OpenAI 放弃是否也是出于这个原因？」</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-marker"><div class="flow-dot">2</div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">并行信息检索</div>
+          <div class="flow-text">AI 同时派出多组搜索 Agent，分别负责纵向信息（历史演变、关键事件）、横向信息（竞品、市场格局）和补充信息（用户讨论、成本数据）。每组 Agent 独立搜索 10-20 个信息源。</div>
+          <div class="flow-detail">工具：WebSearch + WebFetch，优先一手来源（官方博客、财报、JEDEC 标准），多次搜索、多组关键词，搜不到的信息标注「暂缺」。</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-marker"><div class="flow-dot">3</div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">撰写叙事报告 + 人类追问</div>
+          <div class="flow-text">按横纵分析法的框架组织内容：纵向分析沿时间轴还原完整发展脉络，横向分析以当前时间点为切面对比竞争格局，交汇分析提炼新判断。人类在初稿完成后提出补充调研方向，AI 再次并行检索后更新报告。</div>
+          <div class="flow-detail"><strong>本次调研中，人类在初稿后追加了三个方向：</strong><br>
+            1. 算力成本跟供电费用的关系，放在中国成本是否更低？<br>
+            2. SORA 关停是否与 OpenAI 要跟 Claude 竞争、把算力给 Codex 有关？<br>
+            3. OpenAI 具体是如何采购算力的？合同结构是什么？<br>
+            这三个追问显著扩展了报告的深度，补充了电力成本、Anthropic 竞争、万亿采购版图三个维度。</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-marker"><div class="flow-dot">4</div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">交互式可视化</div>
+          <div class="flow-text">将文字报告转为自包含的 HTML 页面，使用 Chart.js 构建交互式图表（折线图、柱状图、环形图等），辅以 SVG 流程图和时间线组件。设计风格复用 bokushi 站点的 design token 体系。</div>
+          <div class="flow-detail">每个图表下方标注数据来源。叙事文字是主体，图表是辅助表达。核心原则：文字不丢重点，图表分担信息密度。</div>
+        </div>
+      </div>
+
+      <div class="flow-step">
+        <div class="flow-marker"><div class="flow-dot">5</div><div class="flow-line"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">排版审校与发布</div>
+          <div class="flow-text">按中文技术文档排版规范做最终审校（直角引号、中英文留白、术语大小写归一、黑话词替换），然后通过 Cloudflare Pages 部署。单个 HTML 文件自包含所有样式和脚本，可独立分享。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Skills Used ── -->
+  <div class="method-section">
+    <h2>使用的 Skills</h2>
+    <p class="method-desc">整个调研过程依赖三个开源 Claude Code Skill，分别负责研究框架、写作风格和排版规范。Skill 是可复用的 AI 指令模板，定义了 AI 在特定任务中的行为方式。</p>
+
+    <div class="skill-list">
+      <a href="https://github.com/KKKKhazix/khazix-skills" target="_blank" class="skill-card">
+        <div class="skill-header">
+          <span class="skill-name">hv-analysis</span>
+          <span class="pill">核心框架</span>
+        </div>
+        <div class="skill-author">by 数字生命卡兹克（@KKKKhazix）</div>
+        <div class="skill-desc">横纵分析法深度研究 Skill。定义了整个调研的方法论框架：并行搜索策略（3 组 Agent 同时出发）、纵向分析结构（起源 → 演进 → 阶段划分）、横向分析维度（竞品对比 + 生态位 + 趋势）、交汇分析要求（三个剧本推演），以及写作风格指南（叙事驱动、敢下判断、回环呼应）。</div>
+      </a>
+
+      <a href="https://github.com/Fenng/Tech-Doc-Style-Chinese" target="_blank" class="skill-card">
+        <div class="skill-header">
+          <span class="skill-name">tech-doc-style-chinese</span>
+          <span class="pill">排版规范</span>
+        </div>
+        <div class="skill-author">by Fenng（@Fenng）</div>
+        <div class="skill-desc">中文技术文档排版规范 Skill。用于最终审校阶段：统一直角引号「」、中英文之间留白、术语大小写归一（API / AI / HBM）、黑话词替换（「赛道」→「领域」、「洞察」→「分析」）、避免宣传腔和第二人称。</div>
+      </a>
+
+      <a href="https://niracler.com/design" target="_blank" class="skill-card">
+        <div class="skill-header">
+          <span class="skill-name">bokushi design tokens</span>
+          <span class="pill">视觉风格</span>
+        </div>
+        <div class="skill-author">niracler.com/design</div>
+        <div class="skill-desc">bokushi 个人站点的设计系统文档。报告的可视化部分直接复用了这套 design token 体系：暖色调页面底色 #fffaf4、珊瑚色 accent #fb8f68、Apple HIG 17px 基准字号、圆角/阴影/间距等 CSS 变量，确保调研报告与个人站点的视觉风格一致。</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Reports ── -->
+  <hr class="section-divider">
+  <div class="section-label">调研报告</div>
+
+  <div class="report-list">
+
+    <a href="./memory-sora/" class="report-card">
+      <div class="report-meta">
+        <span class="report-date">2026.05</span>
+        <span class="pill">横纵分析</span>
+        <span class="pill">六幕 · 37 信源 · 8 图表</span>
+      </div>
+      <div class="report-title">AI 算力饥渴：内存暴涨、SORA 之死与中美约束链</div>
+      <p class="report-desc">AI 对算力的需求正在拧紧一根全球性的约束链。这篇报告从一个朴素的问题出发（内存为什么涨？SORA 为什么死？），逐层展开到 DeepSeek 的技术降本、Claude 的真实成本、美国电网困境和中美约束结构差异。</p>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:0.25rem 0.75rem;font-size:0.8125rem;color:var(--color-text-muted);margin-top:0.75rem;line-height:1.5">
+        <span style="color:var(--color-accent);font-weight:700">一</span><span>需求冲击 — HBM 挤占晶圆产能，消费级内存全线涨价</span>
+        <span style="color:var(--color-accent);font-weight:700">二</span><span>约束链 — CoWoS → HBM → 电力，串联瓶颈正在向电网转移</span>
+        <span style="color:var(--color-accent);font-weight:700">三</span><span>牺牲品 — SORA 日烧 $1500 万，Anthropic 的崛起逼 OpenAI 砍掉它</span>
+        <span style="color:var(--color-accent);font-weight:700">四</span><span>军备竞赛 — OpenAI $1.15 万亿采购，直接跟内存厂签合同</span>
+        <span style="color:var(--color-accent);font-weight:700">五</span><span>另一条路 — DeepSeek 五层降本，Claude API 定价有约 10 倍溢价</span>
+        <span style="color:var(--color-accent);font-weight:700">六</span><span>未来推演 — 电力可能取代芯片成为决定性约束</span>
+      </div>
+      <div class="report-tags" style="margin-top:0.75rem">
+        <span class="tag">HBM</span>
+        <span class="tag">SORA</span>
+        <span class="tag">OpenAI</span>
+        <span class="tag">DeepSeek</span>
+        <span class="tag">Anthropic</span>
+        <span class="tag">中美电力</span>
+        <span class="tag">约束链</span>
+      </div>
+    </a>
+
+  </div>
+
+  <footer>
+    研究方法：横纵分析法（数字生命卡兹克）。纵向沿时间轴追深度，横向以当前时间点追广度，交汇处提炼判断。
+  </footer>
+</div>
+
+</body>
+</html>
