@@ -524,6 +524,59 @@ details.expandable .detail-body a {
   margin: var(--space-6) auto;
   max-width: 100%;
 }
+
+/* ── Term tooltip (hover definitions) ── */
+.term {
+  text-decoration: underline dotted 1.5px;
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  text-underline-offset: 3px;
+  cursor: help;
+  position: relative;
+  display: inline;
+}
+.term:hover, .term:focus { text-decoration-color: var(--color-accent); }
+.term:hover::after,
+.term:focus::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: normal;
+  width: max-content;
+  max-width: 320px;
+  box-shadow: var(--shadow-strong);
+  z-index: 50;
+  pointer-events: none;
+  line-height: var(--line-height-compact);
+}
+.term:hover::before,
+.term:focus::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-border);
+  z-index: 51;
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  .term:hover::after, .term:focus::after {
+    left: 0; transform: none; max-width: 260px;
+  }
+  .term:hover::before, .term:focus::before {
+    left: 1rem; transform: none;
+  }
+}
 </style>
 </head>
 <body>
@@ -547,7 +600,7 @@ details.expandable .detail-body a {
 <!-- ═══ HERO ═══ -->
 <div class="page-shell">
 <section class="hero" id="top">
-  <h1>AI 的算力饥渴<br>正在<span class="accent">重塑一切</span></h1>
+  <h1>AI 算力饥渴<br>内存暴涨、SORA 之死与<span class="accent">中美约束链</span></h1>
   <p class="subtitle">从内存暴涨到 SORA 之死，从 OpenAI 万亿采购到 DeepSeek 五层降本，从美国电网告急到中国另辟蹊径。同一条约束链上，不同的玩家走出了截然不同的路。</p>
   <div class="hero-stats">
     <div class="stat-card"><div class="number">4.5x</div><div class="label">NAND 三季度累计涨幅</div></div>
@@ -562,7 +615,7 @@ details.expandable .detail-body a {
 <!-- 调研起点 -->
 <section class="section fade-in">
   <div class="prose-section">
-    <p style="color:var(--color-text-muted);font-size:var(--font-size-sm)"><strong>调研起点</strong>：这篇报告源于一个朴素的问题——最近半年内存为什么涨得这么凶？SORA 被 OpenAI 放弃是不是也因为这个？调研过程中问题不断展开：AI 的算力成本跟电费有多大关系？DeepSeek 的低价到底靠什么？Claude 和 OpenAI 的 API 定价里藏了多少利润？美国电网扩不动是不是 AI 发展的根本瓶颈？这些问题最终汇成一条线索：<strong>AI 对算力的饥渴正在拧紧一根全球性的约束链，链上每个环节都在发生不同的故事。</strong></p>
+    <p style="color:var(--color-text-muted);font-size:var(--font-size-sm)"><strong>调研起点</strong>：这篇报告源于一个朴素的问题——最近半年内存为什么涨得这么凶？SORA 被 OpenAI 放弃是不是也因为这个？调研过程中问题不断展开：AI 的<span class="term" data-tip="Compute，AI 运行所需的计算资源总称。包含三个维度：芯片运算速度（FLOPS）、内存读写带宽（HBM）、供电散热基础设施。本报告追踪的正是这三个维度各自的瓶颈" tabindex="0">算力</span>成本跟电费有多大关系？DeepSeek 的低价到底靠什么？Claude 和 OpenAI 的 API 定价里藏了多少利润？美国电网扩不动是不是 AI 发展的根本瓶颈？这些问题最终汇成一条线索：<strong>AI 对算力的饥渴正在拧紧一根全球性的约束链，链上每个环节都在发生不同的故事。</strong></p>
   </div>
 </section>
 
@@ -572,15 +625,15 @@ details.expandable .detail-body a {
 <section class="section fade-in" id="demand">
   <div class="section-header">
     <div class="eyebrow">第一幕</div>
-    <h2>需求冲击：AI 吃掉了消费级内存产线</h2>
+    <h2>需求冲击：HBM 挤占晶圆产能，消费级内存全线涨价</h2>
   </div>
 
   <div class="prose-section">
-    <p>内存芯片是人类工业史上最具周期性的产品。三家公司（Samsung、SK Hynix、Micron）控制着全球约 95% 的 DRAM 产能，过去三十年反复经历<strong>扩产 → 过剩 → 暴跌 → 减产 → 短缺 → 暴涨</strong>的循环，每轮 3-5 年（<a href="https://www.uncoveralpha.com/p/every-memory-cycle-ends-the-same" target="_blank">Uncover Alpha</a>）。但 2024 年开始的这一轮可能真的不一样了。</p>
+    <p>内存芯片是人类工业史上最具周期性的产品。三家公司（Samsung、SK Hynix、Micron）控制着全球约 95% 的 <span class="term" data-tip="动态随机存取内存，电脑的运行内存。断电就丢，用于内存条和手机运存" tabindex="0">DRAM</span> 产能，过去三十年反复经历<strong>扩产 → 过剩 → 暴跌 → 减产 → 短缺 → 暴涨</strong>的循环，每轮 3-5 年（<a href="https://www.uncoveralpha.com/p/every-memory-cycle-ends-the-same" target="_blank">Uncover Alpha</a>）。但 2024 年开始的这一轮可能真的不一样了。</p>
 
-    <p>关键在于一种叫 <strong>HBM（高带宽内存）</strong>的特殊内存。HBM 通过硅通孔（TSV）把多层 DRAM 芯片垂直叠在一起，带宽远超传统 DDR（<a href="https://en.wikipedia.org/wiki/High_Bandwidth_Memory" target="_blank">Wikipedia</a>）。如果 DDR5 是四车道公路，HBM 就是 1024 车道立交桥。AI 芯片需要它来快速读取模型参数——GPT-4 据估计有 1.8 万亿参数（<a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a>），每次推理都要从 HBM 中读取这些数据。</p>
+    <p>关键在于一种叫 <strong><span class="term" data-tip="High Bandwidth Memory，高带宽内存：把多层 DRAM 芯片像叠积木一样垂直焊在一起，数据通道从「四车道」变成「上千车道」，AI 芯片的必需品" tabindex="0">HBM（高带宽内存）</span></strong>的特殊内存。HBM 通过<span class="term" data-tip="Through-Silicon Via，硅通孔：在芯片上打微型垂直通道，让叠在一起的芯片层之间直接传数据" tabindex="0">硅通孔（TSV）</span>把多层 DRAM 芯片垂直叠在一起，带宽远超传统 DDR（<a href="https://en.wikipedia.org/wiki/High_Bandwidth_Memory" target="_blank">Wikipedia</a>）。如果 DDR5 是四车道公路，HBM 就是 1024 车道立交桥。AI 芯片需要它来快速读取模型参数——2023 年的 GPT-4 据估计就有 1.8 万亿<span class="term" data-tip="模型内部的可调数值，类似大脑中的突触连接。参数越多，模型越「聪明」但也越耗资源" tabindex="0">参数</span>（<a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a>），当前一代（GPT-5.5、DeepSeek V4）更大。每次推理都要从 HBM 中读取这些数据。</p>
 
-    <p>致命的问题是：<strong>生产 1 GB 的 HBM 需要消耗 3 倍于 DDR5 的晶圆面积</strong>（<a href="https://www.cnbc.com/2026/01/10/micron-ai-memory-shortage-hbm-nvidia-samsung.html" target="_blank">Micron 财报 / CNBC</a>）。2026 年 AI 相关内存预计消耗全球 DRAM 晶圆产能的 20%（<a href="https://www.trendforce.com/news/2025/12/26/news-ai-reportedly-to-consume-20-of-global-dram-wafer-capacity-in-2026-hbm-gddr7-lead-demand/" target="_blank">TrendForce</a>）。每一片分配给 HBM 的晶圆，就是一片从笔记本内存、手机内存中拿走的晶圆。这不是传统的供需错配，而是晶圆产能的结构性再分配。</p>
+    <p>致命的问题是：<strong>生产 1 GB 的 HBM 需要消耗 3 倍于 DDR5 的<span class="term" data-tip="直径约 30cm 的圆形硅片，所有芯片都从上面切割出来。一片晶圆能切多少芯片，就是产能的基本单位" tabindex="0">晶圆</span>面积</strong>（<a href="https://www.cnbc.com/2026/01/10/micron-ai-memory-shortage-hbm-nvidia-samsung.html" target="_blank">Micron 财报 / CNBC</a>）。2026 年 AI 相关内存预计消耗全球 DRAM 晶圆产能的 20%（<a href="https://www.trendforce.com/news/2025/12/26/news-ai-reportedly-to-consume-20-of-global-dram-wafer-capacity-in-2026-hbm-gddr7-lead-demand/" target="_blank">TrendForce</a>）。每一片分配给 HBM 的晶圆，就是一片从笔记本内存、手机内存中拿走的晶圆。这不是传统的供需错配，而是晶圆产能的结构性再分配。</p>
   </div>
 
   <div class="prose-chart surface-card">
@@ -590,7 +643,7 @@ details.expandable .detail-body a {
   </div>
 
   <div class="prose-section mt-4">
-    <p>具体涨幅：DDR5 32GB 套件从 $95 涨到 $184（<a href="https://sourceability.com/post/tracking-memory-price-increases-across-the-last-several-quarters" target="_blank">Sourceability</a>）；DDR5 芯片单价从 2025 年 9 月的 $6.84 涨到 12 月的 $27.20（接近 4 倍）。NAND 更猛——<a href="https://www.tomshardware.com/pc-components/ssds/phison-ceo-confirms-nand-prices-have-more-than-doubled-and-will-continue-to-rise-all-2026-production-already-sold-out-ssds-facing-pricing-apocalypse-throughout-2027" target="_blank">Phison CEO 确认 6 个月内翻倍</a>，Kingston 报告年涨 246%。2026 年第一季度 DRAM 合约价单季环比涨 55-60%，<a href="https://www.trendforce.com/presscenter/news/20251211-12831.html" target="_blank">TrendForce 分析师 Tom Hsu 用了「前所未有」来形容</a>。消费者能感知的影响：2TB NVMe SSD 从 $120-150 涨到 $300-480，<a href="https://www.trendforce.com/news/2025/12/05/exclusive-memory-crunch-hits-pcs-dell-hikes-prices-15-20-mid-december-lenovo-from-january-2026/" target="_blank">Dell 终端产品涨价 15-20%</a>。</p>
+    <p>具体涨幅：DDR5 32GB 套件从 $95 涨到 $184（<a href="https://sourceability.com/post/tracking-memory-price-increases-across-the-last-several-quarters" target="_blank">Sourceability</a>）；DDR5 芯片单价从 2025 年 9 月的 $6.84 涨到 12 月的 $27.20（接近 4 倍）。<span class="term" data-tip="闪存存储芯片，断电不丢数据。SSD 固态硬盘、手机存储都是 NAND。和 DRAM（内存）是两个不同的东西" tabindex="0">NAND</span> 更猛——<a href="https://www.tomshardware.com/pc-components/ssds/phison-ceo-confirms-nand-prices-have-more-than-doubled-and-will-continue-to-rise-all-2026-production-already-sold-out-ssds-facing-pricing-apocalypse-throughout-2027" target="_blank">Phison CEO 确认 6 个月内翻倍</a>，Kingston 报告年涨 246%。2026 年第一季度 DRAM 合约价单季环比涨 55-60%，<a href="https://www.trendforce.com/presscenter/news/20251211-12831.html" target="_blank">TrendForce 分析师 Tom Hsu 用了「前所未有」来形容</a>。消费者能感知的影响：2TB NVMe SSD 从 $120-150 涨到 $300-480，<a href="https://www.trendforce.com/news/2025/12/05/exclusive-memory-crunch-hits-pcs-dell-hikes-prices-15-20-mid-december-lenovo-from-january-2026/" target="_blank">Dell 终端产品涨价 15-20%</a>。</p>
 
     <p>与此同时，每一代 AI 芯片对 HBM 的需求几乎翻倍：H100 搭载 80 GB，H200 升到 141 GB，B200 到 192 GB，Vera Rubin 将达到 288 GB（<a href="https://introl.com/blog/h100-vs-h200-vs-b200-choosing-the-right-nvidia-gpus-for-your-ai-workload" target="_blank">Introl</a>）。HBM 现在占 AI 加速卡制造成本的 30-40%——NVIDIA B200 上 HBM 的成本约 $2400，已超过逻辑芯片本身（<a href="https://intuitionlabs.ai/articles/hbm-vs-ddr-memory-comparison" target="_blank">IntuitionLabs</a>）。</p>
   </div>
@@ -625,15 +678,15 @@ details.expandable .detail-body a {
 <section class="section fade-in" id="constraints">
   <div class="section-header">
     <div class="eyebrow">第二幕</div>
-    <h2>约束链：封装、内存、电力——一根越拧越紧的链条</h2>
+    <h2>约束链：CoWoS → HBM → 电力，串联瓶颈正在向电网转移</h2>
   </div>
 
   <div class="prose-section">
     <p>AI 基础设施的扩张不是被单一瓶颈卡住的，而是被一条串联的约束链锁住的。理解这条链的结构，比知道任何一个数字更重要。</p>
 
-    <p><a href="https://epoch.ai/data-insights/ai-chip-supply-chain-constraints" target="_blank">Epoch AI 的量化分析</a>最清晰：2025 年四大 AI 芯片设计公司消耗了全球 CoWoS 先进封装产能的 <strong>>90%</strong> 和 HBM 供应的 <strong>>90%</strong>，但只消耗了先进逻辑晶圆制造产能的 <strong>~12%</strong>。瓶颈不在芯片本身，在封装和内存。即使芯片设计好了、HBM 也有了，如果没有 CoWoS 封装把它们组合起来，就是一堆散件（<a href="https://medium.com/@Elongated_musk/cowos-not-hbm-is-the-real-ai-supply-bottleneck-d0ae8f3f7ce4" target="_blank">详细分析</a>）。</p>
+    <p><a href="https://epoch.ai/data-insights/ai-chip-supply-chain-constraints" target="_blank">Epoch AI 的量化分析</a>最清晰：2025 年四大 AI 芯片设计公司消耗了全球 <span class="term" data-tip="Chip-on-Wafer-on-Substrate：台积电的先进封装技术，把 AI 芯片和 HBM 内存并排贴在同一块基板上连线。相当于把散件焊成整机的总装工序" tabindex="0">CoWoS</span> 先进封装产能的 <strong>>90%</strong> 和 HBM 供应的 <strong>>90%</strong>，但只消耗了先进逻辑晶圆制造产能的 <strong>~12%</strong>。瓶颈不在芯片本身，在封装和内存。即使芯片设计好了、HBM 也有了，如果没有 CoWoS 封装把它们组合起来，就是一堆散件（<a href="https://medium.com/@Elongated_musk/cowos-not-hbm-is-the-real-ai-supply-bottleneck-d0ae8f3f7ce4" target="_blank">详细分析</a>）。</p>
 
-    <p>但这条链在动态移动。TSMC 的 CoWoS 产能正在从 35K 晶圆/月扩到 130K 晶圆/月（<a href="https://info.fusionww.com/blog/inside-the-ai-bottleneck-cowos-hbm-and-2-3nm-capacity-constraints-through-2027" target="_blank">Fusion Worldwide</a>）。随着封装和内存逐步追上来，<strong>电力正在变成下一个 binding constraint</strong>。Satya Nadella 在 2026 年说：「最大的问题不是算力不够，而是电力不够。」（<a href="https://www.cnn.com/2026/04/23/business/ai-compute-power-electricity-grid" target="_blank">CNN</a>）</p>
+    <p>但这条链在动态移动。TSMC 的 CoWoS 产能正在从 35K 晶圆/月扩到 130K 晶圆/月（<a href="https://info.fusionww.com/blog/inside-the-ai-bottleneck-cowos-hbm-and-2-3nm-capacity-constraints-through-2027" target="_blank">Fusion Worldwide</a>）。随着封装和内存逐步追上来，<strong>电力正在变成下一个最紧约束</strong>。Satya Nadella 在 2026 年说：「最大的问题不是算力不够，而是电力不够。」（<a href="https://www.cnn.com/2026/04/23/business/ai-compute-power-electricity-grid" target="_blank">CNN</a>）</p>
   </div>
 
   <div class="surface-card mt-4 mb-4">
@@ -659,7 +712,9 @@ details.expandable .detail-body a {
 
   <div class="prose-section">
     <h3>美国电网：去工业化的代价</h3>
-    <p>芯片和内存的产能可以靠下订单、付钱来解决（工厂在韩国、台湾，供应链是全球化的）。但数据中心必须部署在本土电网上，而美国的电网扩容能力在去工业化之后严重退化：</p>
+    <p>芯片和内存的产能可以靠下订单、付钱来解决（工厂在韩国、台湾，供应链是全球化的）。但「全球化」本身也是一根细线：<strong>全球 >90% 的 CoWoS 先进封装和超过 90% 的最先进逻辑制造都在台湾一座岛上完成</strong>。台海局势任何风吹草动，这条约束链从「紧」变成「断」只需要几天。这个地缘单点风险没有技术替代方案，也不是砸钱能对冲的。</p>
+
+    <p>电力也是如此。数据中心必须部署在本土电网上，而美国的电网扩容能力在去工业化之后严重退化：</p>
     <ul>
       <li>2026 年计划上线的 12 GW 数据中心容量中，只有 5 GW 实际在建，<strong>7 GW 延迟或取消</strong>（<a href="https://tech-insider.org/us-ai-data-center-delays-cancellations-7gw-capacity-crisis-2026/" target="_blank">Tech Insider</a>）</li>
       <li>高压变压器交货期从疫情前 24-30 个月延长到 <strong>5 年</strong>。美国只生产自用 20%，<strong>中国控制全球 60% 产能</strong>（<a href="https://www.powermag.com/transformers-in-2026-shortage-scramble-or-self-inflicted-crisis/" target="_blank">Power Magazine</a>）</li>
@@ -676,7 +731,7 @@ details.expandable .detail-body a {
 <section class="section fade-in" id="casualties">
   <div class="section-header">
     <div class="eyebrow">第三幕</div>
-    <h2>牺牲品：内存涨价让消费者买单，SORA 因算力争夺而死</h2>
+    <h2>牺牲品：SORA 日烧 $1500 万，Anthropic 的崛起逼 OpenAI 砍掉它</h2>
   </div>
 
   <div class="prose-section">
@@ -696,7 +751,7 @@ details.expandable .detail-body a {
   <div class="prose-section">
     <p>但 SORA 自身的亏损只是内因。真正让 OpenAI 在 2026 年 3 月动刀的催化剂，是一个外部事件：<strong>Anthropic 的 Claude Code 在编码领域的爆发式增长</strong>。</p>
 
-    <p>2025 年 5 月 Claude Code 发布，6 个月内达到 10 亿美元 ARR（<a href="https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/" target="_blank">SaaStr</a>）。到 2026 年 2 月超过 25 亿美元。Anthropic 整体 ARR 暴涨到 300 亿美元，<strong><a href="https://venturebeat.com/technology/anthropic-says-it-hit-a-30-billion-revenue-run-rate-after-crazy-80x-growth" target="_blank">超越了 OpenAI 的 250 亿</a></strong>。OpenAI 企业 API 份额从约 50% 跌到 25%。<a href="https://www.wsj.com" target="_blank">WSJ</a> 获取了 CEO Fidji Simo 的全员会议记录：她把 Anthropic 的崛起称为「wake-up call」，宣布砍掉所有<a href="https://futurism.com/artificial-intelligence/openai-cutting-projects" target="_blank">「side quests」</a>。<strong>八天后，<a href="https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation" target="_blank">SORA 正式关停</a>。</strong></p>
+    <p>2025 年 5 月 Claude Code 发布，6 个月内达到 10 亿美元 <span class="term" data-tip="Annual Recurring Revenue，年化经常性收入：把当前月收入×12 得到的年化数字，衡量订阅制公司规模的核心指标" tabindex="0">ARR</span>（<a href="https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/" target="_blank">SaaStr</a>）。到 2026 年 2 月超过 25 亿美元。Anthropic 整体 ARR 暴涨到 300 亿美元，<strong><a href="https://venturebeat.com/technology/anthropic-says-it-hit-a-30-billion-revenue-run-rate-after-crazy-80x-growth" target="_blank">超越了 OpenAI 的 250 亿</a></strong>。OpenAI 企业 API 份额从约 50% 跌到 25%。<a href="https://www.wsj.com" target="_blank">WSJ</a> 获取了 CEO Fidji Simo 的全员会议记录：她把 Anthropic 的崛起称为「wake-up call」，宣布砍掉所有<a href="https://futurism.com/artificial-intelligence/openai-cutting-projects" target="_blank">「side quests」</a>。<strong>八天后，<a href="https://help.openai.com/en/articles/20001152-what-to-know-about-the-sora-discontinuation" target="_blank">SORA 正式关停</a>。</strong></p>
   </div>
 
   <div class="prose-chart surface-card">
@@ -706,7 +761,7 @@ details.expandable .detail-body a {
   </div>
 
   <div class="prose-section mt-4">
-    <p>视频生成为什么比文本贵 1000 倍？5 秒 24fps 视频 = 120 帧，每帧需要空间一致性 + 帧间时间一致性。处理超过 8 万个 token，attention 操作占推理时间 85% 以上，二次方缩放。而且视频生成高度依赖<strong>内存带宽</strong>而非纯 FLOPS，恰好撞上 HBM 最紧缺的时点。</p>
+    <p>视频生成为什么比文本贵 1000 倍？5 秒 24fps 视频 = 120 帧，每帧需要空间一致性 + 帧间时间一致性。处理超过 8 万个 <span class="term" data-tip="AI 处理文字的最小单位，约等于 1 个英文单词或半个到一个汉字。模型的输入和输出都按 token 计费" tabindex="0">token</span>，<span class="term" data-tip="注意力机制：AI 生成每个字时都要回头「看」前面所有字来决定怎么写。内容越长，要回看的量按平方增长——1000 字要看 100 万次，2000 字就要看 400 万次" tabindex="0">attention 操作</span>占推理时间 85% 以上。而且视频生成高度依赖<strong>内存带宽</strong>而非纯 <span class="term" data-tip="Floating Point Operations Per Second，每秒浮点运算次数，衡量芯片算力的单位。T = 万亿" tabindex="0">FLOPS</span>，恰好撞上 HBM 最紧缺的时点。</p>
   </div>
 
   <div class="prose-chart surface-card">
@@ -730,7 +785,7 @@ details.expandable .detail-body a {
 <section class="section fade-in" id="arms-race">
   <div class="section-header">
     <div class="eyebrow">第四幕</div>
-    <h2>军备竞赛：OpenAI 的万亿采购与供应链垂直整合</h2>
+    <h2>军备竞赛：OpenAI $1.15 万亿采购，直接跟内存厂签合同</h2>
   </div>
 
   <div class="prose-section">
@@ -739,39 +794,43 @@ details.expandable .detail-body a {
 
   <div class="surface-card mb-4">
     <div class="chart-title">三条算力获取路径</div>
-    <svg viewBox="0 0 900 420" style="width:100%;height:auto;font-family:inherit" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="10" width="260" height="400" rx="12" fill="var(--color-bg-muted)" stroke="var(--color-border)" stroke-width="1.5"/>
-      <text x="150" y="42" text-anchor="middle" fill="var(--color-accent)" font-weight="800" font-size="15">路径 A：云租赁</text>
-      <rect x="55" y="60" width="190" height="38" rx="8" fill="var(--color-accent-tint)" stroke="var(--color-accent)" stroke-width="1.2"/>
-      <text x="150" y="84" text-anchor="middle" fill="var(--color-text-primary)" font-size="12" font-weight="600">HBM 厂 → NVIDIA → 云厂商</text>
-      <line x1="150" y1="98" x2="150" y2="128" stroke="var(--color-text-muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-      <rect x="55" y="128" width="190" height="38" rx="8" fill="var(--color-accent)" stroke="none"/>
-      <text x="150" y="152" text-anchor="middle" fill="var(--color-text-inverse)" font-size="13" font-weight="700">OpenAI 租用</text>
-      <text x="150" y="190" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">Azure $2500亿 + AWS $1380亿</text>
-      <text x="150" y="206" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">+ Oracle $3000亿 + CoreWeave $224亿</text>
-      <text x="150" y="228" text-anchor="middle" fill="var(--color-accent)" font-size="12" font-weight="700">合计 ~$7100 亿</text>
-      <rect x="310" y="10" width="260" height="400" rx="12" fill="var(--color-bg-muted)" stroke="var(--color-border)" stroke-width="1.5"/>
-      <text x="440" y="42" text-anchor="middle" fill="var(--color-note)" font-weight="800" font-size="15">路径 B：Stargate 自建</text>
-      <rect x="345" y="60" width="190" height="38" rx="8" fill="color-mix(in srgb, var(--color-note) 15%, var(--color-bg-surface))" stroke="var(--color-note)" stroke-width="1.2"/>
-      <text x="440" y="84" text-anchor="middle" fill="var(--color-text-primary)" font-size="12" font-weight="600">HBM 直签 → NVIDIA/AMD</text>
-      <line x1="440" y1="98" x2="440" y2="128" stroke="var(--color-text-muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-      <rect x="345" y="128" width="190" height="38" rx="8" fill="var(--color-note)" stroke="none"/>
-      <text x="440" y="152" text-anchor="middle" fill="var(--color-text-inverse)" font-size="13" font-weight="700">OpenAI 自有运营</text>
-      <text x="440" y="190" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">德州 Abilene: 45万+ GB200, 1.2GW</text>
-      <text x="440" y="206" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">+ 5 个新站点 + 海外站点</text>
-      <text x="440" y="228" text-anchor="middle" fill="var(--color-note)" font-size="12" font-weight="700">总投资 $5000 亿</text>
-      <rect x="600" y="10" width="280" height="400" rx="12" fill="var(--color-bg-muted)" stroke="var(--color-border)" stroke-width="1.5"/>
-      <text x="740" y="42" text-anchor="middle" fill="var(--color-success)" font-weight="800" font-size="15">路径 C：自研芯片 Titan</text>
-      <rect x="635" y="60" width="210" height="38" rx="8" fill="color-mix(in srgb, var(--color-success) 15%, var(--color-bg-surface))" stroke="var(--color-success)" stroke-width="1.2"/>
-      <text x="740" y="84" text-anchor="middle" fill="var(--color-text-primary)" font-size="12" font-weight="600">Samsung HBM4 独占 → Broadcom + TSMC</text>
-      <line x1="740" y1="98" x2="740" y2="128" stroke="var(--color-text-muted)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-      <rect x="645" y="128" width="190" height="38" rx="8" fill="var(--color-success)" stroke="none"/>
-      <text x="740" y="152" text-anchor="middle" fill="var(--color-text-inverse)" font-size="13" font-weight="700">OpenAI 自有芯片</text>
-      <text x="740" y="190" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">Broadcom $3500亿 + AMD $900亿</text>
-      <text x="740" y="206" text-anchor="middle" fill="var(--color-text-muted)" font-size="10">+ Cerebras $100-200亿 (推理)</text>
-      <text x="740" y="228" text-anchor="middle" fill="var(--color-success)" font-size="12" font-weight="700">合计 ~$4500 亿</text>
-      <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="var(--color-text-muted)"/></marker></defs>
-    </svg>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)">
+      <!-- 路径 A -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);background:var(--color-bg-muted);border:1px solid var(--color-border-soft);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-3)">
+        <div style="font-weight:800;font-size:var(--font-size-sm);color:var(--color-accent)">路径 A：云租赁</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-accent);background:var(--color-accent-tint);font-size:var(--font-size-xs);font-weight:600;text-align:center">HBM 内存厂</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-accent);background:var(--color-accent-tint);font-size:var(--font-size-xs);font-weight:600;text-align:center">NVIDIA 造卡</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-accent);background:var(--color-accent-tint);font-size:var(--font-size-xs);font-weight:600;text-align:center">云厂商部署</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);background:var(--color-accent);color:var(--color-text-inverse);font-size:var(--font-size-sm);font-weight:700;text-align:center">OpenAI 租用</div>
+        <div style="text-align:center;font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-2);line-height:var(--line-height-compact)">Azure $2500亿 + AWS $1380亿<br>+ Oracle $3000亿 + CoreWeave $224亿</div>
+        <div style="font-weight:700;font-size:var(--font-size-sm);color:var(--color-accent)">合计 ~$7100 亿</div>
+      </div>
+      <!-- 路径 B -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);background:var(--color-bg-muted);border:1px solid var(--color-border-soft);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-3)">
+        <div style="font-weight:800;font-size:var(--font-size-sm);color:var(--color-note)">路径 B：Stargate 自建</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-note);background:color-mix(in srgb, var(--color-note) 12%, var(--color-bg-surface));font-size:var(--font-size-xs);font-weight:600;text-align:center">HBM 厂直签</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-note);background:color-mix(in srgb, var(--color-note) 12%, var(--color-bg-surface));font-size:var(--font-size-xs);font-weight:600;text-align:center">NVIDIA / AMD 造卡</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);background:var(--color-note);color:var(--color-text-inverse);font-size:var(--font-size-sm);font-weight:700;text-align:center">OpenAI 自建数据中心</div>
+        <div style="text-align:center;font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-2);line-height:var(--line-height-compact)">德州 Abilene: 45万+ GB200, 1.2GW<br>+ 5 个新站点 + 海外站点</div>
+        <div style="font-weight:700;font-size:var(--font-size-sm);color:var(--color-note)">总投资 $5000 亿</div>
+      </div>
+      <!-- 路径 C -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);background:var(--color-bg-muted);border:1px solid var(--color-border-soft);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-3)">
+        <div style="font-weight:800;font-size:var(--font-size-sm);color:var(--color-success)">路径 C：自研芯片 Titan</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-success);background:color-mix(in srgb, var(--color-success) 12%, var(--color-bg-surface));font-size:var(--font-size-xs);font-weight:600;text-align:center">Samsung HBM4 独占</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);border:1.5px solid var(--color-success);background:color-mix(in srgb, var(--color-success) 12%, var(--color-bg-surface));font-size:var(--font-size-xs);font-weight:600;text-align:center">Broadcom 设计 + TSMC 制造</div>
+        <div style="color:var(--color-text-muted);line-height:1">↓</div>
+        <div style="width:100%;max-width:200px;padding:var(--space-2) var(--space-3);border-radius:var(--radius-sm);background:var(--color-success);color:var(--color-text-inverse);font-size:var(--font-size-sm);font-weight:700;text-align:center">OpenAI 自有芯片</div>
+        <div style="text-align:center;font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-2);line-height:var(--line-height-compact)">Broadcom $3500亿 + AMD $900亿<br>+ Cerebras $100-200亿 (推理)</div>
+        <div style="font-weight:700;font-size:var(--font-size-sm);color:var(--color-success)">合计 ~$4500 亿</div>
+      </div>
+    </div>
     <div class="chart-caption">来源：<a href="https://openai.com" target="_blank">OpenAI 官方</a>, <a href="https://www.cnbc.com" target="_blank">CNBC</a>, <a href="https://techcrunch.com" target="_blank">TechCrunch</a>, <a href="https://tomtunguz.com" target="_blank">Tomasz Tunguz</a></div>
   </div>
 
@@ -785,6 +844,13 @@ details.expandable .detail-body a {
     <div class="chart-wrap" style="aspect-ratio:16/9"><canvas id="chartProcurement"></canvas></div>
     <div class="chart-caption">来源：<a href="https://openai.com" target="_blank">OpenAI</a>, <a href="https://www.cnbc.com" target="_blank">CNBC</a>, <a href="https://tomtunguz.com" target="_blank">Tomasz Tunguz</a></div>
   </div>
+
+  <details class="expandable">
+    <summary>不只是 OpenAI：Google、Meta、Amazon 的算力路径</summary>
+    <div class="detail-body">
+      <p>报告聚焦 OpenAI 的万亿采购，但其他巨头走的路完全不同。<strong>Google</strong> 是唯一同时拥有自研芯片（TPU v7，192 GB HBM）和前沿模型（Gemini）的公司，不依赖 NVIDIA；2026 年 TPU 集群规模已超过 10 万片，且自建数据中心电力充裕。<strong>Meta</strong> 同时押注自研芯片（MTIA）和 NVIDIA GPU，但核心策略是开源 Llama 构建生态，用别人的算力跑自己的模型。<strong>Amazon</strong> 通过自研 Trainium/Inferentia 芯片主打性价比，不追求前沿性能而是降低推理成本。三者的共同点：都在降低对 NVIDIA 和 HBM 的依赖度。区别：Google 最自主，Meta 最开放，Amazon 最务实。</p>
+    </div>
+  </details>
 
   <details class="expandable">
     <summary>微软关系的三次重新谈判</summary>
@@ -801,12 +867,15 @@ details.expandable .detail-body a {
 <section class="section fade-in" id="another-way">
   <div class="section-header">
     <div class="eyebrow">第五幕</div>
-    <h2>另一条路：DeepSeek 的五层降本与中国的约束结构</h2>
+    <h2>另一条路：DeepSeek 五层降本，Claude API 定价有约 10 倍溢价</h2>
   </div>
 
   <div class="prose-section">
     <p>OpenAI 选择用万亿美元砸开约束链。DeepSeek 选了另一条路——<strong>在约束内做到极致效率</strong>。V4-Flash 输出定价 $0.28/百万 token，Claude Opus 4.7 是 $25。差距 89 倍。这不是靠电费便宜实现的，而是五层技术叠加的结果。</p>
 
+    <div class="insight-block">
+      <p><strong>一个容易混淆的区分：训练 vs 推理。</strong>训练是「教 AI 学会」，一次性投入巨额算力（DeepSeek V4 训练用了数千张 GPU 跑数周）；推理是「让 AI 回答问题」，每次调用都产生持续成本。DeepSeek 的 89 倍价格优势主要在<strong>推理</strong>环节。前沿模型的训练仍然需要绝对算力——这也是为什么出口管制对中国的训练能力影响更大，而对推理部署影响有限。</p>
+    </div>
   </div>
 
   <!-- 五层阶梯式递减卡片 -->
@@ -814,8 +883,8 @@ details.expandable .detail-body a {
     <div style="width:100%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-text-muted);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
       <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-text-muted);line-height:1">0</div>
       <div>
-        <div style="font-weight:700;margin-bottom:var(--space-1)">Dense 基线（GPT-4 级别）</div>
-        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">约 280B 参数全部激活，每 token 消耗约 560 TFLOPS（<a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a>）</div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)"><span class="term" data-tip="Dense 架构：模型所有参数每次推理都参与计算，没有「偷懒」的部分。对比 MoE 的稀疏激活" tabindex="0">Dense 架构</span>基线（假设同能力级别）</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">如果用传统 Dense 架构达到 DeepSeek V4 的能力，约需 280B 参数全部激活，每 token 消耗约 560 TFLOPS（<a href="https://newsletter.semianalysis.com/p/gpt-4-architecture-infrastructure" target="_blank">SemiAnalysis</a>）</div>
       </div>
       <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-text-muted)">100%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">相对成本</div></div>
     </div>
@@ -823,8 +892,8 @@ details.expandable .detail-body a {
     <div style="width:92%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-accent);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
       <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-accent);line-height:1">1</div>
       <div>
-        <div style="font-weight:700;margin-bottom:var(--space-1)">MoE 稀疏激活</div>
-        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">1.6T 总参数只激活 49B（3.1%），每次只点亮大脑的 30 个区域（GPT-4 要 150 个）（<a href="https://www.morphllm.com/deepseek-v4" target="_blank">Morph</a>）</div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)"><span class="term" data-tip="Mixture of Experts，混合专家架构：模型有多组「专家」子网络，每次处理请求只叫几个相关专家干活，其余休息。用更少算力达到接近的效果" tabindex="0">MoE</span> 稀疏激活</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">1.6T 总参数只激活 49B（3.1%）。打个比方：公司有 1600 人，每个项目只派 49 个相关专家参与，其余休息。Dense 架构则是全员上阵（<a href="https://www.morphllm.com/deepseek-v4" target="_blank">Morph</a>）</div>
       </div>
       <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-accent)">~18%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ 5x</div></div>
     </div>
@@ -832,8 +901,8 @@ details.expandable .detail-body a {
     <div style="width:78%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-note);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
       <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-note);line-height:1">2</div>
       <div>
-        <div style="font-weight:700;margin-bottom:var(--space-1)">混合注意力压缩 (CSA + HCA)</div>
-        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">FLOPs 再降到 V3 的 27%，KV cache 降到 10%（<a href="https://www.marktechpost.com/2026/04/24/deepseek-ai-releases-deepseek-v4-compressed-sparse-attention-and-heavily-compressed-attention-enable-one-million-token-contexts/" target="_blank">MarkTechPost</a>）</div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)"><span class="term" data-tip="Compressed Sparse Attention + Heavily Compressed Attention：DeepSeek 发明的两种注意力压缩技术，让模型「回看」前文时只看关键部分，大幅减少计算量" tabindex="0">混合注意力压缩 (CSA + HCA)</span></div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">计算量再降到 V3 的 27%，<span class="term" data-tip="Key-Value Cache：AI 推理时把已经算过的中间结果存起来，下次生成时不用重算。省时间但占大量内存" tabindex="0">KV cache</span> 降到 10%（<a href="https://www.marktechpost.com/2026/04/24/deepseek-ai-releases-deepseek-v4-compressed-sparse-attention-and-heavily-compressed-attention-enable-one-million-token-contexts/" target="_blank">MarkTechPost</a>）</div>
       </div>
       <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-note)">~5%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ 再 73%</div></div>
     </div>
@@ -841,8 +910,8 @@ details.expandable .detail-body a {
     <div style="width:62%;background:var(--color-bg-surface);border:1px solid var(--color-border-soft);border-left:4px solid var(--color-success);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-soft);display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center">
       <div style="font-size:var(--font-size-3xl);font-weight:800;color:var(--color-success);line-height:1">3</div>
       <div>
-        <div style="font-weight:700;margin-bottom:var(--space-1)">FP4 量化感知训练</div>
-        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">4 位精度从训练开始，GPU 数量减半。质量不降：SWE-bench 80.6% vs Claude 80.8%（<a href="https://venturebeat.com/technology/deepseek-v4-arrives-with-near-state-of-the-art-intelligence-at-1-6th-the-cost-of-opus-4-7-gpt-5-5" target="_blank">VentureBeat</a>）</div>
+        <div style="font-weight:700;margin-bottom:var(--space-1)"><span class="term" data-tip="4 位浮点精度量化：常规模型用 16 位数字存参数（精度高但占空间），FP4 用 4 位（精度略降但内存和算力减半）。好比把高清照片压成中清——肉眼几乎看不出差别" tabindex="0">FP4 量化</span>感知训练</div>
+        <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">从训练一开始就用低精度，GPU 数量减半。质量不降：SWE-bench 80.6% vs Claude 80.8%（<a href="https://venturebeat.com/technology/deepseek-v4-arrives-with-near-state-of-the-art-intelligence-at-1-6th-the-cost-of-opus-4-7-gpt-5-5" target="_blank">VentureBeat</a>）</div>
       </div>
       <div style="text-align:right"><div style="font-size:var(--font-size-xl);font-weight:800;color:var(--color-success)">~2.5%</div><div style="font-size:var(--font-size-xs);color:var(--color-text-muted)">↓ 再半</div></div>
     </div>
@@ -872,9 +941,9 @@ details.expandable .detail-body a {
     <h3>为什么 OpenAI 和 Anthropic 不直接跟进这五层优化</h3>
     <p>一个自然的疑问：既然 DeepSeek 的技术论文都公开了，OpenAI 和 Anthropic 为什么不直接抄？答案不是「有没有门槛」，而是三个因素叠加：<strong>门槛高低不同、优化目标不同、商业动机不同</strong>。</p>
 
-    <p><strong>可以复制但选择不做的（优化目标冲突）</strong>：GPT-4 已经在用 MoE，但激活比保守得多（15.6% vs 3.1%）。更极端的稀疏在 benchmark 上可能丢 1-2 个百分点。对于在 SWE-bench 上争 0.2% 的公司来说，这个取舍不划算。Anthropic/OpenAI 的目标是「绝对 frontier 性能」，DeepSeek 的目标是「在有限硬件上跑出实用性能」。同一套技术，优化目标不同，取舍就不同。激进的缓存定价也没有技术门槛，但 Anthropic 的 API 是利润中心（约 10 倍 markup），主动降价意味着砍自己的收入。</p>
+    <p><strong>可以复制但选择不做的（优化目标冲突）</strong>：OpenAI 和 Anthropic 的前沿模型也用了 MoE，但激活比远比 DeepSeek 保守（GPT-5.5 估计约 15% vs DeepSeek V4 的 3.1%）。更极端的稀疏在 benchmark 上可能丢 1-2 个百分点。对于在 SWE-bench 上争 0.2% 的公司来说，这个取舍不划算。Anthropic/OpenAI 的目标是「绝对 frontier 性能」，DeepSeek 的目标是「在有限硬件上跑出实用性能」。同一套技术，优化目标不同，取舍就不同。激进的缓存定价也没有技术门槛，但 Anthropic 的 API 是利润中心（定价约为实际计算成本的 10 倍），主动降价意味着砍自己的收入。</p>
 
-    <p><strong>有真实技术门槛的（需要特定硬件和工程积累）</strong>：FP4 量化需要硬件原生支持，H100 没有 FP4 tensor core，需要 Blackwell 或昇腾 950（<a href="https://vrlatech.com/fp4-vs-fp8-vs-fp16-for-llm-inference-which-precision-should-you-use/" target="_blank">VRLA Tech</a>）。CSA/HCA 混合注意力不是可以独立插拔的模块，它和 mHC（流形约束超连接）、Muon 优化器是协同设计的（<a href="https://softmaxdata.com/blog/deepseek-v4-is-not-a-bigger-v3-it-is-a-foundation-not-a-finale/" target="_blank">SoftmaxData</a>）。DeepSeek 团队重写了超过 200 个核心算子，华为派驻工程师现场协作 15 个月才跑通（<a href="https://www.chinatalk.media/p/deepseek-v4" target="_blank">ChinaTalk</a>）。论文公开了原理，但工程实现中的细节不在论文里。</p>
+    <p><strong>有真实技术门槛的（需要特定硬件和工程积累）</strong>：FP4 量化需要硬件原生支持，H100 没有 FP4 <span class="term" data-tip="GPU 中专门做矩阵乘法的硬件单元，AI 训练推理的算力核心。不同代的 Tensor Core 支持不同精度" tabindex="0">tensor core</span>，需要 Blackwell 或昇腾 950（<a href="https://vrlatech.com/fp4-vs-fp8-vs-fp16-for-llm-inference-which-precision-should-you-use/" target="_blank">VRLA Tech</a>）。CSA/HCA 混合注意力不是可以独立插拔的模块，它和 <span class="term" data-tip="Manifold-constrained Hyper-Connection：让模型各层之间的信息传递更高效的新架构组件，类似给网络加了「快速通道」" tabindex="0">mHC（流形约束超连接）</span>、<span class="term" data-tip="一种训练优化算法，比传统 Adam 优化器收敛更快，但需要特定工程适配" tabindex="0">Muon 优化器</span>是协同设计的（<a href="https://softmaxdata.com/blog/deepseek-v4-is-not-a-bigger-v3-it-is-a-foundation-not-a-finale/" target="_blank">SoftmaxData</a>）。DeepSeek 团队重写了超过 200 个核心算子，华为派驻工程师现场协作 15 个月才跑通（<a href="https://www.chinatalk.media/p/deepseek-v4" target="_blank">ChinaTalk</a>）。论文公开了原理，但工程实现中的细节不在论文里。</p>
 
     <p><strong>正在被追赶的（时间问题）</strong>：Claude Opus 定价从 $15/$75 降到 $5/$25（66% 降幅）（<a href="https://www.finout.io/blog/claude-opus-4.7-pricing-the-real-cost-story-behind-the-unchanged-price-tag" target="_blank">Finout</a>），GPT-5.3-Codex token 用量降了 25%（<a href="https://openai.com/index/introducing-gpt-5-3-codex/" target="_blank">OpenAI</a>）。<a href="https://a16z.com/llmflation-llm-inference-cost/" target="_blank">a16z 的 LLMflation 数据</a>显示等效性能推理成本每年降约 10 倍。西方实验室确实在跟进效率优化，只是节奏比 DeepSeek 保守，因为它们的商业模式不需要激进降价——高定价下已经有 $14B+ 的年收入。</p>
   </div>
@@ -944,7 +1013,7 @@ details.expandable .detail-body a {
 <section class="section fade-in" id="scenarios">
   <div class="section-header">
     <div class="eyebrow">第六幕</div>
-    <h2>未来推演：哪个约束会成为决定性变量</h2>
+    <h2>未来推演：电力可能取代芯片成为决定性约束</h2>
   </div>
 
   <div class="prose-section mb-6">
@@ -961,7 +1030,7 @@ details.expandable .detail-body a {
     <div class="surface-card scenario-card dangerous">
       <div class="flex-gap-2 mb-4"><span class="pill danger">最危险</span></div>
       <h3 style="font-size:var(--font-size-lg);font-weight:700;margin-bottom:var(--space-2)">AI 投资回报不及预期</h3>
-      <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm)">Scaling law 收益递减，$7250 亿 hyperscaler 资本支出没有产生相应回报。Amazon 2026 年预计负自由现金流 $170 亿，大科技已发债 $1000 亿。如果 AI 不能证明 ROI，杠杆会迅速反转。新建产能变搁浅资产，内存行业重演 2019 暴跌。</p>
+      <p style="color:var(--color-text-secondary);font-size:var(--font-size-sm)"><span class="term" data-tip="经验规律：模型越大、数据越多、算力越强，AI 就越聪明。但近期出现边际收益递减的迹象" tabindex="0">Scaling law</span> 收益递减，$7250 亿 hyperscaler 资本支出没有产生相应回报。Amazon 2026 年预计负自由现金流 $170 亿，大科技已发债 $1000 亿。如果 AI 不能证明 ROI，杠杆会迅速反转。新建产能变<span class="term" data-tip="已投入大量资金建设但无法产生预期回报的资产，类似烂尾楼" tabindex="0">搁浅资产</span>，内存行业重演 2019 暴跌。</p>
       <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-top:var(--space-3)">危险信号：连续两个季度 hyperscaler capex 下调、企业 AI 采购放缓</div>
     </div>
     <div class="surface-card scenario-card optimistic">
