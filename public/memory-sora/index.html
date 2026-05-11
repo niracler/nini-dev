@@ -147,7 +147,7 @@ body {
 
 /* ── Hero ── */
 .hero {
-  padding: var(--space-12) 0 var(--space-8);
+  padding: var(--space-12) 0 var(--space-6);
   text-align: center;
 }
 .hero h1 {
@@ -161,12 +161,42 @@ body {
 .hero .subtitle {
   color: var(--color-text-secondary);
   font-size: var(--font-size-lg);
-  max-width: 52ch; margin: 0 auto var(--space-8);
+  max-width: 52ch; margin: 0 auto var(--space-4);
+}
+.hero-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+.hero-meta .meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border-soft);
+  font-size: var(--font-size-2xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.hero-meta .meta-pill.accent {
+  background: var(--color-accent-tint);
+  color: var(--color-accent-dark);
+  border-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+.hero-meta a.meta-pill:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  gap: var(--space-3);
   margin: 0 auto;
 }
 .stat-card {
@@ -602,6 +632,12 @@ details.expandable .detail-body a {
 <section class="hero" id="top">
   <h1>AI 算力饥渴<br>内存暴涨、SORA 之死与<span class="accent">中美约束链</span></h1>
   <p class="subtitle">从内存暴涨到 SORA 之死，从 OpenAI 万亿采购到 DeepSeek 五层降本，从美国电网告急到中国另辟蹊径。同一条约束链上，不同的玩家走出了截然不同的路。</p>
+  <div class="hero-meta">
+    <span class="meta-pill">2026 年 5 月</span>
+    <span class="meta-pill">数据截至 2026 Q1</span>
+    <span class="meta-pill">AI 生成 · 人类引导</span>
+    <a href="#sources" class="meta-pill accent">36 条信源 ↓</a>
+  </div>
   <div class="hero-stats">
     <div class="stat-card"><div class="number">4.5x</div><div class="label">NAND 三季度累计涨幅</div></div>
     <div class="stat-card"><div class="number">$210万</div><div class="label">SORA 全生命周期总收入</div></div>
