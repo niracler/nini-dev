@@ -1,12 +1,33 @@
 {
   "folders": [
-    { "path": ".", "name": "Config" },
-    { "path": "repos/nyaruko-telegram-bot", "name": "Nyaruko Telegram Bot" },
-    { "path": "repos/plrom", "name": "Plrom" },
-    { "path": "repos/random", "name": "Random Challenge" },
-    { "path": "repos/bokushi", "name": "Bokushi" },
-    { "path": "repos/ai-programming-share", "name": "AI Programming Share" },
-    { "path": "repos/skill", "name": "Skill" }
+    {
+      "name": "Config",
+      "path": "."
+    },
+    {
+      "name": "Nyaruko Telegram Bot",
+      "path": "repos/nyaruko-telegram-bot"
+    },
+    {
+      "name": "Plrom",
+      "path": "repos/plrom"
+    },
+    {
+      "name": "Random Challenge",
+      "path": "repos/random"
+    },
+    {
+      "name": "Bokushi",
+      "path": "repos/bokushi"
+    },
+    {
+      "name": "AI Programming Share",
+      "path": "repos/ai-programming-share"
+    },
+    {
+      "name": "Skill",
+      "path": "repos/skill"
+    }
   ],
   "settings": {
     "workbench.colorCustomizations": {

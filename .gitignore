@@ -27,3 +27,13 @@ node_modules/
 
 # pnpm store
 .pnpm-store/
+
+# Cloudflare Wrangler local state
+.wrangler/
+
+# CLI agent local state
+.agents/
+.codex/
+
+# Scratch / temporary
+tmp/
