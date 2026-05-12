@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三款 AI 程序员横向对比：Claude Code vs Codex vs DeepSeek-TUI</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+/* ── Bokushi Design Tokens (inline) ── */
+:root {
+  --font-size-2xs: 0.6875rem;
+  --font-size-xs: 0.8125rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-base: 1.0625rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.875rem;
+  --font-size-3xl: 2.25rem;
+  --line-height-base: 1.75;
+  --line-height-compact: 1.5;
+  --line-height-tight: 1.22;
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem; --space-12: 3rem;
+  --radius-xs: 2px; --radius-sm: 6px; --radius-md: 10px;
+  --radius-lg: 16px; --radius-full: 9999px;
+  --transition-base: 0.2s ease; --transition-slow: 0.3s ease;
+  /* Light */
+  --color-bg-page: #fffaf4;
+  --color-bg-surface: #ffffff;
+  --color-bg-muted: #f8efe4;
+  --color-text-primary: #2a1c17;
+  --color-text-primary-rgb: 42 28 23;
+  --color-text-secondary: #46342a;
+  --color-text-muted: #5f4d42;
+  --color-text-inverse: #fef9f0;
+  --color-border: #dcc9ba;
+  --color-border-soft: rgba(42, 28, 23, 0.1);
+  --color-accent: #fb8f68;
+  --color-accent-dark: #d67046;
+  --color-accent-soft: #ffe7dc;
+  --color-accent-rgb: 251 143 104;
+  --color-accent-tint: rgba(251, 143, 104, 0.16);
+  --color-success: #4f8b63;
+  --color-warning: #d8871d;
+  --color-danger: #c84c3a;
+  --color-note: #8d7bd6;
+  --shadow-soft: 0 6px 18px rgba(47, 37, 25, 0.08);
+  --shadow-strong: 0 16px 36px rgba(47, 37, 25, 0.14);
+  --color-code-bg: #f6f8fa;
+  /* Chart palette */
+  --chart-1: #fb8f68;
+  --chart-2: #8d7bd6;
+  --chart-3: #4f8b63;
+  --chart-4: #d8871d;
+  --chart-5: #c84c3a;
+  --chart-6: #5ba3cf;
+  /* Tool brand colors */
+  --claude-color: #d97757;
+  --codex-color: #10a37f;
+  --deepseek-color: #4d6bfe;
+}
+
+[data-theme="dark"] {
+  --color-bg-page: #140e0b;
+  --color-bg-surface: #1b140f;
+  --color-bg-muted: #241914;
+  --color-text-primary: #f8ede1;
+  --color-text-primary-rgb: 248 237 225;
+  --color-text-secondary: #d7c6b8;
+  --color-text-muted: #b8a090;
+  --color-text-inverse: #1b120c;
+  --color-border: #3b2b22;
+  --color-border-soft: rgba(248, 237, 225, 0.12);
+  --color-accent-soft: rgba(251, 143, 104, 0.16);
+  --color-accent-tint: rgba(251, 143, 104, 0.22);
+  --color-success: #8bcaa0;
+  --color-warning: #f3b05b;
+  --color-danger: #f18879;
+  --color-note: #a79fe6;
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.32);
+  --shadow-strong: 0 24px 42px rgba(0, 0, 0, 0.44);
+  --color-code-bg: #1e1e2e;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  letter-spacing: 0.01em;
+  transition: background var(--transition-slow), color var(--transition-slow);
+}
+
+/* ── Layout ── */
+.page-shell {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+}
+@media (min-width: 640px) { .page-shell { padding-inline: var(--space-6); } }
+
+/* ── Nav ── */
+.nav-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in srgb, var(--color-bg-page) 85%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border-soft);
+  padding: var(--space-2) var(--space-4);
+}
+.nav-inner {
+  max-width: 52rem;
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--space-2);
+}
+.nav-links { display: flex; gap: var(--space-1); flex-wrap: wrap; }
+.nav-links a {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+}
+.theme-btn {
+  background: none; border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-text-secondary);
+  cursor: pointer; font-size: var(--font-size-xs);
+  transition: all var(--transition-base);
+}
+.theme-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* ── Hero ── */
+.hero { padding: var(--space-12) 0 var(--space-6); text-align: center; }
+.hero h1 {
+  font-size: clamp(1.875rem, 5vw, 3rem);
+  font-weight: 800; letter-spacing: -0.02em;
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+.hero h1 .accent { color: var(--color-accent); }
+.hero .subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  max-width: 52ch; margin: 0 auto var(--space-4);
+}
+.hero-meta {
+  display: flex; align-items: center; justify-content: center;
+  gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-6);
+}
+.meta-pill {
+  display: inline-flex; align-items: center; gap: 0.3em;
+  padding: 0.2rem 0.6rem; border-radius: var(--radius-full);
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border-soft);
+  font-size: var(--font-size-2xs); font-weight: 600;
+  color: var(--color-text-muted); text-decoration: none;
+}
+.meta-pill.accent {
+  background: var(--color-accent-tint);
+  color: var(--color-accent-dark);
+  border-color: color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+.hero-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3); margin: 0 auto;
+}
+.stat-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-3);
+  box-shadow: var(--shadow-soft); text-align: center;
+}
+.stat-card .number {
+  font-size: var(--font-size-2xl); font-weight: 800;
+  color: var(--color-accent); letter-spacing: -0.02em; line-height: 1.1;
+}
+.stat-card .label {
+  font-size: var(--font-size-xs); color: var(--color-text-muted);
+  margin-top: var(--space-1); line-height: var(--line-height-compact);
+}
+
+/* ── Sections ── */
+.section { padding: var(--space-8) 0; border-top: 1px solid var(--color-border-soft); }
+.section-header { margin-bottom: var(--space-6); }
+.section-header .eyebrow {
+  font-size: var(--font-size-xs); letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--color-accent);
+  font-weight: 700; margin-bottom: var(--space-2);
+}
+.section-header h2 {
+  font-size: var(--font-size-2xl); font-weight: 800;
+  letter-spacing: -0.02em; line-height: var(--line-height-tight);
+}
+.section-header p {
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2); max-width: 68ch;
+}
+
+/* ── Cards ── */
+.surface-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: var(--space-6);
+  transition: border-color var(--transition-base);
+}
+.surface-card:hover { border-color: var(--color-border); }
+.card-grid { display: grid; gap: var(--space-4); }
+.card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 768px) { .card-grid-3 { grid-template-columns: 1fr; } }
+
+/* ── Tool cards ── */
+.tool-card { position: relative; overflow: hidden; }
+.tool-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.tool-card.claude::before { background: var(--claude-color); }
+.tool-card.codex::before { background: var(--codex-color); }
+.tool-card.deepseek::before { background: var(--deepseek-color); }
+.tool-name {
+  font-size: var(--font-size-lg); font-weight: 800;
+  margin-bottom: var(--space-1);
+}
+.tool-maker {
+  font-size: var(--font-size-xs); color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+.tool-desc {
+  font-size: var(--font-size-sm); color: var(--color-text-secondary);
+  line-height: var(--line-height-base); margin-bottom: var(--space-4);
+}
+.tool-verdict {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs); font-weight: 700;
+}
+.verdict-best {
+  background: color-mix(in srgb, var(--color-success) 15%, var(--color-bg-surface));
+  color: var(--color-success);
+  border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+}
+.verdict-good {
+  background: color-mix(in srgb, var(--color-warning) 15%, var(--color-bg-surface));
+  color: var(--color-warning);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 30%, transparent);
+}
+.verdict-wait {
+  background: color-mix(in srgb, var(--color-note) 15%, var(--color-bg-surface));
+  color: var(--color-note);
+  border: 1px solid color-mix(in srgb, var(--color-note) 30%, transparent);
+}
+
+/* ── TLDR box ── */
+.tldr-box {
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg-surface));
+  margin-bottom: var(--space-8);
+}
+.tldr-box h3 {
+  font-size: var(--font-size-lg); font-weight: 800;
+  color: var(--color-accent); margin-bottom: var(--space-3);
+}
+.tldr-box p {
+  font-size: var(--font-size-sm); color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+}
+.tldr-box p + p { margin-top: var(--space-3); }
+.tldr-box strong { color: var(--color-accent-dark); font-weight: 700; }
+.prose strong { color: var(--color-accent-dark); }
+.insight-block strong, .tldr-box strong, .prose strong { color: var(--color-accent-dark); }
+
+/* ── Recommendation cards ── */
+.reco-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+@media (max-width: 768px) { .reco-grid { grid-template-columns: 1fr; } }
+.reco-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+}
+.reco-card.primary {
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 12%, transparent), var(--shadow-soft);
+}
+.reco-tag {
+  display: inline-block;
+  font-size: var(--font-size-2xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-inverse);
+  background: var(--color-accent);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+.reco-tag.alt {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+.reco-title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.01em;
+}
+.reco-headline {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+}
+.reco-headline strong { color: var(--color-accent-dark); font-weight: 700; }
+
+/* Upgrade path */
+.upgrade-path {
+  display: grid; gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.upgrade-step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+.upgrade-num {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: var(--font-size-xs);
+}
+.upgrade-num.alt {
+  background: var(--color-bg-muted);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+.upgrade-body strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+.upgrade-body p {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+.upgrade-arrow {
+  margin-left: 13px;
+  width: 2px; height: 12px;
+  background: var(--color-border);
+}
+
+/* ── Feature matrix ── */
+.feature-table {
+  width: 100%; border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-size: var(--font-size-sm);
+}
+.feature-table thead { background: var(--color-bg-muted); }
+.feature-table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: center; font-weight: 700;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+.feature-table th:first-child { text-align: left; }
+.feature-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-soft);
+  text-align: center; vertical-align: middle;
+}
+.feature-table td:first-child {
+  text-align: left; font-weight: 600;
+  color: var(--color-text-primary);
+}
+.feature-table tr:last-child td { border-bottom: none; }
+.feature-table tbody tr {
+  transition: background var(--transition-base);
+}
+.feature-table tbody tr:hover {
+  background: color-mix(in srgb, var(--color-accent) 4%, var(--color-bg-surface));
+}
+.feat-yes { color: var(--color-success); font-weight: 700; font-size: 1.1em; }
+.feat-no { color: var(--color-danger); font-weight: 700; font-size: 1.1em; }
+.feat-partial { color: var(--color-warning); font-weight: 700; font-size: 0.85em; }
+.feat-note {
+  display: block; font-size: var(--font-size-2xs);
+  color: var(--color-text-muted); font-weight: 400;
+  margin-top: 1px;
+}
+
+/* ── Chart ── */
+.chart-wrap {
+  position: relative; width: 100%;
+}
+.chart-title { font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--space-3); }
+.chart-caption {
+  font-size: var(--font-size-xs); color: var(--color-text-muted);
+  margin-top: var(--space-2); line-height: var(--line-height-compact);
+}
+
+/* ── Compare bars ── */
+.compare-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+.compare-label {
+  flex: 0 0 100px; font-size: var(--font-size-sm);
+  font-weight: 600; text-align: right;
+}
+.compare-bar-wrap {
+  flex: 1; height: 32px;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden; position: relative;
+}
+.compare-bar {
+  height: 100%; border-radius: var(--radius-full);
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; align-items: center;
+  padding-left: var(--space-3);
+  font-size: var(--font-size-xs); font-weight: 700;
+  color: var(--color-text-inverse); white-space: nowrap;
+}
+.compare-value {
+  flex: 0 0 80px; font-size: var(--font-size-sm);
+  font-weight: 700; text-align: left;
+}
+
+/* ── Pill ── */
+.pill {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-bg-muted);
+  font-size: var(--font-size-xs); font-weight: 600;
+}
+.pill.accent {
+  background: var(--color-accent-tint);
+  border-color: color-mix(in srgb, var(--color-accent) 32%, var(--color-border-soft));
+  color: var(--color-accent);
+}
+.pill.success {
+  background: color-mix(in srgb, var(--color-success) 15%, var(--color-bg-surface));
+  border-color: color-mix(in srgb, var(--color-success) 32%, var(--color-border-soft));
+  color: var(--color-success);
+}
+.pill.danger {
+  background: color-mix(in srgb, var(--color-danger) 15%, var(--color-bg-surface));
+  border-color: color-mix(in srgb, var(--color-danger) 32%, var(--color-border-soft));
+  color: var(--color-danger);
+}
+.pill.note {
+  background: color-mix(in srgb, var(--color-note) 15%, var(--color-bg-surface));
+  border-color: color-mix(in srgb, var(--color-note) 32%, var(--color-border-soft));
+  color: var(--color-note);
+}
+
+/* ── Tooltip ── */
+.term {
+  border-bottom: 1px dashed var(--color-accent);
+  cursor: help;
+  color: var(--color-accent-dark); font-weight: 600;
+}
+.term .tip {
+  display: none; position: fixed;
+  background: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  line-height: var(--line-height-compact);
+  width: max-content; max-width: 280px;
+  box-shadow: var(--shadow-strong);
+  z-index: 9999;
+  pointer-events: none;
+}
+.term .tip::after {
+  content: ""; position: absolute;
+  top: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-text-primary);
+}
+
+/* ── Insight block ── */
+.insight-block {
+  border-left: 4px solid var(--color-accent);
+  padding: var(--space-4) var(--space-6);
+  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg-surface));
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: var(--space-6) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+}
+.insight-block strong { color: var(--color-accent-dark); }
+
+/* ── Details ── */
+details.expandable {
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-soft);
+  margin: var(--space-4) 0;
+}
+details.expandable summary {
+  padding: var(--space-3) var(--space-4);
+  font-weight: 700; font-size: var(--font-size-sm);
+  cursor: pointer; list-style: none;
+  display: flex; align-items: center; gap: var(--space-2);
+  color: var(--color-accent-dark);
+  transition: background var(--transition-base);
+}
+details.expandable summary:hover { background: var(--color-bg-muted); }
+details.expandable summary::before {
+  content: "▸"; font-size: 0.85em; transition: transform var(--transition-base);
+}
+details.expandable[open] summary::before { transform: rotate(90deg); }
+details.expandable .detail-body {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-soft);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+}
+
+/* ── Price table ── */
+.price-grid {
+  display: grid; gap: var(--space-4);
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 768px) { .price-grid { grid-template-columns: 1fr; } }
+.price-card {
+  text-align: center;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition-base);
+  position: relative;
+}
+.price-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-strong);
+}
+.price-card.featured {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), var(--shadow-strong);
+}
+.price-card .price-name {
+  font-size: var(--font-size-lg); font-weight: 800;
+  margin-bottom: var(--space-1);
+}
+.price-card .price-amount {
+  font-size: var(--font-size-3xl); font-weight: 800;
+  color: var(--color-accent); letter-spacing: -0.02em;
+}
+.price-card .price-unit {
+  font-size: var(--font-size-xs); color: var(--color-text-muted);
+}
+.price-card .price-desc {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-compact);
+}
+
+/* ── Decision flow ── */
+.decision-flow {
+  display: grid; gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+.decision-node {
+  display: flex; align-items: flex-start; gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  box-shadow: var(--shadow-soft);
+}
+.decision-icon {
+  flex-shrink: 0;
+  width: 2.5rem; height: 2.5rem;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: var(--font-size-lg);
+}
+.decision-body h4 { font-weight: 700; margin-bottom: var(--space-1); }
+.decision-body p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+}
+
+/* ── Source list ── */
+.source-list {
+  list-style: none; padding: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  columns: 2; column-gap: var(--space-6);
+}
+@media (max-width: 640px) { .source-list { columns: 1; } }
+.source-list li {
+  padding: var(--space-1) 0;
+  break-inside: avoid;
+}
+.source-list a {
+  color: var(--color-accent-dark);
+  text-decoration: none;
+}
+.source-list a:hover { text-decoration: underline; }
+
+/* ── Prose ── */
+.prose { max-width: 68ch; }
+.prose p { margin-bottom: var(--space-4); }
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { color: var(--color-text-primary); font-weight: 700; }
+
+/* ── Footer ── */
+.page-footer {
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-soft);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+.page-footer a { color: var(--color-accent-dark); text-decoration: none; }
+
+/* ── Misc ── */
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.text-center { text-align: center; }
+code {
+  background: var(--color-code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-xs);
+  font-size: 0.9em;
+  font-family: "Fira Code", "SFMono-Regular", Consolas, monospace;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex; gap: var(--space-1);
+  border-bottom: 2px solid var(--color-border-soft);
+  margin-bottom: var(--space-6);
+}
+.tab-btn {
+  padding: var(--space-2) var(--space-4);
+  background: none; border: none;
+  font-size: var(--font-size-sm); font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer; position: relative;
+  transition: color var(--transition-base);
+}
+.tab-btn:hover { color: var(--color-accent); }
+.tab-btn.active {
+  color: var(--color-accent);
+}
+.tab-btn.active::after {
+  content: ""; position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px; background: var(--color-accent);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Connection Map ── */
+.conn-map {
+  display: grid; gap: var(--space-6);
+  padding: var(--space-6);
+}
+.conn-lane {
+  display: grid;
+  grid-template-columns: 80px 1fr 120px;
+  align-items: center; gap: var(--space-3);
+  min-height: 64px;
+}
+.conn-from {
+  font-size: var(--font-size-sm); font-weight: 700;
+  text-align: center;
+  padding: var(--space-2); border-radius: var(--radius-md);
+  background: var(--color-bg-muted); border: 1px solid var(--color-border-soft);
+}
+.conn-line {
+  height: 4px; border-radius: 2px;
+  position: relative; overflow: visible;
+}
+.conn-line::after {
+  content: attr(data-label);
+  position: absolute; top: -22px; left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-2xs); font-weight: 700;
+  white-space: nowrap; letter-spacing: 0.05em;
+}
+.conn-line.blocked {
+  background: repeating-linear-gradient(90deg, var(--color-danger) 0, var(--color-danger) 8px, transparent 8px, transparent 14px);
+}
+.conn-line.blocked::after { color: var(--color-danger); }
+.conn-line.vpn {
+  background: repeating-linear-gradient(90deg, var(--color-warning) 0, var(--color-warning) 12px, transparent 12px, transparent 18px);
+  animation: vpn-flow 1.5s linear infinite;
+}
+@keyframes vpn-flow {
+  from { background-position-x: 0; }
+  to { background-position-x: 18px; }
+}
+.conn-line.vpn::after { color: var(--color-warning); }
+.conn-line.direct {
+  background: var(--color-success);
+  animation: direct-pulse 2s ease-in-out infinite;
+}
+@keyframes direct-pulse {
+  0%, 100% { opacity: 0.7; } 50% { opacity: 1; }
+}
+.conn-line.direct::after { color: var(--color-success); }
+.conn-to {
+  font-weight: 800; font-size: var(--font-size-sm);
+  text-align: center;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 2px solid;
+}
+
+/* ── Capability Bars ── */
+.cap-group { margin-bottom: var(--space-6); }
+.cap-group-title {
+  font-size: var(--font-size-xs); font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--color-accent); margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+.cap-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: var(--space-3); padding: var(--space-2) 0;
+  align-items: center;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border-soft) 50%, transparent);
+  position: relative;
+}
+.cap-row:last-child { border-bottom: none; }
+.cap-label {
+  font-size: var(--font-size-sm); font-weight: 600;
+  line-height: 1.3;
+}
+.cap-label small {
+  display: block; font-weight: 400;
+  font-size: var(--font-size-2xs); color: var(--color-text-muted);
+  margin-top: 1px;
+}
+.cap-bars {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2);
+}
+.cap-bar {
+  height: 24px; border-radius: var(--radius-full);
+  background: var(--color-bg-muted);
+  overflow: hidden; position: relative;
+}
+.cap-fill {
+  height: 100%; border-radius: var(--radius-full);
+  display: flex; align-items: center;
+  padding-left: var(--space-2);
+  font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+  color: white; white-space: nowrap;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cap-fill.claude { background: var(--claude-color); }
+.cap-fill.codex { background: var(--codex-color); }
+.cap-fill.deepseek { background: var(--deepseek-color); }
+.cap-fill.none { background: transparent; }
+.cap-bars-legend {
+  display: flex; gap: var(--space-4); justify-content: center;
+  margin-bottom: var(--space-4); font-size: var(--font-size-2xs);
+  color: var(--color-text-muted); font-weight: 600;
+}
+.cap-bars-legend span::before {
+  content: ""; display: inline-block;
+  width: 10px; height: 10px; border-radius: 50%;
+  margin-right: 4px; vertical-align: -1px;
+}
+.cap-bars-legend .leg-c::before { background: var(--claude-color); }
+.cap-bars-legend .leg-x::before { background: var(--codex-color); }
+.cap-bars-legend .leg-d::before { background: var(--deepseek-color); }
+
+/* ── Tool vs Model layer diagram ── */
+.layer-diagram {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+@media (max-width: 640px) {
+  .layer-diagram { grid-template-columns: 1fr; }
+}
+.layer-label {
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-weight: 800; font-size: var(--font-size-sm);
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+.layer-label.tool {
+  background: color-mix(in srgb, var(--color-accent) 15%, var(--color-bg-surface));
+  color: var(--color-accent-dark);
+  border: 2px solid var(--color-accent);
+}
+.layer-label.model {
+  background: color-mix(in srgb, var(--color-note) 15%, var(--color-bg-surface));
+  color: var(--color-note);
+  border: 2px solid var(--color-note);
+}
+.layer-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+.layer-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+.layer-item .item-name {
+  font-weight: 800; font-size: var(--font-size-sm);
+  margin-bottom: var(--space-1);
+}
+.layer-item .item-desc {
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+.layer-item.claude .item-name { color: var(--claude-color); }
+.layer-item.codex .item-name { color: var(--codex-color); }
+.layer-item.deepseek .item-name { color: var(--deepseek-color); }
+.layer-divider {
+  display: flex; align-items: center; gap: var(--space-3);
+  margin: var(--space-4) 0; opacity: 0.6;
+}
+.layer-divider::before, .layer-divider::after {
+  content: ""; flex: 1; height: 1px;
+  background: var(--color-border);
+}
+.layer-divider span {
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.layer-decoupling {
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-bg-surface));
+  border: 1px dashed var(--color-success);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.layer-decoupling strong { color: var(--color-success); }
+.dim-tag {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-left: var(--space-2);
+  vertical-align: 2px;
+}
+.dim-tag.tool {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: var(--color-accent-dark);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+.dim-tag.model {
+  background: color-mix(in srgb, var(--color-note) 15%, transparent);
+  color: var(--color-note);
+  border: 1px solid color-mix(in srgb, var(--color-note) 40%, transparent);
+}
+
+/* ── Showcase Cards ── */
+.showcase-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4);
+}
+@media (max-width: 768px) { .showcase-grid { grid-template-columns: 1fr; } }
+.showcase-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4); box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.showcase-card:hover {
+  transform: translateY(-3px); box-shadow: var(--shadow-strong);
+}
+.showcase-card svg {
+  display: block; margin: 0 auto var(--space-3);
+  width: 100%; max-width: 200px; height: auto;
+}
+.showcase-title {
+  font-weight: 800; font-size: var(--font-size-sm);
+  margin-bottom: var(--space-1); text-align: center;
+}
+.showcase-desc {
+  font-size: var(--font-size-2xs); color: var(--color-text-secondary);
+  text-align: center; line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <div class="nav-links">
+      <a href="#tldr">建议</a>
+      <a href="#layers">两个维度</a>
+      <a href="#features">工具功能</a>
+      <a href="#quality">模型能力</a>
+      <a href="#cost">成本</a>
+      <a href="#china">中国可用性</a>
+      <a href="#verdict">结论</a>
+    </div>
+    <button class="theme-btn" onclick="const d=document.documentElement;d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'':'dark');this.textContent=d.getAttribute('data-theme')==='dark'?'Light':'Dark'">Dark</button>
+  </div>
+</nav>
+
+<div class="page-shell">
+
+<!-- ── Hero ── -->
+<section class="hero" id="top">
+  <h1>三款<span class="accent">「AI 程序员」</span>横向对比</h1>
+  <p class="subtitle">Claude Code vs Codex vs DeepSeek-TUI——从中国开发团队的视角做一次全面对比。这三个工具都是命令行版本的 AI 编程助手（不是网页聊天，是直接修改代码的 AI 同事）。</p>
+  <div class="hero-meta">
+    <span class="meta-pill accent">2026.05</span>
+    <span class="meta-pill">对比分析</span>
+    <span class="meta-pill">3 工具 · 20+ 维度 · 3 图表</span>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-card" style="border-top:3px solid var(--codex-color);">
+      <div class="number" style="color:var(--codex-color); font-size: var(--font-size-xl);">Codex</div>
+      <div class="label"><strong style="color:var(--color-text-primary)">推荐主力</strong><br>价格 + 功能 + 生态都更优</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid var(--deepseek-color);">
+      <div class="number" style="color:var(--deepseek-color); font-size: var(--font-size-xl);">DeepSeek-TUI</div>
+      <div class="label"><strong style="color:var(--color-text-primary)">辅助工具</strong><br>配额溢出时承接简单任务</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid var(--claude-color);">
+      <div class="number" style="color:var(--claude-color); font-size: var(--font-size-xl);">Claude Code</div>
+      <div class="label"><strong style="color:var(--color-text-primary)">受限</strong><br>中国封锁严重，慎选</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Recommendations -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="tldr">
+  <div class="section-header">
+    <div class="eyebrow">核心建议</div>
+    <h2>团队该怎么选？</h2>
+    <p>分两类人给出可执行的方案，下面的章节是具体依据。</p>
+  </div>
+
+  <div class="reco-grid">
+
+    <!-- Developer recommendation -->
+    <div class="reco-card primary">
+      <div class="reco-tag">开发人员</div>
+      <div class="reco-title">用 OpenAI 的 Codex 订阅</div>
+      <div class="reco-headline">价格、功能、生态都明显更优。<strong>从 $20/月 起步，按需升级</strong>。Claude Code 因为账号封锁不适合中国团队主力使用，DeepSeek-TUI 只在用量超出时作为补充，不要让团队整体切换工具。</div>
+
+      <div class="upgrade-path">
+        <div class="upgrade-step">
+          <div class="upgrade-num">1</div>
+          <div class="upgrade-body">
+            <strong>起步：买 ChatGPT Plus（$20/月）</strong>
+            <p>这个订阅自带 Codex 工具（命令行 + 桌面 APP），日常开发基本够用。</p>
+          </div>
+        </div>
+        <div class="upgrade-arrow"></div>
+        <div class="upgrade-step">
+          <div class="upgrade-num alt">2a</div>
+          <div class="upgrade-body">
+            <strong>用量不够时：补一点 DeepSeek 按量付费</strong>
+            <p>用 DeepSeek 模型分担超出部分。可以让感兴趣的人试试 DeepSeek-TUI 这个工具，<strong style="color:var(--color-danger)">但不要让团队整体切换</strong>，换工具的学习成本和心理负担不小。</p>
+          </div>
+        </div>
+        <div class="upgrade-step">
+          <div class="upgrade-num">2b</div>
+          <div class="upgrade-body">
+            <strong>用量预计接近 $100 套餐 80% 时：升级到 $100/月</strong>
+            <p>还是 OpenAI 的订阅，工具不用换。同样的钱能用的次数比按量付费便宜得多。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Non-developer recommendation -->
+    <div class="reco-card">
+      <div class="reco-tag alt">非开发人员</div>
+      <div class="reco-title">用开源桌面 APP + 公司统一发放账号</div>
+      <div class="reco-headline">非开发同事不要用命令行工具（学习门槛高、容易误操作）。<strong>用一个开源桌面 APP，公司统一买一个企业账号，发给所有同事用</strong>。可审计、可控成本、操作简单。</div>
+
+      <div class="upgrade-path">
+        <div class="upgrade-step">
+          <div class="upgrade-num">1</div>
+          <div class="upgrade-body">
+            <strong>选一个开源桌面客户端</strong>
+            <p>例如 Cherry Studio、Chatbox、LobeChat 等开源 APP，类似 ChatGPT 网页版的桌面替代品，可以连接任何 AI 公司的服务。</p>
+          </div>
+        </div>
+        <div class="upgrade-arrow"></div>
+        <div class="upgrade-step">
+          <div class="upgrade-num">2</div>
+          <div class="upgrade-body">
+            <strong>公司开一个企业账号</strong>
+            <p>OpenAI、DeepSeek、智谱 GLM 都有企业版。一个账号给全公司共用，按使用量月结。</p>
+          </div>
+        </div>
+        <div class="upgrade-arrow"></div>
+        <div class="upgrade-step">
+          <div class="upgrade-num">3</div>
+          <div class="upgrade-body">
+            <strong>分发给同事，按部门控制额度</strong>
+            <p>可以用 LiteLLM、One-API 这类开源中转工具来管理：每个部门多少额度、谁用了多少都能看到。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Tool vs Model layer distinction -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="layers">
+  <div class="section-header">
+    <div class="eyebrow">先理解一个概念</div>
+    <h2>「工具」和「AI 模型」是两回事</h2>
+    <p>这是看下面所有对比的前提。同一个工具能接不同公司的 AI 模型，反之亦然。</p>
+  </div>
+
+  <div class="surface-card">
+    <div class="layer-diagram">
+      <div class="layer-label tool">工具<br><small style="font-weight:400; opacity:0.7;">（用什么界面）</small></div>
+      <div class="layer-items">
+        <div class="layer-item claude">
+          <div class="item-name">Claude Code</div>
+          <div class="item-desc">命令行 + 桌面 APP<br>+ 编辑器插件<br>+ Slack/手机/云端</div>
+        </div>
+        <div class="layer-item codex">
+          <div class="item-name">Codex</div>
+          <div class="item-desc">命令行 + 桌面 APP<br>+ 浏览器扩展<br>+ 网页版</div>
+        </div>
+        <div class="layer-item deepseek">
+          <div class="item-name">DeepSeek-TUI</div>
+          <div class="item-desc">仅命令行<br>（12MB 单文件）<br>+ 编程接口</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layer-divider"><span>各自接入</span></div>
+
+    <div class="layer-diagram">
+      <div class="layer-label model">AI 模型<br><small style="font-weight:400; opacity:0.7;">（背后写代码的大脑）</small></div>
+      <div class="layer-items">
+        <div class="layer-item claude">
+          <div class="item-name">Opus 4.7</div>
+          <div class="item-desc">Anthropic 出品<br>代码深度推理强<br>价格最贵</div>
+        </div>
+        <div class="layer-item codex">
+          <div class="item-name">GPT-5.5</div>
+          <div class="item-desc">OpenAI 出品<br>综合实力较强<br>价格中等</div>
+        </div>
+        <div class="layer-item deepseek">
+          <div class="item-name">DeepSeek V4</div>
+          <div class="item-desc">DeepSeek 出品<br>实力落后约 8 个月<br>价格最低</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layer-decoupling">
+      <strong>关键事实：两层可以解耦。</strong>同一个工具可以接入不同公司的 AI 模型。最灵活的是 DeepSeek-TUI，原生支持 9 种以上的模型供应商，可以随时切换。<strong>Claude Code 虽然默认接 Anthropic，但改一下配置就能接国产模型（DeepSeek / Kimi / 智谱 GLM / Qwen 都提供了标准的兼容接口）</strong>——这也是中国开发者绕开 Anthropic 封锁的常见做法。Codex 灵活性最差，只能接 OpenAI 系列。<br><br>
+      <strong>所以决策时要分别问：</strong>① 用哪个<em>工具</em>？看 CLI 体验、功能、生态、中国可用性；② 用哪个<em>模型</em>？看代码质量、价格、上下文窗口。
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Feature comparison (visual) -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="features">
+  <div class="section-header">
+    <div class="eyebrow">工具能力对比</div>
+    <h2>三个工具分别能做什么？</h2>
+    <p>这里对比的是<strong>工具本身的功能</strong>（界面、自动化、安全机制等），跟背后接哪个 AI 模型是两回事。颜色越满表示能力越强，空白表示不支持。</p>
+  </div>
+
+  <!-- ─── Capability Bars Matrix ─── -->
+  <h3 style="margin-bottom:var(--space-4); font-size:var(--font-size-lg);">功能能力对比</h3>
+  <div class="surface-card mb-8">
+    <div class="cap-bars-legend">
+      <span class="leg-c">Claude Code</span>
+      <span class="leg-x">Codex</span>
+      <span class="leg-d">DeepSeek-TUI</span>
+    </div>
+
+    <div class="cap-group">
+      <div class="cap-group-title">日常编码（基础能力，三家都有）</div>
+      <div class="cap-row"><div class="cap-label">读改代码<small>AI 直接打开和修改项目里的文件</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%"></div></div><div class="cap-bar"><div class="cap-fill codex" style="width:100%"></div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%"></div></div></div></div>
+      <div class="cap-row"><div class="cap-label">执行命令<small>AI 在终端里跑命令（比如跑测试、装依赖库）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%"></div></div><div class="cap-bar"><div class="cap-fill codex" style="width:100%"></div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%"></div></div></div></div>
+      <div class="cap-row"><div class="cap-label">在哪里使用<small>是只有黑屏命令行，还是有图形界面的桌面 APP</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:95%">命令行 + 桌面 + 编辑器插件 + 网页</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:90%">命令行 + 桌面 + 浏览器扩展</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:35%">仅命令行</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">一次能记住多少<small>AI 单次对话能处理的内容长度（越大越能应对大型项目）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%">100 万字</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:30%">20 万字（100 万灰度）</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%">100 万字</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">操控电脑<small>AI 能否点按钮、操作其他软件（不只改代码）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:90%">支持，分层权限</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:60%">仅 macOS</div></div><div class="cap-bar"><div class="cap-fill none" style="width:0%"></div></div></div></div>
+      <div class="cap-row"><div class="cap-label">改完代码自动查错<small>AI 改完后立即知道有没有语法/类型错误，不用等运行报错</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill none" style="width:0%"></div></div><div class="cap-bar"><div class="cap-fill none" style="width:0%"></div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%">支持 5 种主流语言</div></div></div></div>
+    </div>
+
+    <div class="cap-group">
+      <div class="cap-group-title">自动化与团队协作</div>
+      <div class="cap-row"><div class="cap-label">定时执行<small>类似闹钟，让 AI 在指定时间自动跑任务（人不在电脑前也能跑）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%">云端调度，关机也能跑</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:85%">3 种调度模式</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:50%">通过接口配置</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">代码托管平台集成<small>能否在 GitHub/GitLab 上 @AI 让它自动审查和修改代码</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:90%">GitHub + GitLab 都支持</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:80%">GitHub @codex 原生</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:25%">基础读取</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">远程操作<small>能否从手机、Slack、网页等远程控制 AI 工作</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%">Slack + Telegram + 手机</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:65%">远程控制 + 语音</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:70%">提供编程接口</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">自定义触发器<small>「AI 做某件事时自动跑指定脚本」——比如提交前必须通过格式检查</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%">28+ 种事件</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:75%">支持</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:40%">基础事件</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">接外部系统<small>AI 能否连公司数据库、内部接口拿数据（行业标准协议叫 MCP）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:95%">支持，含登录授权</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:85%">支持并行调用</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:90%">支持，可反向暴露</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">AI 长期记忆 <span class="pill accent" style="font-size:9px; padding:0 6px; margin-left:4px;">未来方向</span><small>跨会话记住偏好、项目约定、踩过的坑——下次无需重复解释</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:100%">自动记忆 + 项目规则</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:90%">Chronicle 记忆系统</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:75%">手动笔记 + 任务恢复</div></div></div></div>
+    </div>
+
+    <div class="cap-group">
+      <div class="cap-group-title">安全与灵活性</div>
+      <div class="cap-row"><div class="cap-label">安全隔离<small>限制 AI 能动哪些文件，防止它误删除或访问敏感数据</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:60%">应用层控制</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:95%">操作系统级</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%">操作系统级 + 可远程</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">出错能撤回<small>AI 改坏了能一键还原到之前的状态</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:70%">用 Git 分支隔离</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:70%">用 Git 分支隔离</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:95%">每轮对话都拍快照</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">多线程并行<small>AI 能否同时派多个分身处理不同子任务</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:85%">多 Agent 配合</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:80%">桌面多窗口</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:90%">7 种角色分工</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">开源（工具本身）<small>工具源代码是否公开可查（不是 AI 模型，是 CLI 工具）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:15%">闭源商业</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:100%">完全开源</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%">完全开源</div></div></div></div>
+      <div class="cap-row"><div class="cap-label">能否换 AI 模型<small>工具能否接入不同公司的模型（OpenAI、DeepSeek、本地模型等）</small></div><div class="cap-bars"><div class="cap-bar"><div class="cap-fill claude" style="width:75%">改配置可接国产兼容</div></div><div class="cap-bar"><div class="cap-fill codex" style="width:30%">仅 OpenAI 系</div></div><div class="cap-bar"><div class="cap-fill deepseek" style="width:100%">原生支持 9+ 家</div></div></div></div>
+    </div>
+  </div>
+
+  <div class="insight-block mb-6">
+    <strong>「AI 长期记忆」是这类工具未来一年的关键战场。</strong>目前三家都已经有基础的记忆机制，但仍处于早期：Claude Code 自动记录每个项目的常用命令和约定，Codex 有 Chronicle 跨会话记忆系统，DeepSeek-TUI 是手动笔记 + 任务恢复。理想形态是「AI 助手能记住团队的代码风格、踩过的坑、人员分工」——一旦做到位，团队迁移成本会显著上升，工具粘性会越来越像传统办公软件（比如换 Office 全家桶的成本）。
+  </div>
+
+  <!-- ─── 3. Unique Feature Showcases with SVG ─── -->
+  <h3 style="margin-bottom:var(--space-4); font-size:var(--font-size-lg);">各家独有亮点</h3>
+
+  <div class="showcase-grid mb-6">
+    <!-- Claude: Routines -->
+    <div class="showcase-card" style="border-top: 3px solid var(--claude-color);">
+      <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="28" stroke="#d97757" stroke-width="3" fill="none"/>
+        <line x1="40" y1="20" x2="40" y2="40" stroke="#d97757" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="40" y1="40" x2="54" y2="48" stroke="#d97757" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="80" y="28" font-size="9" fill="#d97757" font-weight="700">定时</text>
+        <text x="80" y="42" font-size="9" fill="#d97757" font-weight="700">远程</text>
+        <text x="80" y="56" font-size="9" fill="#d97757" font-weight="700">GitHub</text>
+        <line x1="105" y1="24" x2="130" y2="24" stroke="#d97757" stroke-width="1.5" marker-end="url(#arr-c)"/>
+        <line x1="105" y1="38" x2="130" y2="38" stroke="#d97757" stroke-width="1.5" marker-end="url(#arr-c)"/>
+        <line x1="105" y1="52" x2="130" y2="52" stroke="#d97757" stroke-width="1.5" marker-end="url(#arr-c)"/>
+        <rect x="132" y="16" width="56" height="44" rx="6" stroke="#d97757" stroke-width="1.5" fill="#d9775711"/>
+        <text x="160" y="35" font-size="8" fill="#d97757" font-weight="600" text-anchor="middle">Cloud</text>
+        <text x="160" y="48" font-size="8" fill="#d97757" font-weight="600" text-anchor="middle">Agent</text>
+        <defs><marker id="arr-c" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#d97757"/></marker></defs>
+      </svg>
+      <div class="showcase-title" style="color:var(--claude-color);">关机也能跑的云端调度</div>
+      <div class="showcase-desc">把任务派给 Anthropic 云端的 AI，按时间表自动执行（电脑关机也能跑）。还能从 Slack 频道、Telegram、手机 APP 远程派任务。</div>
+    </div>
+
+    <!-- Codex: Desktop App -->
+    <div class="showcase-card" style="border-top: 3px solid var(--codex-color);">
+      <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="8" width="80" height="64" rx="6" stroke="#10a37f" stroke-width="2" fill="#10a37f11"/>
+        <line x1="10" y1="22" x2="90" y2="22" stroke="#10a37f" stroke-width="1"/>
+        <rect x="14" y="26" width="32" height="8" rx="2" fill="#10a37f33"/>
+        <rect x="14" y="38" width="32" height="8" rx="2" fill="#10a37f55"/>
+        <rect x="14" y="50" width="32" height="8" rx="2" fill="#10a37f33"/>
+        <rect x="50" y="26" width="36" height="32" rx="3" fill="#10a37f22" stroke="#10a37f" stroke-width="1"/>
+        <text x="68" y="46" font-size="7" fill="#10a37f" font-weight="600" text-anchor="middle">diff</text>
+        <path d="M100,40 L125,20" stroke="#10a37f" stroke-width="1.5" marker-end="url(#arr-x)"/>
+        <path d="M100,40 L125,40" stroke="#10a37f" stroke-width="1.5" marker-end="url(#arr-x)"/>
+        <path d="M100,40 L125,60" stroke="#10a37f" stroke-width="1.5" marker-end="url(#arr-x)"/>
+        <rect x="128" y="12" width="60" height="16" rx="4" fill="#10a37f22" stroke="#10a37f" stroke-width="1"/>
+        <text x="158" y="23" font-size="7" fill="#10a37f" font-weight="600" text-anchor="middle">Browser</text>
+        <rect x="128" y="32" width="60" height="16" rx="4" fill="#10a37f22" stroke="#10a37f" stroke-width="1"/>
+        <text x="158" y="43" font-size="7" fill="#10a37f" font-weight="600" text-anchor="middle">Image Gen</text>
+        <rect x="128" y="52" width="60" height="16" rx="4" fill="#10a37f22" stroke="#10a37f" stroke-width="1"/>
+        <text x="158" y="63" font-size="7" fill="#10a37f" font-weight="600" text-anchor="middle">Voice</text>
+        <defs><marker id="arr-x" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#10a37f"/></marker></defs>
+      </svg>
+      <div class="showcase-title" style="color:var(--codex-color);">桌面 APP 全能工作台</div>
+      <div class="showcase-desc">同时开多个 AI 任务窗口、内置浏览器（让 AI 看网页）、图片生成、语音对话、GitHub 评论中 @codex 自动改代码。关 APP 再打开，所有任务还在原状态。</div>
+    </div>
+
+    <!-- DeepSeek: LSP + Multi-provider -->
+    <div class="showcase-card" style="border-top: 3px solid var(--deepseek-color);">
+      <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="55" height="60" rx="4" stroke="#4d6bfe" stroke-width="1.5" fill="#4d6bfe11"/>
+        <text x="37" y="28" font-size="8" fill="#4d6bfe" font-weight="600" text-anchor="middle">code.rs</text>
+        <rect x="16" y="34" width="42" height="5" rx="1" fill="#4d6bfe33"/>
+        <rect x="16" y="42" width="35" height="5" rx="1" fill="#c84c3a55"/>
+        <rect x="16" y="50" width="38" height="5" rx="1" fill="#4d6bfe33"/>
+        <text x="55" y="45" font-size="7" fill="#c84c3a" font-weight="700">!</text>
+        <path d="M70,40 L95,40" stroke="#4d6bfe" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arr-d)"/>
+        <rect x="98" y="22" width="40" height="36" rx="4" stroke="#4d6bfe" stroke-width="1.5" fill="#4d6bfe22"/>
+        <text x="118" y="38" font-size="7" fill="#4d6bfe" font-weight="700" text-anchor="middle">LSP</text>
+        <text x="118" y="50" font-size="6" fill="#4d6bfe" text-anchor="middle">5 lang</text>
+        <path d="M142,40 L165,40" stroke="#4f8b63" stroke-width="1.5" marker-end="url(#arr-d2)"/>
+        <rect x="168" y="26" width="26" height="28" rx="4" stroke="#4f8b63" stroke-width="1.5" fill="#4f8b6322"/>
+        <text x="181" y="44" font-size="7" fill="#4f8b63" font-weight="700" text-anchor="middle">AI</text>
+        <text x="100" y="72" font-size="6.5" fill="#4d6bfe" font-weight="600">编辑 → LSP 查错 → 反馈给 AI</text>
+        <defs>
+          <marker id="arr-d" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#4d6bfe"/></marker>
+          <marker id="arr-d2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#4f8b63"/></marker>
+        </defs>
+      </svg>
+      <div class="showcase-title" style="color:var(--deepseek-color);">改完代码自动查错 + 自由换模型</div>
+      <div class="showcase-desc">AI 改完代码立刻自动检查语法错误（5 种主流编程语言），结果反馈给 AI 让它自己修。可以随时切换不同公司的 AI 模型，包括离线本地模型。中国直连 + 人民币计费。</div>
+    </div>
+  </div>
+
+  <div class="insight-block">
+    <strong>2026 Q2 格局：基础功能趋同，差异在独有特性。</strong>三家在文件读写、命令执行、MCP、子代理、会话持久化上已高度重叠（看上面的能力条矩阵，基础行全满）。Claude Code 赢在消息集成和云端调度；Codex 赢在桌面 APP 可视化体验；<strong>DeepSeek-TUI 赢在 LSP 诊断、多后端灵活性、中国直连。</strong>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Benchmarks -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="quality">
+  <div class="section-header">
+    <div class="eyebrow">AI 模型能力 · 2026 年 5 月</div>
+    <h2>哪个 AI 写代码更强？</h2>
+    <p>这里对比的是<strong>背后 AI 模型本身的实力</strong>（Claude Opus 4.7 / OpenAI GPT-5.5 / DeepSeek V4）。这些模型可以脱离工具单独评估，下面是国际公认的几个编程能力测试得分。</p>
+  </div>
+
+  <div class="surface-card mb-6">
+    <div class="chart-title">主要基准测试得分（2026 年 5 月）</div>
+    <div class="chart-wrap">
+      <canvas id="benchChart"></canvas>
+    </div>
+    <div class="chart-caption">
+      数据来源：各工具官方公布及第三方评测。注意选择性报告：OpenAI 只报 SWE-bench Verified 和 Terminal-Bench（它表现更好的），不报 SWE-bench Pro；Anthropic 反之。DeepSeek V4 Pro 数据来自独立评测。
+      <a href="https://llm-stats.com/benchmarks/swe-bench-verified" target="_blank">[SWE-bench]</a>
+      <a href="https://benchlm.ai/models/gpt-5-5" target="_blank">[BenchLM]</a>
+    </div>
+  </div>
+
+  <div class="prose mb-6">
+    <p><strong>SWE-bench Verified</strong>（模拟真实 GitHub Issue 修复）：GPT-5.5 以 88.7% 微幅高于 Opus 4.7 的 87.6%。但 OpenAI 自己的审计发现该测试存在污染问题（前沿模型能复现金标准 patch），所以 OpenAI 已经停止在此基准上报告新分数。</p>
+    <p><strong>SWE-bench Pro</strong>（更难、更可靠的版本）：Opus 4.7 以 64.3% 明显高于 GPT-5.5 的 58.6%。社区越来越认为 Pro 版本才是可靠的信号。</p>
+    <p><strong>Terminal-Bench 2.0</strong>（终端操作能力）：GPT-5.5 以 82.7% 大幅高于 Opus 4.7 的 69.4%。</p>
+    <p>代码盲测（Reddit 社区）中，<strong>67% 的审查者认为 Claude 的代码质量更高</strong>。但 Codex 使用的 token 比 Claude 少 3-4 倍，同一个重构任务 Claude Code 花了 $155，Codex 只花了 $15。<a href="https://www.morphllm.com/comparisons/codex-vs-claude-code" target="_blank" style="color:var(--color-accent-dark)">[MorphLLM]</a></p>
+  </div>
+
+  <details class="expandable">
+    <summary>2026 Q2 模型阵容速查</summary>
+    <div class="detail-body">
+      <table class="feature-table">
+        <thead>
+          <tr><th>工具</th><th>旗舰模型</th><th>快速模型</th><th>经济模型</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: var(--claude-color); font-weight: 700">Claude Code</td>
+            <td>Opus 4.7</td>
+            <td>Sonnet 4.6</td>
+            <td>Haiku 4.5</td>
+          </tr>
+          <tr>
+            <td style="color: var(--codex-color); font-weight: 700">Codex</td>
+            <td>GPT-5.5</td>
+            <td>GPT-5.4-mini</td>
+            <td>GPT-4.1 Nano</td>
+          </tr>
+          <tr>
+            <td style="color: var(--deepseek-color); font-weight: 700">DeepSeek-TUI</td>
+            <td>V4-Pro</td>
+            <td>V4-Flash</td>
+            <td>V4-Flash</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: var(--space-3)">GPT-5.5 使用的输出 token 数量比 Opus 4.7 少 72%，因此同等质量下 Codex 的实际花费更低。<a href="https://openai.com/index/introducing-gpt-5-5/" target="_blank" style="color:var(--color-accent-dark)">[OpenAI]</a></p>
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Cost -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="cost">
+  <div class="section-header">
+    <div class="eyebrow">成本对比</div>
+    <h2>$100/月 对 $100/月：两家同价位套餐</h2>
+    <p>OpenAI 在 2026 年 4 月推出 $100/月 套餐，价格与 Anthropic 同价位的 Claude Max 持平。下面看实际价格差距。</p>
+  </div>
+
+  <div class="price-grid mb-8">
+    <div class="price-card">
+      <div class="price-name" style="color: var(--claude-color)">Claude Max 5x</div>
+      <div class="price-amount">$100</div>
+      <div class="price-unit">/月</div>
+      <div class="price-desc">
+        Opus 4.7 / Sonnet 4.6 / Haiku 4.5<br>
+        Opus/Sonnet 4.6+ 全 1M 上下文<br>
+        IDE 集成（VS Code / JetBrains）<br>
+        <span style="color:var(--color-danger)">中国不可用</span>
+      </div>
+    </div>
+    <div class="price-card featured">
+      <div class="price-name" style="color: var(--codex-color)">Codex Pro 5x</div>
+      <div class="price-amount">$100</div>
+      <div class="price-unit">/月（2026/4/9 推出）</div>
+      <div class="price-desc">
+        GPT-5.5 / GPT-5.4 / GPT-5.4-mini<br>
+        CLI + 桌面 APP + Chrome 扩展<br>
+        Computer Use + 90+ 插件<br>
+        <span style="color:var(--color-warning)">需翻墙 · 不封号</span>
+      </div>
+    </div>
+    <div class="price-card">
+      <div class="price-name" style="color: var(--deepseek-color)">DeepSeek API</div>
+      <div class="price-amount">按量</div>
+      <div class="price-unit">纯 API 付费</div>
+      <div class="price-desc">
+        V4-Flash: $0.14/M 输入 token<br>
+        V4-Pro: $1.74/M（75% 折扣至 5/31）<br>
+        中国直连 + 支付宝/微信<br>
+        <span style="color:var(--color-success)">中国原生可用</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="surface-card mb-6">
+    <div class="chart-title">单位 Token 价格对比：API vs 订阅套餐（每百万 tokens，美元）</div>
+    <div class="chart-wrap">
+      <canvas id="tokenPriceChart"></canvas>
+    </div>
+    <div class="chart-caption">
+      <strong>这张图对比按量付费和订阅套餐的单价</strong>。柱子越高越贵。据 <a href="https://she-llac.com/claude-limits" target="_blank">独立第三方逆向分析</a>，Claude $20/月套餐相当于按量买 <strong>$163</strong> 的额度（约 8 倍优惠），$100/月套餐相当于 <strong>$1,354</strong>（约 13 倍）。Codex 套餐结构类似。DeepSeek 没有订阅套餐，只能按量付费。<br>结论：<strong>对于经常使用的开发者，订阅套餐永远比按量付费划算得多</strong>。
+      <a href="https://platform.openai.com/pricing" target="_blank">[OpenAI]</a>
+      <a href="https://api-docs.deepseek.com/quick_start/pricing/" target="_blank">[DeepSeek]</a>
+    </div>
+  </div>
+
+  <div class="insight-block">
+    <strong>实际开发者花费：</strong>中国开发者社区的典型方案是「常驻 Codex $20/月（ChatGPT Plus），遇到复杂重构临时升到 $100/月」。用 API 的 Claude Code 用户月均花费 $500-2,000，而 Max Plan 用户同等工作量只要 $100。<a href="https://v2ex.com/t/1206516" target="_blank" style="color:var(--color-accent-dark)">[V2EX]</a> 社区共识：只买月付不买年付，AI 工具迭代太快。
+  </div>
+
+  <details class="expandable mt-6">
+    <summary>实测用量参考（Claude Max $100/月套餐 × 5 个月）</summary>
+    <div class="detail-body">
+      <p>5 个月内累计消耗约 88 亿 tokens，按 API 价格换算等价 $6,544。</p>
+      <p>实际支付：通过 iOS 内购订阅 $125/月（Apple 抽成 30%），5 个月共 <strong>$625</strong>，相当于 <strong>10.5 倍杠杆</strong>。如果通过网页订阅可省下这部分，按 $500 计算则是 13 倍。</p>
+      <p>月消耗峰值出现在升级到 Opus 4.7 之后的某天，单日折算 $253。这个杠杆的前提是 Anthropic 在战略性亏损获客。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: China accessibility (provider/service layer) -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="china">
+  <div class="section-header">
+    <div class="eyebrow">外部约束</div>
+    <h2>中国能不能用？</h2>
+    <p>这不是工具或模型的问题，而是<strong>每家 AI 公司对中国用户的政策</strong>决定的。Anthropic 主动封禁，OpenAI 不封号但需要翻墙，DeepSeek 是中国公司、原生支持。</p>
+  </div>
+
+  <div class="surface-card mb-6">
+    <div class="conn-map">
+      <div class="conn-lane">
+        <div class="conn-from">中国</div>
+        <div class="conn-line blocked" data-label="翻墙 + 封号 + 灰度 KYC"></div>
+        <div class="conn-to" style="color:var(--claude-color); border-color:var(--claude-color); opacity:0.5;">Anthropic</div>
+      </div>
+      <div class="conn-lane">
+        <div class="conn-from">中国</div>
+        <div class="conn-line vpn" data-label="翻墙（不封号）"></div>
+        <div class="conn-to" style="color:var(--codex-color); border-color:var(--codex-color);">OpenAI</div>
+      </div>
+      <div class="conn-lane">
+        <div class="conn-from">中国</div>
+        <div class="conn-line direct" data-label="直连 · 支付宝/微信 · 零配置"></div>
+        <div class="conn-to" style="color:var(--deepseek-color); border-color:var(--deepseek-color);">DeepSeek</div>
+      </div>
+    </div>
+  </div>
+
+  <details class="expandable">
+    <summary>Anthropic 对华封锁时间线（2025-2026）</summary>
+    <div class="detail-body">
+      <p><strong>2025/9：</strong>发布 50% 股权测试，中国控股公司全球子公司一律禁用。波及字节、腾讯、阿里的海外工具。<a href="https://www.anthropic.com/news/updating-restrictions-of-sales-to-unsupported-regions" target="_blank" style="color:var(--color-accent-dark)">[Anthropic 公告]</a></p>
+      <p><strong>2025 下半年：</strong>封禁 145 万账号，52,000 份申诉中仅 1,700 份通过（成功率 3.3%）。<a href="https://www.80aj.com/2026/03/06/anthropic-account-suspension-2026/" target="_blank" style="color:var(--color-accent-dark)">[来源]</a></p>
+      <p><strong>2026/2：</strong>公开点名 DeepSeek、Moonshot AI、MiniMax 通过 24,000 个虚假账号发起 1,600 万次 distillation 攻击。<a href="https://thehackernews.com/2026/02/anthropic-says-chinese-ai-firms-used-16.html" target="_blank" style="color:var(--color-accent-dark)">[来源]</a></p>
+      <p><strong>2026/4：</strong>灰度测试 KYC 实名验证（政府证件 + 实时自拍），部分账户被要求验证。中国身份证不被接受，仅接受护照。<a href="https://www.webpronews.com/anthropics-passport-checkpoint-how-id-checks-are-locking-chinese-developers-out-of-claude/" target="_blank" style="color:var(--color-accent-dark)">[来源]</a></p>
+    </div>
+  </details>
+
+  <div class="insight-block">
+    <strong>中国开发者社区的应对已分化为四条路径：</strong>① 灰色市场 API 中转（高风险，淘宝上已有 2200+ 单的卖家）；② 转向 Codex / Cursor 等替代工具（务实选择）；③ 全面拥抱国产模型（DeepSeek V4 / Kimi K2.6 / GLM-5.1 在 SWE-bench 上的差距已缩小到小数点级别）；④ <strong>留下 Claude Code 这个工具壳</strong>，把 <code>ANTHROPIC_BASE_URL</code> 改到 DeepSeek/Kimi/GLM/Qwen 提供的 Anthropic 兼容 endpoint，享受 Claude Code 的工具生态 + 国产模型 + 直连低延迟 + 人民币计费。<a href="https://www.scmp.com/tech/tech-trends/article/3353002/shadow-apis-how-chinese-developers-bypass-restrictions-access-claude-and-gemini" target="_blank" style="color:var(--color-accent-dark)">[SCMP]</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Ecosystem & Risk -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="ecosystem">
+  <div class="section-header">
+    <div class="eyebrow">生态与风险</div>
+    <h2>谁在做这些工具？能长期依赖吗？</h2>
+  </div>
+
+  <div class="card-grid card-grid-3 mb-6">
+    <div class="surface-card">
+      <div style="font-weight:700; color: var(--claude-color); margin-bottom: var(--space-3);">Claude Code</div>
+      <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.7;">
+        <strong>Anthropic</strong><br>
+        估值 $3,800 亿（2026/2 Series G 已关闭）<br>
+        进行中 $9,000 亿轮（FT 5/7 报道）<br>
+        二级市场已隐含约 $1 万亿<br>
+        ARR $440 亿+（2026/5）<br>
+        ~123K Stars · 闭源 · 仅含安装脚本和插件示例<br>
+        <span class="pill success" style="margin-top: var(--space-2);">低风险</span>
+        <span class="pill danger" style="margin-top: var(--space-1);">中国不可用</span>
+      </div>
+    </div>
+    <div class="surface-card">
+      <div style="font-weight:700; color: var(--codex-color); margin-bottom: var(--space-3);">Codex CLI + Desktop</div>
+      <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.7;">
+        <strong>OpenAI</strong>（估值 $8,520 亿，2026/3 关闭）<br>
+        81.8K Stars · 428+ 贡献者 · 553 releases<br>
+        3M+ 周活用户（2026/4）<br>
+        Apache 2.0 完全开源<br>
+        <span class="pill success" style="margin-top: var(--space-2);">低风险</span>
+        <span class="pill accent" style="margin-top: var(--space-1);">需翻墙不封号</span>
+      </div>
+    </div>
+    <div class="surface-card">
+      <div style="font-weight:700; color: var(--deepseek-color); margin-bottom: var(--space-3);">DeepSeek-TUI</div>
+      <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: 1.7;">
+        <strong>个人开发者</strong>（Hunter Bown，法学生）<br>
+        ~22.5K Stars · 66 贡献者 · 80 releases<br>
+        非 DeepSeek 官方产品<br>
+        MIT 完全开源<br>
+        <span class="pill danger" style="margin-top: var(--space-2);">较高风险</span>
+        <span class="pill success" style="margin-top: var(--space-1);">中国原生可用</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="surface-card">
+    <div class="chart-title">社区规模对比</div>
+    <div class="chart-wrap">
+      <canvas id="communityChart"></canvas>
+    </div>
+    <div class="chart-caption">
+      截至 2026 年 5 月。本报告聚焦终端 CLI 形态，IDE 形态的 Cursor（$2B ARR、Composer 2 自研模型）、Windsurf（Cognition 收购、SWE-1.5）、GitHub Copilot（29% 工作场景占有率第一）也是重要参考但不在本报告对比范围内。开源替代有 OpenCode（140K Stars）。
+      <a href="https://github.com/openai/codex" target="_blank">[Codex GitHub]</a>
+      <a href="https://agentconn.com/blog/opencode-open-source-ai-coding-agent-review-2026/" target="_blank">[OpenCode]</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SECTION: Verdict -->
+<!-- ══════════════════════════════════════════════════════ -->
+<section class="section" id="verdict">
+  <div class="section-header">
+    <div class="eyebrow">本次调研重点</div>
+    <h2>DeepSeek-TUI 到底值不值得用？</h2>
+  </div>
+
+  <div class="tldr-box">
+    <p>DeepSeek-TUI 的功能完整度已经追上 Codex 和 Claude Code，<strong>独有的「改完代码自动查错」、「7 种角色多线程并行」、「自由换 9+ 种 AI 模型」</strong>都是亮点。但 AI 模型质量是明显短板：DeepSeek V4 在国际权威编程能力测试上只有 80.6 分（GPT-5.5 是 88.7 分），复杂任务成功率明显偏低。</p>
+    <p>成本上常见的认知误区：DeepSeek 模型按量付费的单价确实最低，但 <strong>Codex / Claude 的 $20-100/月订阅套餐换算下来反而比 DeepSeek 按量付费便宜 2-3 倍</strong>。DeepSeek 只在轻度使用、或者没有海外信用卡的场景下才有成本优势。</p>
+    <p><strong>结论：</strong>DeepSeek-TUI 适合作为辅助工具试一试（特别是配额超出时承接简单任务），不适合作为团队主力。中国开发者如果想要 Claude/GPT 那样的模型质量但不想翻墙，可以走<strong>「Claude Code 工具壳 + 国产模型」</strong>这条路（详见前面「中国可用性」章节）。</p>
+  </div>
+</section>
+
+<!-- ── Sources ── -->
+<section class="section">
+  <div class="section-header">
+    <div class="eyebrow">信息来源</div>
+    <h2>参考资料</h2>
+  </div>
+  <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-4);">关键数据点已在正文中以内联链接标注来源。下面是补充的延伸阅读列表，按主题分组。</p>
+
+  <div style="margin-bottom: var(--space-6);">
+    <h3 style="font-size: var(--font-size-base); font-weight: 700; margin-bottom: var(--space-3); color: var(--color-text-primary);">官方公告与文档</h3>
+    <ul class="source-list">
+      <li><a href="https://openai.com/index/introducing-the-codex-app/" target="_blank">OpenAI: Introducing the Codex App</a>（2026/2/2）</li>
+      <li><a href="https://openai.com/index/introducing-gpt-5-5/" target="_blank">OpenAI: Introducing GPT-5.5</a>（2026/4/23）</li>
+      <li><a href="https://openai.com/index/codex-for-almost-everything/" target="_blank">OpenAI: Codex for (almost) everything</a>（2026/4/16）</li>
+      <li><a href="https://www.anthropic.com/news/updating-restrictions-of-sales-to-unsupported-regions" target="_blank">Anthropic 中国封锁政策公告</a>（2025/9）</li>
+      <li><a href="https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation" target="_blank">Anthropic Series G $380B 融资公告</a></li>
+      <li><a href="https://platform.openai.com/pricing" target="_blank">OpenAI API 定价</a></li>
+      <li><a href="https://api-docs.deepseek.com/quick_start/pricing/" target="_blank">DeepSeek API 定价</a></li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: var(--space-6);">
+    <h3 style="font-size: var(--font-size-base); font-weight: 700; margin-bottom: var(--space-3); color: var(--color-text-primary);">基准测试与第三方分析</h3>
+    <ul class="source-list">
+      <li><a href="https://llm-stats.com/benchmarks/swe-bench-verified" target="_blank">SWE-bench Verified 排行榜</a></li>
+      <li><a href="https://benchlm.ai/blog/posts/deepseek-v4-vs-claude-opus-4-7-vs-gpt-5-5" target="_blank">BenchLM: 三方基准对比</a></li>
+      <li><a href="https://www.morphllm.com/comparisons/codex-vs-claude-code" target="_blank">MorphLLM: Codex vs Claude Code</a></li>
+      <li><a href="https://www.nist.gov/news-events/news/2026/05/caisi-evaluation-deepseek-v4-pro" target="_blank">NIST: DeepSeek V4 独立评估</a></li>
+      <li><a href="https://she-llac.com/claude-limits" target="_blank">she-llac: Claude 真实限制逆向分析</a></li>
+      <li><a href="https://www.gradually.ai/en/claude-code-statistics/" target="_blank">Claude Code 市场数据</a></li>
+    </ul>
+  </div>
+
+  <div style="margin-bottom: var(--space-6);">
+    <h3 style="font-size: var(--font-size-base); font-weight: 700; margin-bottom: var(--space-3); color: var(--color-text-primary);">中国可用性相关报道</h3>
+    <ul class="source-list">
+      <li><a href="https://www.80aj.com/2026/03/06/anthropic-account-suspension-2026/" target="_blank">Anthropic 2026 封号潮深度解析</a></li>
+      <li><a href="https://thehackernews.com/2026/02/anthropic-says-chinese-ai-firms-used-16.html" target="_blank">Hacker News: 1600 万次 distillation 攻击</a></li>
+      <li><a href="https://www.webpronews.com/anthropics-passport-checkpoint-how-id-checks-are-locking-chinese-developers-out-of-claude/" target="_blank">WebProNews: KYC 实名验证</a></li>
+      <li><a href="https://www.scmp.com/tech/tech-trends/article/3353002/shadow-apis-how-chinese-developers-bypass-restrictions-access-claude-and-gemini" target="_blank">SCMP: Shadow APIs 灰色市场</a></li>
+      <li><a href="https://techcrunch.com/2026/04/29/sources-anthropic-could-raise-a-new-50b-round-at-a-valuation-of-900b/" target="_blank">TechCrunch: Anthropic $900B 募资</a></li>
+      <li><a href="https://9to5mac.com/2026/04/09/openai-introduces-100-month-pro-plan-aimed-at-codex-users-heres-what-it-includes/" target="_blank">9to5Mac: OpenAI $100/月 Pro Plan</a></li>
+    </ul>
+  </div>
+
+  <div>
+    <h3 style="font-size: var(--font-size-base); font-weight: 700; margin-bottom: var(--space-3); color: var(--color-text-primary);">中国开发者社区讨论</h3>
+    <ul class="source-list">
+      <li><a href="https://v2ex.com/t/1206516" target="_blank">V2EX: Claude Code 还是 Codex?</a></li>
+      <li><a href="https://aicoding.csdn.net/6920a66582fbe0098cadad78.html" target="_blank">CSDN: 我为什么选了 $20 的那个</a></li>
+      <li><a href="https://www.cclliang.com/2026/04/11/ai/%E9%80%89codex%E8%BF%98%E6%98%AFclaude/" target="_blank">沧沧凉凉: 选 Codex 还是 Claude?</a></li>
+    </ul>
+  </div>
+
+  <div style="margin-top: var(--space-6);">
+    <h3 style="font-size: var(--font-size-base); font-weight: 700; margin-bottom: var(--space-3); color: var(--color-text-primary);">代码仓库</h3>
+    <ul class="source-list">
+      <li><a href="https://github.com/openai/codex" target="_blank">Codex CLI GitHub</a>（81.8K Stars）</li>
+      <li><a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code GitHub</a>（~123K Stars，仅含安装脚本和插件示例）</li>
+      <li><a href="https://github.com/Hmbown/DeepSeek-TUI" target="_blank">DeepSeek-TUI GitHub</a>（~22.5K Stars）</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="page-footer">
+  <p>2026.05 · AI 生成内容，数据来自公开信息源</p>
+</footer>
+
+</div><!-- .page-shell -->
+
+<script>
+// ── Theme persistence ──
+(function(){
+  const saved = localStorage.getItem('nini-theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme','dark');
+    const btn = document.querySelector('.theme-btn');
+    if (btn) btn.textContent = 'Light';
+  }
+  document.querySelector('.theme-btn')?.addEventListener('click', function(){
+    const current = document.documentElement.getAttribute('data-theme');
+    localStorage.setItem('nini-theme', current === 'dark' ? '' : 'dark');
+  });
+})();
+
+// ── Chart defaults ──
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+Chart.defaults.font.size = 13;
+
+function getChartColors() {
+  const s = getComputedStyle(document.documentElement);
+  return {
+    text: s.getPropertyValue('--color-text-primary').trim(),
+    muted: s.getPropertyValue('--color-text-muted').trim(),
+    border: s.getPropertyValue('--color-border-soft').trim(),
+    claude: s.getPropertyValue('--claude-color').trim(),
+    codex: s.getPropertyValue('--codex-color').trim(),
+    deepseek: s.getPropertyValue('--deepseek-color').trim(),
+  };
+}
+
+// ── Benchmark Chart (updated 2026 Q2) ──
+(function(){
+  const c = getChartColors();
+  new Chart(document.getElementById('benchChart'), {
+    type: 'bar',
+    data: {
+      labels: ['SWE-bench\nVerified', 'SWE-bench\nPro', 'Terminal-Bench\n2.0'],
+      datasets: [
+        {
+          label: 'Claude Opus 4.7',
+          data: [87.6, 64.3, 69.4],
+          backgroundColor: c.claude + 'cc',
+          borderColor: c.claude, borderWidth: 1, borderRadius: 6,
+        },
+        {
+          label: 'GPT-5.5 (Codex)',
+          data: [88.7, 58.6, 82.7],
+          backgroundColor: c.codex + 'cc',
+          borderColor: c.codex, borderWidth: 1, borderRadius: 6,
+        },
+        {
+          label: 'DeepSeek V4-Pro',
+          data: [80.6, 55.4, 67.9],
+          backgroundColor: c.deepseek + 'cc',
+          borderColor: c.deepseek, borderWidth: 1, borderRadius: 6,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { color: c.text, usePointStyle: true, pointStyle: 'circle' } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}%` } }
+      },
+      scales: {
+        y: { beginAtZero: true, max: 100, ticks: { color: c.muted, callback: v => v + '%' }, grid: { color: c.border } },
+        x: { ticks: { color: c.muted }, grid: { display: false } }
+      }
+    }
+  });
+})();
+
+// ── Token Price Chart (updated 2026 Q2) ──
+(function(){
+  const c = getChartColors();
+  new Chart(document.getElementById('tokenPriceChart'), {
+    type: 'bar',
+    data: {
+      labels: ['输入 (每百万 tokens)', '输出 (每百万 tokens)'],
+      datasets: [
+        {
+          label: 'Claude Opus 4.7',
+          data: [5.00, 25.00],
+          backgroundColor: c.claude + 'cc',
+          borderColor: c.claude, borderWidth: 1, borderRadius: 4,
+        },
+        {
+          label: 'GPT-5.5 (Codex)',
+          data: [5.00, 30.00],
+          backgroundColor: c.codex + 'cc',
+          borderColor: c.codex, borderWidth: 1, borderRadius: 4,
+        },
+        {
+          label: 'DeepSeek V4-Pro',
+          data: [1.74, 3.48],
+          backgroundColor: c.deepseek + '99',
+          borderColor: c.deepseek, borderWidth: 1, borderRadius: 4,
+        },
+        {
+          label: 'DeepSeek V4-Flash',
+          data: [0.14, 0.28],
+          backgroundColor: c.deepseek + 'cc',
+          borderColor: c.deepseek, borderWidth: 1, borderRadius: 4,
+        },
+        {
+          label: '$100/月 Plan 等效',
+          data: [0.05, 0.05],
+          backgroundColor: '#fb8f68cc',
+          borderColor: '#fb8f68', borderWidth: 2, borderRadius: 4,
+          borderDash: [4, 2],
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { color: c.text, usePointStyle: true, pointStyle: 'circle' } },
+        tooltip: { callbacks: { label: ctx => ctx.raw !== null ? `${ctx.dataset.label}: $${ctx.raw}` : null } }
+      },
+      scales: {
+        y: {
+          type: 'logarithmic',
+          ticks: { color: c.muted, callback: v => '$' + v },
+          grid: { color: c.border }
+        },
+        x: { ticks: { color: c.muted }, grid: { display: false } }
+      }
+    }
+  });
+})();
+
+// ── Community Chart (updated) ──
+(function(){
+  const c = getChartColors();
+  new Chart(document.getElementById('communityChart'), {
+    type: 'bar',
+    data: {
+      labels: ['GitHub Stars (K)', '贡献者数', 'Release 次数'],
+      datasets: [
+        {
+          label: 'Claude Code',
+          data: [123, 50, 200],
+          backgroundColor: c.claude + 'cc',
+          borderColor: c.claude, borderWidth: 1, borderRadius: 6,
+        },
+        {
+          label: 'Codex CLI',
+          data: [81.8, 428, 553],
+          backgroundColor: c.codex + 'cc',
+          borderColor: c.codex, borderWidth: 1, borderRadius: 6,
+        },
+        {
+          label: 'DeepSeek-TUI',
+          data: [22.5, 66, 80],
+          backgroundColor: c.deepseek + 'cc',
+          borderColor: c.deepseek, borderWidth: 1, borderRadius: 6,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { color: c.text, usePointStyle: true, pointStyle: 'circle' } },
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: c.muted }, grid: { color: c.border } },
+        x: { ticks: { color: c.muted }, grid: { display: false } }
+      }
+    }
+  });
+})();
+
+// ── Tabs ──
+function switchTab(btn, panelId) {
+  btn.closest('.section').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.closest('.section').querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ── Scroll spy ──
+(function(){
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+})();
+
+// ── Tooltip positioning (fixed, avoids table clipping) ──
+(function(){
+  document.querySelectorAll('.term').forEach(term => {
+    const tip = term.querySelector('.tip');
+    if (!tip) return;
+    term.addEventListener('mouseenter', () => {
+      tip.style.display = 'block';
+      const r = term.getBoundingClientRect();
+      const tw = tip.offsetWidth;
+      let left = r.left + r.width / 2 - tw / 2;
+      if (left < 8) left = 8;
+      if (left + tw > window.innerWidth - 8) left = window.innerWidth - 8 - tw;
+      tip.style.left = left + 'px';
+      tip.style.top = (r.top - tip.offsetHeight - 8) + 'px';
+    });
+    term.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  });
+})();
+</script>
+
+</body>
+</html>
